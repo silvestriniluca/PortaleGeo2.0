@@ -180,7 +180,10 @@ namespace PortaleGeoWeb.Controllers
             
             string newName = _FileName.Remove(_FileName.Length -4);
 
-            string path = @"C:\Users\marco_magenta\Downloads\" + newName+ "GeocodingbyHere.csv";
+            string path = Path.Combine(Server.MapPath("~/User"));
+            path = path.Remove(path.Length - 40);
+            path = path + @"\Downloads\" + newName + "GeocodingbyHere.csv";
+           
 
             if (System.IO.File.Exists(path))
                 {

@@ -1,0 +1,66 @@
+﻿@model IEnumerable<PortaleGeoWeb.Models.Geo_Utente>
+
+@{
+    ViewBag.Title = "Utente";
+}
+
+<h2>Utente</h2>
+
+<p>
+    <a href="@Url.Action("Aggiungi", "Utente")" class="btn btn-outline-primary">
+        <i class="fas fa-plus"></i> Aggiungi Nuovo Utente
+    </a>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Cognome)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Nome)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CodiceFiscale)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Email)
+        </th>
+
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.Cognome)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Nome)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.CodiceFiscale)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Email)
+    </td>
+
+    <td>
+        <a class="btn btn-sm btn-outline-secondary mb-1" aria-label="Dettagli"
+           href="@Url.Action("Dettagli", new { id = item.Id })">
+            <i class="fas fa-search"></i>
+        </a>
+
+        <a class="btn btn-sm btn-outline-secondary mb-1" aria-label="Modifica"
+           href="@Url.Action("Modifica", new { id = item.Id })">
+            <i class="fas fa-cog"></i>
+        </a>
+
+        <a class="btn btn-sm btn-outline-secondary mb-1" aria-label="Elimina"
+           href="@Url.Action("Cancella", new { id = item.Id })">
+            <i class="fas fa-trash-alt"></i>
+        </a>
+    </td>
+</tr>
+}
+
+</table>

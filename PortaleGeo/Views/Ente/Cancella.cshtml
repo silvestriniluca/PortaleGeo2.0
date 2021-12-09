@@ -1,0 +1,80 @@
+﻿@model PortaleGeoWeb.ViewModels.VmEnte
+
+@{
+    ViewBag.Title = "Cancella";
+}
+
+<h2>Cancella</h2>
+
+<h3>Sei sicuro di voler cancellare?</h3>
+<div>
+    <h4>Ente</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CodiceIstat)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CodiceIstat)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CodiceFisco)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CodiceFisco)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SiglaProv)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SiglaProv)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Cap)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Cap)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Nome)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Nome)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ValidoDal)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ValidoDal)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ValidoAl)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ValidoAl)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Cancella" class="btn btn-default" /> |
+            @Html.ActionLink("Torna alla lista", "Index")
+        </div>
+    }
+</div>

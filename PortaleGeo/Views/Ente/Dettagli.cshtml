@@ -1,0 +1,114 @@
+﻿@model PortaleGeoWeb.ViewModels.VmEnte
+
+@{
+    ViewBag.Title = "Dettaglio";
+}
+
+<h2>Dettaglio</h2>
+
+<div>
+    <h4>Ente</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CodiceIstat)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CodiceIstat)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CodiceFisco)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CodiceFisco)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SiglaProv)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SiglaProv)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Cap)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Cap)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Nome)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Nome)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CodiceFiscale)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CodiceFiscale)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AderisceDigipalm)
+        </dt>
+
+        @if (Model.AderisceDigipalm == 1){ <dd>SI</dd>} else { <dd>NO</dd>}
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OnBoardingRicevuto)
+        </dt>
+
+        @if (Model.OnBoardingRicevuto == 1){ <dd>SI</dd>} else { <dd>NO</dd>}
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OnBoardingInviato)
+        </dt>
+
+        @if (Model.OnBoardingInviato == 1){ <dd>SI</dd>} else { <dd>NO</dd>}
+
+         <dt>
+            @Html.DisplayNameFor(model => model.PraticheUSR)
+        </dt>
+
+        @if (Model.PraticheUSR == 1){ <dd>SI</dd>} else { <dd>NO</dd>}
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ValidoDal)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ValidoDal)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ValidoAl)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ValidoAl)
+        </dd>
+
+                <dt>
+            @Html.DisplayNameFor(model => model.AuthIoWS)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AuthIoWS)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Modifica", "Modifica", new { id = Model.Id }) |
+    @Html.ActionLink("Torna alla lista", "Index")
+</p>

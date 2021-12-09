@@ -1,0 +1,55 @@
+﻿@{
+    ViewBag.Title = "SelezionaSistema";
+}
+
+
+<h2>SistemaDiGeoreferenzazione</h2>
+
+
+<div class="form-group">
+    @Html.Label("Seleziona Sistema:", htmlAttributes: new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @Html.DropDownList("SistemaDiGeoreferenzazione", (SelectList)ViewBag.SistemaDiGeoreferenzazione, htmlAttributes: new { @class = "select form-control" })
+    </div>
+</div>
+
+<br />
+
+
+
+<div>
+    <input type="button" value="Conferma" class="btn btn-outline-dark" id="Conferma" />
+</div>
+
+    @section scripts
+        {
+        <script>
+            $(document).on("click", "#Conferma", function () {
+                var sistema_geo = $('#SistemaDiGeoreferenzazione').val();
+                console.log($('#SistemaDiGeoreferenzazione').val());
+                
+                $.ajax({
+                    dataType: "json",
+                    type: "POST",
+                    url: "Conferma/Index",
+                    data: { 'Sistema': sistema_geo },
+                    success: function (data) {
+                        if (data.code === 1) {
+                           
+                            window.location.href = '@Url.Action("Index","OpenStreetMap")';
+                        } else if (data.code === 2) {
+                          
+                            window.location.href = '@Url.Action("Index","SistemaHere")';
+                        }
+                        else {
+                            
+                            window.location.href = '@Url.Action("Index","Home")';
+                        }
+                    }
+                });
+            });
+        </script>
+    }
+
+
+

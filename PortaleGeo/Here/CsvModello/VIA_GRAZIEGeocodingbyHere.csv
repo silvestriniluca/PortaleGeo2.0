@@ -1,0 +1,2 @@
+Provincia;Comune;Indirizzo;CAP;DENOMINAZIONE;C_FISCALE;PARTITA_IV;ATTIVITA;CODICI_ATT;Ateco_Prev;LetteraAte;DescLetter;IND_PEC;AA_ADD;Tipo_Impre;IdUnivoco;IdOrigine;Tabella_Pr;Tipo_Artig;geo_Latitude;geo_Longitude;geo_MatchLevel;geo_MatchType;geo_Relevance;geo_Error
+MACERATA;MACERATA;VIA GRAZIE 35;62100;CHEN LIANMEI;CHNLNM79E45Z210D;2037290430;CONFEZIONE IN SERIE DI ABBIGLIAMENTO ESTERNO;14.13.1 I / 14.13.1 P;14;C;ATTIVIT?� MANIFATTURIERE;LIANMEI20@PEC.IT;0;;7620;7620;Imprese_Marche_48mila;;41,06876;14,27246;houseNumber;pointAddress;0,69;

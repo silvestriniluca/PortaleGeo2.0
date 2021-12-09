@@ -1,0 +1,290 @@
+﻿@model PortaleGeoWeb.Models.HerePageModel
+@{
+    ViewBag.Title = "Index";
+}
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<head>
+    <!-- stylesheet of Bootstrap-->
+    <!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">-->
+    <!--Leaflet's CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+          integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+          crossorigin="" />
+
+    <!-- Make sure you put this AFTER Leaflet's CSS,    JS Leaflet -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+            integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+            crossorigin=""></script>
+
+    <!--libreria ajax jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+    @*<script src="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.umd.js"></script>*@
+
+</head>
+<div>
+    <img src="/Images/HERE_logo.svg.png" height="50" alt="" loading="lazy" id="here" class="rounded-start" />
+    <h2>Sistema di Georeferenzazione HERE (file CSV)</h2>
+</div>
+
+<div>
+    <button type="button" class="btn btn-outline-secondary" id="DeleteTable"><i class="fas fa-plus"></i>Cancella Tutto </button>
+    <button type="button" class="btn btn-outline-secondary" id="Estrai"><i class="fas fa-plus"></i>Estrai</button>
+   
+</div>
+<br />
+<div>
+    @using (Html.BeginForm("Upload", "SistemaHere", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+    {
+
+        <span>Seleziona File:</span>
+        @Html.TextBox("file", "file", new { @class = "form-control", @type = "file", @id = "file" })
+        <br />
+        <div>
+            <input type="button" value="AvviaGeoCode" class="btn btn-dark" id="UploadBtn" />
+            <input type="button" value="Test" class="btn btn-outline-secondary" id="Test" />
+            <button type="button" class="btn btn-outline-danger" id="ElimnaDatiStorage">EliminaDatiHereinMemoria</button>
+        </div>
+    }
+
+</div>
+<br />
+<style>
+    #ElimnaDatiStorage{
+        transform:translate(400%);
+    }
+
+
+    #here {
+        transform: translate(-60%)
+    }
+
+    #Test {
+        transform: translate(60%);
+    }
+
+    table {
+        font-family: Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        table tr, #customers th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+            table tr:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+
+            table tr:hover {
+                background-color: #ddd;
+            }
+
+        table th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #ff6600;
+            color: white;
+        }
+</style>
+
+<div id="divDati">
+
+
+</div>
+
+
+
+
+@section scripts
+                {
+    <script>
+
+        $('#UploadBtn, #Test').click(function () {
+            if (this.id == 'UploadBtn') {
+                $('#Estrai').prop('disabled', false);
+            }
+            else if (this.id == 'Test') {
+                $('#Estrai').prop('disabled', true);
+            }
+        });
+        
+     
+        $('#UploadBtn, #Test').click(function () {
+            if (this.id == 'UploadBtn') {
+                provaurl = '@Url.Action("Upload", "SistemaHere")';
+            }
+            else if (this.id == 'Test') {
+                provaurl = '@Url.Action("Test", "SistemaHere")';
+            }
+
+
+            var files = $("#file").get(0).files;
+            var formData = new FormData();
+            formData.append('file', files[0]);
+            $.ajax({
+                type: "POST",
+                url: provaurl,
+                data: formData,
+                processData: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    if (data.Status === 1) {
+
+                        // alert(data.Message);
+                        console.log(data.Message);
+                        console.log(data.Message2);
+                        // var headers = $("#column").val(data.Message)
+                        var headers = data.Message;
+
+                        // TODO remove if exists
+                        var divRoot = $("#divDati");
+                        //var tableRoot = $("<table id='datiCSV' >");
+                        var tableRoot = $("<table>", { id: 'datiCSV' });
+                        var theadRoot = $("<thead>");
+                        var tbodyRoot = $("<tbody>");
+
+                        divRoot.append(tableRoot);
+                        tableRoot.append(theadRoot);
+                        tableRoot.append(tbodyRoot);
+
+                        //var domRoot = $("#datiCSV");
+                        var rowDom = $('<tr>');
+                        for (i = 0; i < headers.length; i++) {
+                            var header = headers[i];
+                            rowDom.append($("<th>").append(header));
+                        }
+                        theadRoot.append(rowDom);
+
+                        var rows = data.Message2;
+
+
+                        for (j = 0; j < rows.length; j++) {
+                            var rowss = rows[j];
+
+
+
+                            var rowDom1 = $('<tr>');
+
+                            for (k = 0; k < rowss.length; k++) {
+                                var rowsss = rowss[k];
+
+                                rowDom1.append($("<td>").append(rowsss));
+
+                            }
+
+                            tbodyRoot.append(rowDom1);
+                        }
+
+
+
+                        var nome = data.Message3;
+
+
+                        $("#datiCSV").DataTable({
+                            language: {
+                                url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Italian.json'
+                            },
+                            paging: false,
+                            scrollY: 400,
+                            scrollX: true,
+                            dom: 'Bfrtip',
+                            buttons:
+                                [
+
+                                    {
+                                        text: 'Scarica Dati su Mappa',
+                                        action: function (e, dt, button, config) {
+                                            var datiHere = dt.buttons.exportData();
+
+                                            jQuery.ajax({
+
+                                                //definisco il tipo della chiamata
+                                                type: "POST",
+
+                                                // specifico la URL della risorsa da contattare
+                                                url: '@Url.Action("JsonRisultati", "SistemaHere")',
+                                                // passo dei dati alla risorsa remota
+                                                dataType: "json",
+                                                //    contentType: 'application/json; charset=utf-8',
+                                                data: { '_FileName': data.Message3 },
+                                                // Tipo di dato che si riceve di ritorno
+
+
+                                                // imposto un'azione per il caso di successo
+                                                success: function (data) {
+                                                // Salvo i dati geocodificata nel browser
+                                                    const myArray = [];
+                                                    var i = localStorage.length;
+                                                    console.log(nome)
+                                                    if (myArray[i] = 'undefined') {
+
+                                                        myArray[i] = data.ritorno;
+                                                        console.log(myArray[i]);
+
+
+                                                        localStorage.setItem(nome, myArray[i]);
+
+                                                    }
+
+
+                                                },
+
+                                                error: function () {
+                                                    alert("Estrai File");
+                                                }
+
+                                            })
+
+                                        },
+                                    }
+                                ]
+                        });
+
+                      
+                       
+
+
+                        $("#DeleteTable").click(function () {
+                            $("#divDati").empty();
+                        });
+
+
+
+                        $("#Estrai").click(function () {
+                            var href = data.Message1;
+                            window.location.href = (href)
+
+
+
+                        });
+
+                       
+
+                    }
+
+                    else {
+                        alert("errore");
+                    }
+                }
+
+            });
+        });
+
+        $("#ElimnaDatiStorage").click(function () {
+            localStorage.clear();
+        });
+
+
+
+
+    </script>
+
+
+}
+

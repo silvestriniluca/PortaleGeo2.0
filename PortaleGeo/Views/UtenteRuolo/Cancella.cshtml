@@ -1,0 +1,60 @@
+﻿@model PortaleGeoWeb.ViewModels.VmUtenteRuolo
+
+@{
+    ViewBag.Title = "Cancella";
+}
+
+<h2>Cancella</h2>
+
+<h3>Sei sicuro di voler cancellare?</h3>
+<div>
+    <h4>Ruolo Utente</h4>
+    <hr />
+    <dl class="dl-horizontal">
+
+        <dt>
+            Ruolo
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IO_Ruolo.Name)
+        </dd>
+
+        <dt>
+            Utente
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IO_Utente.CodiceFiscale)
+            @Html.DisplayFor(model => model.IO_Utente.Cognome)
+            @Html.DisplayFor(model => model.IO_Utente.Nome)
+        </dd>
+
+        <dt>
+            Ente
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IO_Ente.Nome)
+        </dd>
+
+        <dt>
+            Fornitore
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IO_Fornitore.RagioneSociale)
+        </dd>
+
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Cancella" class="btn btn-default" /> |
+            @Html.ActionLink("Torna alla lista", "Index")
+        </div>
+    }
+</div>

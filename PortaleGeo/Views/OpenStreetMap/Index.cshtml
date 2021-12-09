@@ -1,0 +1,221 @@
+﻿@model IEnumerable<PortaleGeoWeb.Models.OpenStreetMapCSV>
+
+@{
+    ViewBag.Title = "Index";
+}
+<head>
+
+</head>
+<div>
+    <img src="/Images/OpenStreetMap.jpeg" height="50" alt="" loading="lazy"  class="rounded-circle" />
+    <h2>Sistema di Georeferenzazione OpenStreetMap (Manuale e file CSV)</h2>
+</div>
+<style>
+    #datiCSV {
+        font-family: Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        #datiCSV td, #customers th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        #datiCSV tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        #datiCSV tr:hover {
+            background-color: #ddd;
+        }
+
+        #datiCSV th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #ff6600;
+            color: white;
+        }
+</style>
+<p>
+
+    <a href="@Url.Action("Aggiungi", "OpenStreetMap")" class="btn btn-outline-secondary">
+        <i class="fas fa-plus"></i> Inserisci Indirizzo Manuale
+    </a>
+    <a href="@Url.Action("DeleteAll", "OpenStreetMap")" class="btn btn-outline-secondary">
+        <i class="fas fa-plus"></i> Cancella Tutto
+    </a>
+    <a href="@Url.Action("GeoCodeRow", "OpenStreetMap")" class="btn btn-outline-secondary">
+        <i class="fas fa-plus"></i> Avvia GeoCode
+    </a>
+    <a href="@Url.Action("Estrai", "OpenStreetMap")" class="btn btn-outline-secondary">
+        <i class="fas fa-plus"></i> Estrai
+    </a>
+
+ 
+
+
+
+    <div class="row">
+        <div class="col-sm-12" style="padding-bottom:20px">
+            <div class="col-sm-2">
+                <span>Seleziona File  :</span>
+            </div>
+            <div class="col-sm-3">
+                <input class="form-control" type="file" name="importFile" id="importFile" />
+            </div>
+            <br />
+            <div class="col-sm-3">
+                <input class="btn btn-dark" id="btnUpload" type="button" value="Upload" />
+            </div>
+        </div>
+    </div>
+
+</p>
+
+<p>
+
+</p>
+
+<table class="table" id="datiCSV">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Indirizzo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.N_Civico)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Comune)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.Provincia)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.Regione)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.Note1)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Note2)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.Lat)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Lon)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Approx01)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Approx02)
+        </th>
+
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Indirizzo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.N_Civico)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Comune)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Provincia)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Regione)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Note1)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Note2)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Lat)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Lon)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Approx01)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Approx02)
+            </td>
+            <td>
+
+                <a class="btn btn-sm btn-outline-secondary mb-1" aria-label="Dettagli"
+                   href="@Url.Action("Dettaglio", new { id = item.Id })">
+                    <i class="fas fa-search"></i>
+                </a>
+
+                <a class="btn btn-sm btn-outline-secondary mb-1" aria-label="Modifica"
+                   href="@Url.Action("Modifica", new { id = item.Id })">
+                    <i class="fas fa-cog"></i>
+                </a>
+
+                <a class="btn btn-sm btn-outline-secondary mb-1" aria-label="Elimina"
+                   href="@Url.Action("Delete", new { id = item.Id })">
+                    <i class="fas fa-trash-alt"></i>
+                </a>
+            </td>
+        </tr>
+    }
+
+</table>
+
+@section scripts{
+    <script>
+
+
+        $(document).on("click", "#btnUpload", function () {
+            var files = $("#importFile").get(0).files;
+            var formData = new FormData();
+            formData.append('importFile', files[0]);
+
+            $.ajax({
+            type: "POST",
+            url: '@Url.Action("ImportFile", "OpenStreetMap")',
+            data: formData,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    if (data.Status === 1) {
+                        alert(data.Message);
+                        window.location.reload();
+                    } else {
+                        alert(data.Message);
+                    }
+                }
+            });
+        });
+/*
+        $("#datiCSV").DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Italian.json'
+            },
+            paging: false,
+            scrollX: true,
+            scrollY:400
+        });*/
+    </script>
+}

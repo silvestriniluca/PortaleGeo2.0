@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortaleGeoWeb", "PortaleGeo\PortaleGeoWeb.csproj", "{A168E98B-DB51-4EF1-B172-5ECD30684C3B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{05FC27BA-FEAC-455C-B457-74619311CB9D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A168E98B-DB51-4EF1-B172-5ECD30684C3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A168E98B-DB51-4EF1-B172-5ECD30684C3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A168E98B-DB51-4EF1-B172-5ECD30684C3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A168E98B-DB51-4EF1-B172-5ECD30684C3B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2FB70AC1-5780-476C-AB3D-9449FBB5AD8A}
+	EndGlobalSection
+EndGlobal

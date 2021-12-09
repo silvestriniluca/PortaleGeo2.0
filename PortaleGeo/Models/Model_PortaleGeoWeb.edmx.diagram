@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="28b449695d474abe9c80f195fccf7836" Name="Diagram1">
+        <EntityTypeShape EntityType="GeoCodeModel.AspNetRoles" Width="1.5" PointX="5.75" PointY="2.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="GeoCodeModel.AspNetUserClaims" Width="1.5" PointX="10.25" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="GeoCodeModel.AspNetUserLogins" Width="1.5" PointX="10.25" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="GeoCodeModel.AspNetUsers" Width="1.5" PointX="8" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="GeoCodeModel.Geo_Ente" Width="1.5" PointX="0.75" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="GeoCodeModel.Geo_Fornitore" Width="1.5" PointX="0.75" PointY="7" IsExpanded="true" />
+        <EntityTypeShape EntityType="GeoCodeModel.Geo_Ruolo" Width="1.5" PointX="0.75" PointY="10.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="GeoCodeModel.Geo_Utente" Width="1.5" PointX="0.75" PointY="13.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="GeoCodeModel.Geo_UtenteRuolo" Width="1.5" PointX="3" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="GeoCodeModel.sysdiagrams" Width="1.5" PointX="2.75" PointY="5.75" IsExpanded="true" />
+        <AssociationConnector Association="GeoCodeModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="GeoCodeModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="GeoCodeModel.FK__Utente__IdEnt__09A971A2" ManuallyRouted="false" />
+        <AssociationConnector Association="GeoCodeModel.FK__Utente__IdEnt__0A9D95DB" ManuallyRouted="false" />
+        <AssociationConnector Association="GeoCodeModel.FK__Utente__IdFor__0B91BA14" ManuallyRouted="false" />
+        <AssociationConnector Association="GeoCodeModel.FK__Utente__IdFor__0C85DE4D" ManuallyRouted="false" />
+        <AssociationConnector Association="GeoCodeModel.FK__Utente__RoleI__0D7A0286" ManuallyRouted="false" />
+        <AssociationConnector Association="GeoCodeModel.FK__Utente__UserI__0E6E26BF" ManuallyRouted="false" />
+        <AssociationConnector Association="GeoCodeModel.AspNetUserRoles" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="GeoCodeModel.OpenStreetMapCSV" Width="1.5" PointX="5.375" PointY="6.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

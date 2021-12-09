@@ -1,0 +1,25 @@
+﻿@model PortaleGeoWeb.ViewModels.VmRuolo
+
+    ViewBag.Title = "Dettagli";
+}
+
+<h2>Dettagli</h2>
+
+<div>
+    <h4>Ruolo</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Modifica", "Modifica", new { id = Model.Id }) |
+    @Html.ActionLink("Torna alla lista", "Index")
+</p>

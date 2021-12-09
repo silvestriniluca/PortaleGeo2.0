@@ -1,0 +1,129 @@
+﻿@model System.Data.DataTable
+@using System.Data;
+@{
+    ViewBag.Title = "Upload";
+}
+
+<h2>Visualizzazione file CSV da Geocodificare</h2>
+
+
+<style>
+    table {
+        font-family: Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        table td, #customers th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        table tr:hover {
+            background-color: #ddd;
+        }
+
+        table th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #ff6600;
+            color: white;
+        }
+</style>
+
+@using (Html.BeginForm("Upload", "Home", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary()
+    <div >
+    @Html.TextBox("upload", "", new { @class = "form-control", @type = "file" , @id= "dataFile" })
+        <br/>
+    </div>
+    <div>
+        <input type="submit" value="Upload" class="btn btn-dark" />
+    </div>
+
+  
+    <br />
+    <br />
+
+
+
+    if (Model != null)
+        {
+        <table id="DatiCsv">
+            <thead>
+                <tr>
+                    @foreach (DataColumn col in Model.Columns)
+                    {
+                        <th>@col.ColumnName</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (DataRow row in Model.Rows)
+                {
+                    <tr>
+                        @foreach (DataColumn col in Model.Columns)
+                        {
+                            <td>@row[col.ColumnName]</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    }
+
+
+
+<!-- skipped -->
+
+
+<hr />
+
+
+    @section scripts{
+        <script>
+
+
+            $("#DatiCsv").DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Italian.json'
+                },
+              
+                paging: true,
+                scrollX: true,
+                scrollY: 400,
+                dom: 'Bfrtip',
+                buttons: [
+                    'excel',
+                    {
+                        text: 'JSON',
+                        action: function (e, dt, button, config) {
+                            var data = dt.buttons.exportData();
+
+                            $.fn.dataTable.fileSave(
+                                new Blob([JSON.stringify(data)]),
+                                'Export.json'
+                            );
+                        }
+                    }
+                ]
+            
+                 
+            });
+      
+  
+
+        </script>
+}
+
+
+
+

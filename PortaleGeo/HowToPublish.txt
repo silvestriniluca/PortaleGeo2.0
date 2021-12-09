@@ -1,0 +1,7 @@
+﻿Taken from https://docs.microsoft.com/en-us/nuget/quickstart/create-and-publish-a-package-using-visual-studio-net-framework
+
+1) Update Assembly Info from project's properties
+
+2) $ nuget pack -Version 1.0.<?> (last was 1.0.1)
+
+3) $ nuget push .\IO-APP-SDK.1.0.<?>.nupkg <nuget key> -Source https://api.nuget.org/v3/index.json

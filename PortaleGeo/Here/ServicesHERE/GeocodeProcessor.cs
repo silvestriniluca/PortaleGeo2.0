@@ -18,13 +18,19 @@ namespace PortaleGeoWeb
         {
 
             int counter = 0;
+
+            //creao oggetto con id, codice e url per richiamare il servizio
             HereGeoCoder service = new HereGeoCoder();
-            //
+
+            //crea lista di oggetti response json + stringa json
             List<GeocoderReply> outList = new List<GeocoderReply>();
 
-            DataDescriptor savedList = new DataDescriptor();
-            savedList.Rows = new List<string[]>();
-            //
+            //crea oggetto nuovo DatDescriptor
+            DataDescriptor data_computed = new DataDescriptor();
+
+            //per me questa riga è inutile, perchè Data Descriptor lo fa già di definizione
+            data_computed.Rows = new List<string[]>();
+            //numera le nuove intestazioni
             int K_LATITUDE = data.Header.Length;
             int K_LONGITUDE = data.Header.Length + 1;
             int K_MATCH_LEVEL = data.Header.Length + 2;
@@ -32,20 +38,23 @@ namespace PortaleGeoWeb
             int K_MATCH_RELEVANCE = data.Header.Length + 4;
             int K_MATCH_ERROR = data.Header.Length + 5;
             //
-            savedList.Header = new string[data.Header.Length + 6];
-            Array.Copy(data.Header, savedList.Header, data.Header.Length);
+            data_computed.Header = new string[data.Header.Length + 6];
+            Array.Copy(data.Header, data_computed.Header, data.Header.Length);
             //
             // Array.Resize(ref data.Header, data.Header.Length + 6);
             //
 
-            savedList.Header[K_LATITUDE] = "geo_Latitude";
-            savedList.Header[K_LONGITUDE] = "geo_Longitude";
-            savedList.Header[K_MATCH_LEVEL] = "geo_MatchLevel";
-            savedList.Header[K_MATCH_TYPE] = "geo_MatchType";
-            savedList.Header[K_MATCH_RELEVANCE] = "geo_Relevance";
-            savedList.Header[K_MATCH_ERROR] = "geo_Error";
+            data_computed.Header[K_LATITUDE] = "Here_Latitude";
+            data_computed.Header[K_LONGITUDE] = "Here_Longitude";
+            data_computed.Header[K_MATCH_LEVEL] = "Here_MatchLevel";
+            data_computed.Header[K_MATCH_TYPE] = "Here_MatchType";
+            data_computed.Header[K_MATCH_RELEVANCE] = "Here_Relevance";
+            data_computed.Header[K_MATCH_ERROR] = "Here_Error";
 
-            //
+
+
+            //TEST per i primi 5 elementi
+
             if (data.i == true)
             {
                
@@ -60,13 +69,14 @@ namespace PortaleGeoWeb
                         service._state = "MARCHE";
                         GeocoderReply geocoderReply = service.executeRequest(row[par.posIndirizzo]);
                         outList.Add(geocoderReply);
-                        //
+                        //row + 6??header semmai
                         string[] outRow = new string[row.Length + 6];
                         Array.Copy(row, outRow, row.Length);
                         //
                         if (geocoderReply.ReplyException == null)
                         {
-                            if (geocoderReply.ReplyObject != null)
+                            //se COMUNE passato non corrisponde con quello del risultato geocode dà errore
+                        if (geocoderReply.ReplyObject != null && geocoderReply.ReplyObject.Response.View[0].Result[0].Location.Address.City.ToString().ToLower() == service._city.ToLower())
                             {
                                 //
                                 if (geocoderReply.ReplyObject.Response.View.Length > 0)
@@ -92,8 +102,8 @@ namespace PortaleGeoWeb
                             outRow[K_MATCH_ERROR] = geocoderReply.ReplyException.ToString();
                         }
 
-                        //
-                        savedList.Rows.Add(outRow);
+                    //
+                    data_computed.Rows.Add(outRow);
                         //
                         counter++;
 
@@ -102,6 +112,11 @@ namespace PortaleGeoWeb
                     
                 }
             }
+
+
+
+            //AVVIA GEOCODE
+
             else
             {
                 foreach (var row in data.Rows)
@@ -117,7 +132,8 @@ namespace PortaleGeoWeb
                     //
                     if (geocoderReply.ReplyException == null)
                     {
-                        if (geocoderReply.ReplyObject != null)
+                        //se COMUNE passato non corrisponde con quello del risultato geocode dà errore
+                        if (geocoderReply.ReplyObject != null && geocoderReply.ReplyObject.Response.View[0].Result[0].Location.Address.City.ToString().ToLower() == service._city.ToLower())
                         {
                             //
                             if (geocoderReply.ReplyObject.Response.View.Length > 0)
@@ -144,7 +160,7 @@ namespace PortaleGeoWeb
                     }
 
                     //
-                    savedList.Rows.Add(outRow);
+                    data_computed.Rows.Add(outRow);
                     //
                     counter++;
 
@@ -165,7 +181,7 @@ namespace PortaleGeoWeb
             string outFileName = Path.Combine(path, name + "_elaborated.csv");
             
 
-            return savedList;
+            return data_computed;
         }
 
 

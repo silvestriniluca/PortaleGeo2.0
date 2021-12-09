@@ -145,10 +145,11 @@ namespace PortaleGeoWeb.Controllers
 
                     //file data + colonne Here (nuovo file georefernziato)
                     DataDescriptor data_computed = GeocodeProcessor.EsecuteGecoding(data, par, path_newfile, conf);
-                    //
+                    
                     //   string tempFile = Path.Combine(Server.MapPath("~/CsvModello"), _tempFileName) + ".csv";
-                    //
+                    
                     // write csv elaborated
+
                     //
                     MyCsvWriter.SaveCsvFile(path_newfile, conf, data_computed);
 

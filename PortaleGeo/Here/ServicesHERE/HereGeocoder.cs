@@ -20,7 +20,7 @@ namespace PortaleGeoWeb.service
 
         public string _state = "Marche";
         public string _country = "ITA";
-        public string _city = "Ancona";
+        public string _city = "";
 
 
         private string _urlPattern =
@@ -45,6 +45,7 @@ namespace PortaleGeoWeb.service
 
         private GeocoderReply CallRestService(string uri, string method, dynamic parms)
         {
+            //json + stringa json + exception
             GeocoderReply gr = new GeocoderReply();
 
             var req = HttpWebRequest.Create(uri);
@@ -55,13 +56,15 @@ namespace PortaleGeoWeb.service
             {
                 using (var resp = req.GetResponse())
                 {
-                    var results = new StreamReader(resp.GetResponseStream()).ReadToEnd();
-                    //
-                    gr.ReplyJson = results;                    
-                    //
-                    HereGeocodeResponse hereReply = HereGeocodeResponse.FromJson(results);
-                    //
+                    dynamic result_json = new StreamReader(resp.GetResponseStream()).ReadToEnd();
+
+                    //TROVA IL RISULTATO DEL GEOCODE in formato stringa
+                    gr.ReplyJson = result_json;
+
+                    HereGeocodeResponse hereReply = HereGeocodeResponse.FromJson(result_json);
+
                     gr.ReplyObject = hereReply;
+                    
                 }
             }
             catch (Exception ex)

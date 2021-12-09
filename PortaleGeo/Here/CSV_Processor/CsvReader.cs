@@ -23,6 +23,7 @@ namespace PortaleGeoWeb.reader.csv
             //nuovo oggetto DatDescriptor
             DataDescriptor retData = new DataDescriptor();
             
+            //per me questa riga è inutile, perchè Data Descriptor lo fa già di definizione
                 retData.Rows = new List<string[]>();
 
             var reader = new StreamReader(fileName);

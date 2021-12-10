@@ -10,9 +10,9 @@ namespace PortaleGeoWeb.ViewModels
     public class VmHere
     {
         
-        [Name("geo_Latitude")]
+        [Name("Here_Latitude")]
          public string geo_Latitude { get; set; }
-        [Name("geo_Longitude")]
+        [Name("Here_Longitude")]
         public string geo_Longitude { get; set; }
         [Name("Indirizzo")]
         public string Indirizzo { get; set; }

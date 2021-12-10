@@ -132,12 +132,13 @@ namespace PortaleGeoWeb
                     //
                     if (geocoderReply.ReplyException == null)
                     {
-                        //se COMUNE passato non corrisponde con quello del risultato geocode dà errore
-                        if (geocoderReply.ReplyObject != null && geocoderReply.ReplyObject.Response.View[0].Result[0].Location.Address.City.ToString().ToLower() == service._city.ToLower())
+                        if (geocoderReply.ReplyObject.Response.View.Length > 0)
                         {
-                            //
-                            if (geocoderReply.ReplyObject.Response.View.Length > 0)
+                            //se COMUNE passato non corrisponde con quello del risultato geocode dà errore
+                            if (geocoderReply.ReplyObject != null
+                                    && geocoderReply.ReplyObject.Response.View[0].Result[0].Location.Address.City.ToString().ToLower() == service._city.ToLower())
                             {
+
                                 outRow[K_LATITUDE] = geocoderReply.ReplyObject.Response.View[0].Result[0].Location
                                     .DisplayPosition.Latitude.ToString();
                                 outRow[K_LONGITUDE] = geocoderReply.ReplyObject.Response.View[0].Result[0].Location
@@ -147,6 +148,7 @@ namespace PortaleGeoWeb
                                 outRow[K_MATCH_RELEVANCE] =
                                     geocoderReply.ReplyObject.Response.View[0].Result[0].Relevance.ToString();
                                 outRow[K_MATCH_ERROR] = null;
+
                             }
                         }
                         else

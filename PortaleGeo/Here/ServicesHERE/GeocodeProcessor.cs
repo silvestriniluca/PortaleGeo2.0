@@ -57,59 +57,62 @@ namespace PortaleGeoWeb
 
             if (data.i == true)
             {
-               
+
 
                 foreach (var row in data.Rows)
                 {
 
-                    
 
-                        service._city = row[par.posComune];
-                        service._country = "ITALIA";
-                        service._state = "MARCHE";
-                        GeocoderReply geocoderReply = service.executeRequest(row[par.posIndirizzo]);
-                        outList.Add(geocoderReply);
-                        //row + 6??header semmai
-                        string[] outRow = new string[row.Length + 6];
-                        Array.Copy(row, outRow, row.Length);
-                        //
-                        if (geocoderReply.ReplyException == null)
+
+                    service._city = row[par.posComune];
+                    service._country = "ITALIA";
+                    service._state = "MARCHE";
+                    GeocoderReply geocoderReply = service.executeRequest(row[par.posIndirizzo]);
+                    outList.Add(geocoderReply);
+                    //row + 6??header semmai
+                    string[] outRow = new string[row.Length + 6];
+                    Array.Copy(row, outRow, row.Length);
+                    //
+                    if (geocoderReply.ReplyException == null)
+                    {
+                        //se l'indirizzo non è stato trovato  --> oggetto NULLO
+                        if (geocoderReply.ReplyObject.Response.View.Length > 0)
                         {
-                            //se COMUNE passato non corrisponde con quello del risultato geocode dà errore
-                        if (geocoderReply.ReplyObject != null && geocoderReply.ReplyObject.Response.View[0].Result[0].Location.Address.City.ToString().ToLower() == service._city.ToLower())
+                            //se COMUNE passato non corrisponde con quello del risultato geocode dà errore --> oggetto NULLO
+                            if (geocoderReply.ReplyObject != null
+                                    && geocoderReply.ReplyObject.Response.View[0].Result[0].Location.Address.City.ToString().ToLower() == service._city.ToLower())
                             {
-                                //
-                                if (geocoderReply.ReplyObject.Response.View.Length > 0)
-                                {
-                                    outRow[K_LATITUDE] = geocoderReply.ReplyObject.Response.View[0].Result[0].Location
-                                        .DisplayPosition.Latitude.ToString();
-                                    outRow[K_LONGITUDE] = geocoderReply.ReplyObject.Response.View[0].Result[0].Location
-                                        .DisplayPosition.Longitude.ToString();
-                                    outRow[K_MATCH_LEVEL] = geocoderReply.ReplyObject.Response.View[0].Result[0].MatchLevel;
-                                    outRow[K_MATCH_TYPE] = geocoderReply.ReplyObject.Response.View[0].Result[0].MatchType;
-                                    outRow[K_MATCH_RELEVANCE] =
-                                        geocoderReply.ReplyObject.Response.View[0].Result[0].Relevance.ToString();
-                                    outRow[K_MATCH_ERROR] = null;
-                                }
-                            }
-                            else
-                            {
-                                outRow[K_MATCH_ERROR] = "REPLY-OBJECT-NULL";
+
+                                outRow[K_LATITUDE] = geocoderReply.ReplyObject.Response.View[0].Result[0].Location
+                                    .DisplayPosition.Latitude.ToString();
+                                outRow[K_LONGITUDE] = geocoderReply.ReplyObject.Response.View[0].Result[0].Location
+                                    .DisplayPosition.Longitude.ToString();
+                                outRow[K_MATCH_LEVEL] = geocoderReply.ReplyObject.Response.View[0].Result[0].MatchLevel;
+                                outRow[K_MATCH_TYPE] = geocoderReply.ReplyObject.Response.View[0].Result[0].MatchType;
+                                outRow[K_MATCH_RELEVANCE] =
+                                    geocoderReply.ReplyObject.Response.View[0].Result[0].Relevance.ToString();
+                                outRow[K_MATCH_ERROR] = null;
+
                             }
                         }
                         else
                         {
-                            outRow[K_MATCH_ERROR] = geocoderReply.ReplyException.ToString();
+                            outRow[K_MATCH_ERROR] = "REPLY-OBJECT-NULL";
                         }
+                    }
+                    else
+                    {
+                        outRow[K_MATCH_ERROR] = geocoderReply.ReplyException.ToString();
+                    }
 
                     //
                     data_computed.Rows.Add(outRow);
-                        //
-                        counter++;
+                    //
+                    counter++;
 
-                        //
-                        if (counter > 5) goto Test;
-                    
+                    //
+                    if (counter > 5) goto Test;
+
                 }
             }
 
@@ -132,9 +135,10 @@ namespace PortaleGeoWeb
                     //
                     if (geocoderReply.ReplyException == null)
                     {
+                        //se l'indirizzo non è stato trovato  --> oggetto NULLO
                         if (geocoderReply.ReplyObject.Response.View.Length > 0)
                         {
-                            //se COMUNE passato non corrisponde con quello del risultato geocode dà errore
+                            //se COMUNE passato non corrisponde con quello del risultato geocode dà errore --> oggetto NULLO
                             if (geocoderReply.ReplyObject != null
                                     && geocoderReply.ReplyObject.Response.View[0].Result[0].Location.Address.City.ToString().ToLower() == service._city.ToLower())
                             {

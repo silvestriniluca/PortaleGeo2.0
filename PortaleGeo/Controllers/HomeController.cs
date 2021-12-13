@@ -101,7 +101,7 @@ namespace PortaleGeoWeb
                         //Cattura i dati byte per byte senza eseguire alcun tipo di traduzione. Se stai leggendo dati di immagine o
                         //qualsiasi file binario, questo è il flusso da usare.
                         string _FileName = Path.GetFileName(upload.FileName);
-                        string path = Path.Combine(Server.MapPath("~/CsvModello"), _FileName);                      
+                        string path = Path.Combine(Server.MapPath("~/Here/CsvModello"), _FileName);                      
                         CsvConfiguration conf = new CsvConfiguration(CultureInfo.InvariantCulture);
                         conf.BadDataFound = null;
                         conf.Delimiter = ";";

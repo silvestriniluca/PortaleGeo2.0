@@ -18,13 +18,14 @@ namespace PortaleGeoWeb.service
         private string _app_id = "cekVYYpERe7h38ELgWSS";
         private string _app_code = "ihMFm1IVDRZpCZ8Pv3hj9Q";
 
+        public string _county = "";
         public string _state = "Marche";
         public string _country = "ITA";
         public string _city = "";
 
 
         private string _urlPattern =
-            "https://geocoder.api.here.com/6.2/geocode.json?app_id={0}&app_code={1}&gen=9&state={2}&Country={3}&city={4}&street=";
+            "https://geocoder.api.here.com/6.2/geocode.json?app_id={0}&app_code={1}&gen=9&state={2}&Country={3}&county={4}&city={5}&street=";
 
 
         public GeocoderReply executeRequest(string specie, string denominazioneIndirizzo, string civico, string lettera)
@@ -77,7 +78,7 @@ namespace PortaleGeoWeb.service
 
         private string buildUrlPattern()
         {
-            string kom = String.Format(_urlPattern, _app_id, _app_code, _state, _country, _city);
+            string kom = String.Format(_urlPattern, _app_id, _app_code, _state, _country, _county, _city);
             //
             return kom;
         }

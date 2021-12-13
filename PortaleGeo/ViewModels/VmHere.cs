@@ -16,7 +16,8 @@ namespace PortaleGeoWeb.ViewModels
         public string geo_Longitude { get; set; }
         [Name("Indirizzo")]
         public string Indirizzo { get; set; }
-        [Name("DENOMINAZIONE")]
+
+        [Name("DENOMINAZIONE")] [Optional]
         public string DENOMINAZIONE { get; set; }
 
 

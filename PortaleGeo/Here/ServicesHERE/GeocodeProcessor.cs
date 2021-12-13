@@ -154,6 +154,10 @@ namespace PortaleGeoWeb
                                 outRow[K_MATCH_ERROR] = null;
 
                             }
+                            else
+                            {
+                                outRow[K_MATCH_ERROR] = "REPLY-CITY-NOT-CORRESPOND";
+                            }
                         }
                         else
                         {

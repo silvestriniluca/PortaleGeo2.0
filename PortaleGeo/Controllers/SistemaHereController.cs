@@ -45,7 +45,7 @@ namespace PortaleGeoWeb.Controllers
                 string _FileName = Path.GetFileName(file.FileName);
                 //
                 string _tempFileName = Path.GetFileName(Path.GetTempFileName());
-                string path = Path.Combine(Server.MapPath("~/CsvModello"), _tempFileName) + ".csv";
+                string path = Path.Combine(Server.MapPath("~/Here/CsvModello"), _tempFileName) + ".csv";
                 //
                 // save file
                 file.SaveAs(path);
@@ -73,7 +73,7 @@ namespace PortaleGeoWeb.Controllers
                     data.i = true;
                     DataDescriptor data_computed = GeocodeProcessor.EsecuteGecoding(data, par, path, conf);
                     //
-                    string tempFile = Path.Combine(Server.MapPath("~/CsvModello"), _tempFileName) + ".csv";
+                    string tempFile = Path.Combine(Server.MapPath("~/Here/CsvModello"), _tempFileName) + ".csv";
                     //
                     // write csv elaborated
                     //
@@ -82,7 +82,7 @@ namespace PortaleGeoWeb.Controllers
                     HerePageModel model = new HerePageModel()
                     {
                         Data = data_computed,
-                        UrlPathDownload = "/CsvModello/" + _tempFileName + ".csv"
+                        UrlPathDownload = "/Here/CsvModello/" + _tempFileName + ".csv"
                     };
 
                     return Json(new { Status = 1, Message = model.Data.Header, Message2 = model.Data.Rows, Message1 = model.UrlPathDownload });
@@ -115,8 +115,8 @@ namespace PortaleGeoWeb.Controllers
                 string path_newfile = Path.Combine(Server.MapPath("~/Here/CsvModello"), newName) + "GeocodingbyHere.csv";
          
                 //string _tempFileName = Path.GetFileName(Path.GetTempFileName());
-             //string path = Path.Combine(Server.MapPath("~/CsvModello"), _tempFileName) + ".csv";
-             // string PATHVERO = Path.Combine(Server.MapPath("~/CsvModello"), _FileName);
+                //string path = Path.Combine(Server.MapPath("~/CsvModello"), _tempFileName) + ".csv";
+                // string PATHVERO = Path.Combine(Server.MapPath("~/CsvModello"), _FileName);
                               //
                 // save file
                 file.SaveAs(path_newfile);

@@ -80,7 +80,7 @@ namespace PortaleGeoWeb
                         {
                             //se COMUNE passato non corrisponde con quello del risultato geocode dà errore --> oggetto NULLO
                             if (geocoderReply.ReplyObject != null
-                                    && geocoderReply.ReplyObject.Response.View[0].Result[0].Location.Address.City.ToString().ToLower() == service._city.ToLower())
+                                    && geocoderReply.ReplyObject.Response.View[0].Result[0].Location.Address.City.ToString().ToLower().Trim() == service._city.ToLower().Trim())
                             {
 
                                 outRow[K_LATITUDE] = geocoderReply.ReplyObject.Response.View[0].Result[0].Location
@@ -93,6 +93,10 @@ namespace PortaleGeoWeb
                                     geocoderReply.ReplyObject.Response.View[0].Result[0].Relevance.ToString();
                                 outRow[K_MATCH_ERROR] = null;
 
+                            }
+                            else
+                            {
+                                outRow[K_MATCH_ERROR] = "REPLY-CITY-NOT-CORRESPOND";
                             }
                         }
                         else

@@ -17,12 +17,6 @@ namespace PortaleGeoWeb.reader.csv
             using (var writer = new StreamWriter(outFileName))
             using (var csv = new CsvWriter(writer, conf))
             {
-                //csv.WriteRecord( savedList.Header );
-                //foreach (var rr in savedList.Rows)
-                //{
-                //    csv.WriteRecord(rr);
-                //}
-
 
                 foreach (var value in savedList.Header)
                 {

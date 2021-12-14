@@ -90,6 +90,9 @@
             background-color: #ff6600;
             color: white;
         }
+        #divDati{
+            overflow:auto;
+        }
 </style>
 
 <div id="divDati">
@@ -187,12 +190,11 @@
 
 
                         $("#datiCSV").DataTable({
+
                             language: {
                                 url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Italian.json'
                             },
-                            paging: false,
-                            scrollY: 400,
-                            scrollX: true,
+                            paging: true,                           
                             dom: 'Bfrtip',
                             buttons:
                                 [
@@ -245,6 +247,7 @@
                                     }
                                 ]
                         });
+                        jQuery('.datiCSV').wrap('<div class="divDati" />')
 
                       
                        

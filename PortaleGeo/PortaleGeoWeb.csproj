@@ -370,7 +370,9 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\EnteController.cs" />
     <Compile Include="Controllers\FornitoreController.cs" />
+    <Compile Include="Controllers\GoogleController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ProvaController.cs" />
     <Compile Include="Controllers\RuoloController.cs" />
     <Compile Include="Controllers\OpenStreetMapController.cs" />
@@ -485,6 +487,14 @@
     <Compile Include="ViewModels\VmFornitore.cs" />
     <Content Include="Content\ui-bootstrap-csp.css" />
     <Content Include="HowToPublish.txt" />
+    <Content Include="Images\609px-Map_of_region_of_Marche,_Italy,_with_provinces-it.svg.png" />
+    <Content Include="Images\geocoding_02.png" />
+    <Content Include="Images\HERE_logo.svg.png" />
+    <Content Include="Images\infasedisviluppo.png" />
+    <Content Include="Images\kisspng-computer-icons-login-management-user-5ae155f36cf686.7736884715247170434463.png" />
+    <Content Include="Images\logout.png" />
+    <Content Include="Images\OpenStreetMap.jpeg" />
+    <Content Include="Images\simboloGeoCode.jpg" />
     <Content Include="Models\Model_PortaleGeoWeb.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>Model_PortaleGeoWeb.edmx</DependentUpon>
@@ -521,6 +531,8 @@
     <Content Include="Scripts\bootstrap.esm.js.map" />
     <Content Include="Scripts\bootstrap.bundle.min.js.map" />
     <Content Include="Scripts\bootstrap.bundle.js.map" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\IISProfile.pubxml" />
     <None Include="Scripts\jquery-3.6.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.6.0.js" />
     <Content Include="Scripts\jquery-3.6.0.min.js" />
@@ -630,6 +642,8 @@
     <Content Include="Views\Home\Mappa.cshtml" />
     <Content Include="Here\CsvModello\VIA_GRAZIE.csv" />
     <Content Include="Here\CsvModello\VIA_GRAZIEGeocodingbyHere.csv" />
+    <Content Include="Views\Google\Index.cshtml" />
+    <Content Include="Views\Shared\_LoginPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\fontawesome-all.css" />
@@ -641,10 +655,6 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Images\digipalm.png" />
-    <Content Include="Images\io-it-logo-blue.svg" />
-    <Content Include="Images\io_logo.png" />
-    <Content Include="Images\ufficio_speciale.jpg" />
     <Content Include="Microsoft.Owin.Security.Cookies.dll" />
     <Content Include="webfonts\fa-brands-400.svg" />
     <Content Include="webfonts\fa-regular-400.svg" />

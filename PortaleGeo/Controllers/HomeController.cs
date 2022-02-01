@@ -18,7 +18,7 @@ using PortaleGeoWeb.ViewModels;
 
 namespace PortaleGeoWeb
 {
-
+    
     public class HomeController : Controller
     {
         public ActionResult Index()
@@ -61,7 +61,7 @@ namespace PortaleGeoWeb
             }
             return Json(new { Message = "Prova" });
         }
-   
+        [Authorize(Roles = "Administrators,EnteLocale,Fornitore")]
         public ActionResult Mappa(string Origine)
         {
             ViewBag.OrigineDati = new SelectList(new List<SelectListItem>
@@ -79,7 +79,7 @@ namespace PortaleGeoWeb
 
             return View();
         }
-
+        [Authorize(Roles = "Administrators,EnteLocale,Fornitore")]
         public ActionResult Upload()
         {
             return View();
@@ -87,6 +87,9 @@ namespace PortaleGeoWeb
 
 
 
+
+
+        [Authorize(Roles = "Administrators,EnteLocale,Fornitore")]
         [HttpPost]
          [ValidateAntiForgeryToken]
         public ActionResult Upload(HttpPostedFileBase upload)
@@ -100,8 +103,9 @@ namespace PortaleGeoWeb
                         //Stream stream = upload.InputStream; //Un InputStream è il metodo grezzo per ottenere informazioni da una risorsa.
                         //Cattura i dati byte per byte senza eseguire alcun tipo di traduzione. Se stai leggendo dati di immagine o
                         //qualsiasi file binario, questo è il flusso da usare.
-                        string _FileName = Path.GetFileName(upload.FileName);
-                        string path = Path.Combine(Server.MapPath("~/Here/CsvModello"), _FileName);                      
+                        string _FileName = Path.GetFileName(upload.FileName);                   
+                        string path = Path.Combine(Server.MapPath("~/Here/CsvModello"), _FileName);
+                        upload.SaveAs(path);
                         CsvConfiguration conf = new CsvConfiguration(CultureInfo.InvariantCulture);
                         conf.BadDataFound = null;
                         conf.Delimiter = ";";

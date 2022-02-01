@@ -22,7 +22,7 @@ using System.Web.Script.Serialization;
 
 namespace PortaleGeoWeb.Controllers
 {
-
+    [Authorize(Roles = "Administrators,EnteLocale,Fornitore")]
     // GET: SistemaOpenStreetMap
     public class GeoCode
     {

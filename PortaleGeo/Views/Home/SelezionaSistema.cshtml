@@ -3,15 +3,23 @@
 }
 
 
-<h2>SistemaDiGeoreferenzazione</h2>
-
-
-<div class="form-group">
-    @Html.Label("Seleziona Sistema:", htmlAttributes: new { @class = "control-label col-md-2" })
-    <div class="col-md-10">
-        @Html.DropDownList("SistemaDiGeoreferenzazione", (SelectList)ViewBag.SistemaDiGeoreferenzazione, htmlAttributes: new { @class = "select form-control" })
+<h2>Sistema Di Georeferenzazione</h2>
+<br />
+<br />
+<div class="container">
+    <div class="row">
+        <div class="col-md">
+            
+            <h4>@Html.Label("Seleziona Sistema:", htmlAttributes: new { @class = "control-label col-md-5" })</h4>          
+            @Html.DropDownList("SistemaDiGeoreferenzazione", (SelectList)ViewBag.SistemaDiGeoreferenzazione, htmlAttributes: new { @class = "select form-control" })
+        </div>
+            <div class="col-md-5">
+                <img src="/Images/609px-Map_of_region_of_Marche,_Italy,_with_provinces-it.svg.png" height="150" alt="" loading="lazy" id="Marche" class="rounded-circle" />
+            </div>
+        </div>
+        
     </div>
-</div>
+
 
 <br />
 
@@ -43,7 +51,7 @@
                         }
                         else {
                             
-                            window.location.href = '@Url.Action("Index","Home")';
+                            window.location.href = '@Url.Action("Index","Google")';
                         }
                     }
                 });

@@ -22,6 +22,7 @@ using PortaleGeoWeb.ViewModels;
 
 namespace PortaleGeoWeb.Controllers
 {
+    [Authorize(Roles = "Administrators,EnteLocale,Fornitore")]
     public class SistemaHereController : Controller
     {
 
@@ -189,8 +190,6 @@ namespace PortaleGeoWeb.Controllers
             if (System.IO.File.Exists(path))
                 {
 
-            
-
             using (var reader = new StreamReader(path))
 
             {
@@ -202,7 +201,6 @@ namespace PortaleGeoWeb.Controllers
 
                 using (var csvReader = new CsvReader(reader, conf))
                 {
-
                     var records = csvReader.GetRecords<VmHere>().ToList();
                     var serializer = new JavaScriptSerializer();
                     var serializedResult = serializer.Serialize(records);

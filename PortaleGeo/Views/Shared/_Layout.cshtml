@@ -7,18 +7,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title -PortaleGeoWeb</title>
 
-
-
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-
-
 
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
-        <a class="navbar-brand" href="/">HOME</a>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-secondary ">
+        <a class="navbar-brand" href="/"><strong>Home</strong></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -26,37 +23,58 @@
             <ul class="navbar-nav">
 
 
+
+
                 @if (this.User.IsInRole("Administrators") || this.User.IsInRole("EnteLocale") || this.User.IsInRole("Fornitore"))
                 {
 
                     <li class="nav-item">
-                        <a class="nav-link" href="/Home/Upload">Visualizza File</a>
+                        <a class="nav-link" href="/Home/Upload"><strong>Visualizza File</strong></a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="/Home/SelezionaSistema">Seleziona Sistema</a>
+                        <a class="nav-link" href="/Home/SelezionaSistema"><strong>Seleziona Sistema</strong></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/Home/Mappa">Visualizza Mappa</a>
+                        <a class="nav-link" href="/Home/Mappa"><strong>Visualizza Mappa</strong></a>
                     </li>
-                    <li class="nav-item">
-                        <img src="/Images/609px-Map_of_region_of_Marche,_Italy,_with_provinces-it.svg.png" height="50" alt="" loading="lazy" id="Marche" class="rounded-circle" />
-                    </li>
-}
+
+
+                }
             </ul>
         </div>
         <div class="nav navbar-nav navbar-right">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="rounded-circle" href="/Account/Login" id="loginLink"> <img src="/Images/kisspng-computer-icons-login-management-user-5ae155f36cf686.7736884715247170434463.png" height="40" alt="" loading="lazy" /> </a>
+                @*  <li class="nav-item">
+                        <a class="rounded-circle" href="/Account/Login" id="loginLink"> <img src="/Images/kisspng-computer-icons-login-management-user-5ae155f36cf686.7736884715247170434463.png" height="40" alt="" loading="lazy" /> </a>
+                    </li>*@
+                <li id="Login">
+                    @Html.Partial("_LoginPartial")
                 </li>
+
             </ul>
+
+
         </div>
+
     </nav>
+
+
     <style>
+        #Marche {
+            transform: translate(-70%)
+        }
+
+        #Login {
+            transform: translate(20%)
+        }
+
+        body {
+            padding-top: 0px;
+        }
 
         .navbar-nav.navbar-right {
-            transform: translate(-50%);
+            transform: translate(-18%);
         }
 
         .navbar-brand {
@@ -73,12 +91,13 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - Applicazione ASP.NET</p>
+            <p>&copy; @DateTime.Now.Year - Regione Marche PortaleGeo</p>
         </footer>
     </div>
 
 
     @Scripts.Render("~/bundles/jquery")
+
     <!--Import jQuery before export.js-->
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
@@ -98,14 +117,86 @@
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
+
+
     @RenderSection("scripts", required: false)
+
+    @using Microsoft.AspNet.Identity
+    @if (Request.IsAuthenticated)
+    {
+
+
+        <script type="text/javascript">
+
+
+             if (hdPlugins) { {
+
+
+                //alert('QUI');
+                let info = hdPlugins.additionalInfo;
+
+                //HINT come esempio...
+                if ("Amministratore")
+                    info += "\n- ruolo: Amministratore \n- uo: R_MARCHE";
+
+                var hd_div = document.createElement('div');
+                hd_div.id = "helpdesk";
+                hd_div.style.cssText = "width: 300px;position: fixed;bottom: 0;right: 15px;";
+                //document.getElementById("body").appendChild(hd_div);
+                document.getElementsByClassName("body-content")[0].appendChild(hd_div);
+
+                var iconic = document.createElement('img');
+                iconic.src = "https://pass.regione.marche.it/hd/open-iconic.svg";
+                iconic.className = "iconic-sprite";
+                iconic.style = "display:none;";
+                document.getElementsByClassName("body-content")[0].appendChild(iconic);
+
+                var app_hd = Elm.NewTicket.embed
+                    (document.getElementById(hd_div.id)
+                        , hdProjectData
+                            ({
+
+                                //HINT - da modificare
+                                user_email: '@HttpContext.Current.User.Identity.Name'
+                                , additional_info: info
+                            })
+                    );
+
+                // Elements to inject
+                var mySVGsToInject = document.querySelectorAll('img.iconic-sprite');
+
+                // Do the injection
+                SVGInjector(mySVGsToInject);
+            }
+        </script>
+
+    }
+
+    @RenderSection("finalscripts", required: false)
+
+    <!--Import jQuery before export.js-->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+    <!--Data Table-->
+    <script type="text/javascript" src=" https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src=" https://cdn.datatables.net/buttons/1.2.4/js/dataTables.buttons.min.js"></script>
+
+    <!--Export table buttons-->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.24/build/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.24/build/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.print.min.js"></script>
+
+    <!--Export table button CSS-->
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
+
+
+
+
+
 </body>
-
-
-
-
-
-
-
-
 </html>

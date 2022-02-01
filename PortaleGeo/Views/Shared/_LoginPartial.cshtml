@@ -1,0 +1,35 @@
+﻿@using Microsoft.AspNet.Identity
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+        @Html.AntiForgeryToken()
+
+<ul class="nav navbar-nav navbar-right">
+    
+    <li class="nav-item">
+        <strong class="nav-link">Benvenuto!</strong>
+    </li>
+    <li class="nav-item">
+        <a type="text/html" class="nav-link" href="#" id="IdLog"><strong> @HttpContext.Current.User.Identity.Name</strong>  </a>
+    @*    @Html.ActionLink(User.Identity.Name, "Index", "Manage", routeValues: null, htmlAttributes: new { title = "UserName", @class = "form-control" })*@
+    </li>
+   
+    <li id="logout"><a href="javascript:document.getElementById('logoutForm').submit()" class="rounded-circle"> <img src="~/Images/logout.png" height="40" alt="" loading="lazy" title="LogOut" /> </a></li>
+</ul>
+    }
+}
+else
+{
+    <li class="nav-item">
+        <a class="rounded-circle" href="/Account/Login" id="loginLink"> <img src="/Images/kisspng-computer-icons-login-management-user-5ae155f36cf686.7736884715247170434463.png" height="40" alt="" loading="lazy" title="Login" /> </a>
+    </li>
+
+}
+
+
+<style>
+    #logout{
+        transform:translate(100%);
+    }
+</style>

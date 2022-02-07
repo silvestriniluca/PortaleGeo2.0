@@ -25,7 +25,6 @@ namespace PortaleGeoWeb.Models
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<AspNetRoles> AspNetRoles { get; set; }
         public virtual DbSet<AspNetUserClaims> AspNetUserClaims { get; set; }
         public virtual DbSet<AspNetUserLogins> AspNetUserLogins { get; set; }
         public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
@@ -34,7 +33,9 @@ namespace PortaleGeoWeb.Models
         public virtual DbSet<Geo_Ruolo> Geo_Ruolo { get; set; }
         public virtual DbSet<Geo_Utente> Geo_Utente { get; set; }
         public virtual DbSet<Geo_UtenteRuolo> Geo_UtenteRuolo { get; set; }
-        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
+        public virtual DbSet<Geo_Attività> Geo_Attività { get; set; }
+        public virtual DbSet<AspNetRoles> AspNetRoles { get; set; }
         public virtual DbSet<OpenStreetMapCSV> OpenStreetMapCSV { get; set; }
+        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
     }
 }

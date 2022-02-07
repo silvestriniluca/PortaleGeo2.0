@@ -379,6 +379,9 @@
     <Compile Include="Controllers\SistemaHereController.cs" />
     <Compile Include="Controllers\UtenteController.cs" />
     <Compile Include="Controllers\UtenteRuoloController.cs" />
+    <Compile Include="Models\Geo_Attività.cs">
+      <DependentUpon>Model_PortaleGeoWeb.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\HerePageModel.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -492,6 +495,7 @@
     <Content Include="Images\HERE_logo.svg.png" />
     <Content Include="Images\infasedisviluppo.png" />
     <Content Include="Images\kisspng-computer-icons-login-management-user-5ae155f36cf686.7736884715247170434463.png" />
+    <Content Include="Images\loading.jpg" />
     <Content Include="Images\logout.png" />
     <Content Include="Images\OpenStreetMap.jpeg" />
     <Content Include="Images\simboloGeoCode.jpg" />

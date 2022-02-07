@@ -33,6 +33,7 @@
             text-align: left;
             background-color: #ff6600;
             color: white;
+     
         }
 </style>
 
@@ -40,22 +41,35 @@
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary()
-    <div >
-    @Html.TextBox("upload", "", new { @class = "form-control", @type = "file" , @id= "dataFile" })
-        <br/>
-    </div>
     <div>
-        <input type="submit" value="Upload" class="btn btn-dark" />
+        @Html.TextBox("upload", "", new { @class = "form-control", @type = "file", @id = "dataFile", @accept = ".csv" })
+        <br />
     </div>
-
+    <div class="row">
+        <div class="col-sm-1">
+            <input type="submit" value="Upload" class="btn btn-dark" id="upload" />
+        </div>
+        <div class="col-md-2" id="loading"  >
+            <p><strong>Loading ...</strong> </p>
+            @*  <img src="~/Images/loading.jpg" alt="" loading="lazy"  height="50" class="rounded-circle" />*@
+        </div>
+    </div>
   
+
+   <style>
+       #loading{
+           transform: translate(30%);
+           color: darkorange;
+       }
+   </style>
+
     <br />
     <br />
 
 
 
     if (Model != null)
-        {
+    {
         <table id="DatiCsv" data-page-length='25'>
             <thead>
                 <tr>
@@ -78,7 +92,7 @@
             </tbody>
         </table>
     }
-    }
+}
 
 
 
@@ -88,39 +102,47 @@
 <hr />
 
 
-    @section scripts{
-        <script>
+@section scripts{
+    <script>
+        $('document').hide().ready(function () {
+            $('#loading').hide().ajaxStart(function () {
+                $(this).show();
+            })
+                .ajaxStop(function () {
+                    $(this).hide();
+                });
+         
+        });
 
+        $("#DatiCsv").DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Italian.json'
+            },
+            paging: true,
+            scrollX: true,
+            scrollY: 400,
+            dom: 'Bfrtip',
+            buttons: [
+                'excel',
+                {
+                    text: 'JSON',
+                    action: function (e, dt, button, config) {
+                        var data = dt.buttons.exportData();
 
-            $("#DatiCsv").DataTable({
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Italian.json'
-                },         
-                paging: true,
-                scrollX: true,
-                scrollY: 400,
-                dom: 'Bfrtip',
-                buttons: [
-                    'excel',
-                    {
-                        text: 'JSON',
-                        action: function (e, dt, button, config) {
-                            var data = dt.buttons.exportData();
-
-                            $.fn.dataTable.fileSave(
-                                new Blob([JSON.stringify(data)]),
-                                'Export.json'
-                            );
-                        }
+                        $.fn.dataTable.fileSave(
+                            new Blob([JSON.stringify(data)]),
+                            'Export.json'
+                        );
                     }
-                ]
-            
-                 
-            });
-        
-  
+                }
+            ]
 
-        </script>
+
+        });
+
+
+
+    </script>
 }
 
 

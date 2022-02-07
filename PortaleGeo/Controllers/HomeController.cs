@@ -18,9 +18,11 @@ using PortaleGeoWeb.ViewModels;
 
 namespace PortaleGeoWeb
 {
-    
+
     public class HomeController : Controller
     {
+      
+
         public ActionResult Index()
         {
             return View();
@@ -150,7 +152,27 @@ namespace PortaleGeoWeb
             // return Json(new { Message = "File non caricato" });
             return View();
         }
-        
+        public static void GetAttività(string Id, string email,string NameFile, string Path, bool OpenStreetMap, bool Here)
+        {
+            using(GeoCodeEntities1 db= new GeoCodeEntities1())
+            {
+               
+                Geo_Attività geo_Attività = new Geo_Attività();
+            
+                
+                 
+                geo_Attività.Autore = email;
+                geo_Attività.Id_Autore = Id;
+                geo_Attività.Here = Here;
+                geo_Attività.OpenStreetMap = OpenStreetMap;
+                geo_Attività.PathFile = Path;
+                geo_Attività.DescrizioneFile = NameFile;
+                db.Geo_Attività.Add(geo_Attività);
+               
+                
+                db.SaveChanges();
+            }
+        }
     }
 }
        

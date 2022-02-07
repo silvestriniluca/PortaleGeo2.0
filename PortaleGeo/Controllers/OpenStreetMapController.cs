@@ -24,6 +24,7 @@ namespace PortaleGeoWeb.Controllers
 {
     [Authorize(Roles = "Administrators,EnteLocale,Fornitore")]
     // GET: SistemaOpenStreetMap
+
     public class GeoCode
     {
         public int Id { get; set; }
@@ -35,6 +36,8 @@ namespace PortaleGeoWeb.Controllers
 
         public string Cap { get; set; }
         public string Village { get; set; }
+
+
 
         public GeoCode(int Id, double Lat, double Lon, string Approx01, string Approx02, string Cap, string Village)
         {
@@ -48,12 +51,15 @@ namespace PortaleGeoWeb.Controllers
         }
 
     }
-
+    
 
     public class OpenStreetMapController : Controller
     {
 
         private GeoCodeEntities1 db = new GeoCodeEntities1();
+
+        public static string Percorso { get; set; }
+        public static string Nomepercorso { get; set; }
 
         // GET: GeoCodeCSV
         public ActionResult Index()
@@ -181,8 +187,12 @@ namespace PortaleGeoWeb.Controllers
         [HttpPost]
         public ActionResult ImportFile(HttpPostedFileBase importFile)
         {
-            if (importFile == null) return Json(new { Status = 0, Message = "Nessun file selezionato" });
 
+            var name = Path.GetFileName(importFile.FileName);
+            if (importFile == null) return Json(new { Status = 0, Message = "Nessun file selezionato" });
+            string path = null;
+            Percorso = path;
+            Nomepercorso = name;
             try
             {
                 var fileData = GetDataFromCSVFile(importFile.InputStream);
@@ -192,7 +202,7 @@ namespace PortaleGeoWeb.Controllers
                     db.OpenStreetMapCSV.Add(dr);
                     db.SaveChanges();
                 }
-
+              
                 return Json(new { Status = 1, Message = "File Importato con Successo " });
             }
             catch (Exception ex)
@@ -275,10 +285,16 @@ namespace PortaleGeoWeb.Controllers
 
         //GeoCodeRow
 
-        public ActionResult GeoCodeRow()
+        public ActionResult GeoCodeRow(string path, string name)
         {
-            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
+           
 
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
+            var cf = Session["CF"].ToString();
+            var Geo_Utente = db.Geo_Utente
+                    .Where(x => x.CodiceFiscale == cf).FirstOrDefault();
+            
+            HomeController.GetAttività(Geo_Utente.Id, Geo_Utente.UserName, Nomepercorso, Percorso, true, false);
             foreach (var row in db.OpenStreetMapCSV)
             {
 

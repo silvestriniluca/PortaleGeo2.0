@@ -37,6 +37,9 @@
             background-color: #ff6600;
             color: white;
         }
+        #loading{
+            color: red;
+        }
 </style>
 <p>
 
@@ -46,14 +49,14 @@
     <a href="@Url.Action("DeleteAll", "OpenStreetMap")" class="btn btn-outline-secondary">
         <i class="fas fa-plus"></i> Cancella Tutto
     </a>
-    <a href="@Url.Action("GeoCodeRow", "OpenStreetMap")" class="btn btn-outline-secondary">
+    <a href="@Url.Action("GeoCodeRow", "OpenStreetMap")" class="btn btn-outline-secondary" id="Geocoding">
         <i class="fas fa-plus"></i> Avvia GeoCode
     </a>
     <a href="@Url.Action("Estrai", "OpenStreetMap")" class="btn btn-outline-secondary">
         <i class="fas fa-plus"></i> Estrai
     </a>
 
- 
+
 
 
 
@@ -63,11 +66,18 @@
                 <span>Seleziona File  :</span>
             </div>
             <div class="col-sm-3">
-                <input class="form-control" type="file" name="importFile" id="importFile" />
+                <input class="form-control" type="file" name="importFile" id="importFile" accept=".csv" />
             </div>
             <br />
-            <div class="col-sm-3">
-                <input class="btn btn-dark" id="btnUpload" type="button" value="Upload" />
+            <div class="row">
+                <div class="col-sm-3">
+                    <input class="btn btn-dark" id="btnUpload" type="button" value="Upload" />
+                </div>
+
+                <div class="col-sm-2" id="loading">
+                    <p><strong>LOADING ...</strong></p>
+                    @*  <img src="~/Images/loading.jpg" alt="" loading="lazy"  height="50" class="rounded-circle" />*@
+                </div>
             </div>
         </div>
     </div>
@@ -186,6 +196,19 @@
 @section scripts{
     <script>
 
+        $('document').hide().ready(function () {
+            $('#loading').hide().ajaxStart(function () {
+                $(this).show();
+            })
+                .ajaxStop(function () {
+                    $(this).hide();
+                    
+                });
+          
+
+
+      
+        });
 
         $(document).on("click", "#btnUpload", function () {
             var files = $("#importFile").get(0).files;

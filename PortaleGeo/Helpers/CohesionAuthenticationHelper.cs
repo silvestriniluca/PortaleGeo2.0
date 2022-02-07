@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using PortaleGeoWeb;
 
 namespace PortaleGeoWeb.Helpers
 {
@@ -18,25 +19,28 @@ namespace PortaleGeoWeb.Helpers
 
                 var cf = session["CF"].ToString();
                 //var redirectUrl = session["REDIRECT"]? returnUrl
-
+            
+            
                 using (GeoCodeEntities1 db = new GeoCodeEntities1()) { 
 
                     var Geo_Utente = db.Geo_Utente
                         .Where(x => x.CodiceFiscale == cf).FirstOrDefault();
 
-                    if (Geo_Utente != null)
-                    {
-                        var email = Geo_Utente.Email;
-                        var id = Geo_Utente.Id;
-                        var user = new ApplicationUser
+                        if (Geo_Utente != null)
                         {
-                            UserName = email,
-                            Email = email,
-                            Id = id
+                            var email = Geo_Utente.Email;
+                            var id = Geo_Utente.Id;
+                            var user = new ApplicationUser
+                            {
+                                UserName = email,
+                                Email = email,
+                                Id = id
 
-                        };
-
-
+                            };
+                     //   if (id != null)
+                       // {
+                         //   HomeController.GetAttività(id, email, "");
+                       // }
                         await signInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                         return true;
                     }

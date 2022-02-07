@@ -39,7 +39,7 @@
     {
 
         <span>Seleziona File:</span>
-        @Html.TextBox("file", "file", new { @class = "form-control", @type = "file", @id = "file" })
+        @Html.TextBox("file", "file", new { @class = "form-control", @type = "file", @id = "file", @accept=".csv" })
         <br />
         <div>
             <input type="button" value="AvviaGeoCode" class="btn btn-dark" id="UploadBtn" />

@@ -56,6 +56,18 @@
           <Property Name="AccessFailedCount" Type="int" Nullable="false" />
           <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
         </EntityType>
+        <EntityType Name="Geo_Attività">
+          <Key>
+            <PropertyRef Name="IdGeo" />
+          </Key>
+          <Property Name="IdGeo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Autore" Type="nvarchar" MaxLength="256" />
+          <Property Name="DescrizioneFile" Type="nvarchar" MaxLength="256" />
+          <Property Name="PathFile" Type="nvarchar" MaxLength="256" />
+          <Property Name="Here" Type="bit" />
+          <Property Name="OpenStreetMap" Type="bit" />
+          <Property Name="Id_Autore" Type="nvarchar" MaxLength="128" />
+        </EntityType>
         <EntityType Name="Geo_Ente">
           <Key>
             <PropertyRef Name="Id" />
@@ -128,9 +140,9 @@
         </EntityType>
         <EntityType Name="OpenStreetMapCSV">
           <Key>
-            <PropertyRef Name="id" />
+            <PropertyRef Name="Id" />
           </Key>
-          <Property Name="id" Type="int" Nullable="false" />
+          <Property Name="Id" Type="int" Nullable="false" />
           <Property Name="Indirizzo" Type="varchar" MaxLength="250" />
           <Property Name="N_Civico" Type="varchar" MaxLength="250" />
           <Property Name="Comune" Type="varchar" MaxLength="250" />
@@ -288,12 +300,25 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Geo_Attività_Geo_Utente">
+          <End Role="Geo_Utente" Type="Self.Geo_Utente" Multiplicity="0..1" />
+          <End Role="Geo_Attività" Type="Self.Geo_Attività" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Geo_Utente">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Geo_Attività">
+              <PropertyRef Name="Id_Autore" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="GeoCodeModelStoreContainer">
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Geo_Attività" EntityType="Self.Geo_Attività" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Geo_Ente" EntityType="Self.Geo_Ente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Geo_Fornitore" EntityType="Self.Geo_Fornitore" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Geo_Ruolo" EntityType="Self.Geo_Ruolo" Schema="dbo" store:Type="Tables" />
@@ -341,19 +366,15 @@
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
           </AssociationSet>
+          <AssociationSet Name="FK_Geo_Attività_Geo_Utente" Association="Self.FK_Geo_Attività_Geo_Utente">
+            <End Role="Geo_Utente" EntitySet="Geo_Utente" />
+            <End Role="Geo_Attività" EntitySet="Geo_Attività" />
+          </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="GeoCodeModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="AspNetRoles">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="AspNetUsers" Relationship="Self.AspNetUserRoles" FromRole="AspNetRoles" ToRole="AspNetUsers" />
-        </EntityType>
         <EntityType Name="AspNetUserClaims">
           <Key>
             <PropertyRef Name="Id" />
@@ -393,7 +414,7 @@
           <Property Name="UserName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="AspNetUserClaims" Relationship="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserClaims" />
           <NavigationProperty Name="AspNetUserLogins" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserLogins" />
-          <NavigationProperty Name="AspNetRoles" Relationship="Self.AspNetUserRoles" FromRole="AspNetUsers" ToRole="AspNetRoles" />
+          <NavigationProperty Name="AspNetRoles" Relationship="GeoCodeModel.AspNetUserRoles" FromRole="AspNetUsers" ToRole="AspNetRoles" />
         </EntityType>
         <EntityType Name="Geo_Ente">
           <Key>
@@ -460,6 +481,7 @@
           <Property Name="Nome" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="CodiceFiscale" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Geo_UtenteRuolo" Relationship="Self.FK__Utente__UserI__0E6E26BF" FromRole="Geo_Utente" ToRole="Geo_UtenteRuolo" />
+          <NavigationProperty Name="Geo_Attività" Relationship="GeoCodeModel.FK_Geo_Attività_Geo_Utente" FromRole="Geo_Utente" ToRole="Geo_Attività" />
         </EntityType>
         <EntityType Name="Geo_UtenteRuolo">
           <Key>
@@ -476,16 +498,6 @@
           <NavigationProperty Name="Geo_Fornitore1" Relationship="Self.FK__Utente__IdFor__0C85DE4D" FromRole="Geo_UtenteRuolo" ToRole="Geo_Fornitore" />
           <NavigationProperty Name="Geo_Ruolo" Relationship="Self.FK__Utente__RoleI__0D7A0286" FromRole="Geo_UtenteRuolo" ToRole="Geo_Ruolo" />
           <NavigationProperty Name="Geo_Utente" Relationship="Self.FK__Utente__UserI__0E6E26BF" FromRole="Geo_UtenteRuolo" ToRole="Geo_Utente" />
-        </EntityType>
-        <EntityType Name="sysdiagrams">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="principal_id" Type="Int32" Nullable="false" />
-          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="version" Type="Int32" />
-          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
         </EntityType>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
@@ -587,12 +599,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="AspNetUserRoles">
-          <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="*" />
-          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="*" />
-        </Association>
         <EntityContainer Name="GeoCodeEntities1" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" />
           <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" />
           <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" />
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" />
@@ -601,7 +608,6 @@
           <EntitySet Name="Geo_Ruolo" EntityType="Self.Geo_Ruolo" />
           <EntitySet Name="Geo_Utente" EntityType="Self.Geo_Utente" />
           <EntitySet Name="Geo_UtenteRuolo" EntityType="Self.Geo_UtenteRuolo" />
-          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
           <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
@@ -634,12 +640,52 @@
             <End Role="Geo_Utente" EntitySet="Geo_Utente" />
             <End Role="Geo_UtenteRuolo" EntitySet="Geo_UtenteRuolo" />
           </AssociationSet>
-          <AssociationSet Name="AspNetUserRoles" Association="Self.AspNetUserRoles">
+          <EntitySet Name="Geo_Attività" EntityType="GeoCodeModel.Geo_Attività" />
+          <AssociationSet Name="FK_Geo_Attività_Geo_Utente" Association="GeoCodeModel.FK_Geo_Attività_Geo_Utente">
+            <End Role="Geo_Utente" EntitySet="Geo_Utente" />
+            <End Role="Geo_Attività" EntitySet="Geo_Attività" />
+          </AssociationSet>
+          <EntitySet Name="AspNetRoles" EntityType="GeoCodeModel.AspNetRoles" />
+          <EntitySet Name="OpenStreetMapCSV" EntityType="GeoCodeModel.OpenStreetMapCSV" />
+          <AssociationSet Name="AspNetUserRoles" Association="GeoCodeModel.AspNetUserRoles">
             <End Role="AspNetRoles" EntitySet="AspNetRoles" />
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
           </AssociationSet>
-          <EntitySet Name="OpenStreetMapCSV" EntityType="GeoCodeModel.OpenStreetMapCSV" />
+          <EntitySet Name="sysdiagrams" EntityType="GeoCodeModel.sysdiagrams" />
         </EntityContainer>
+        <EntityType Name="Geo_Attività">
+          <Key>
+            <PropertyRef Name="IdGeo" />
+          </Key>
+          <Property Name="IdGeo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Autore" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="DescrizioneFile" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="PathFile" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Here" Type="Boolean" />
+          <Property Name="OpenStreetMap" Type="Boolean" />
+          <Property Name="Id_Autore" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Geo_Utente" Relationship="GeoCodeModel.FK_Geo_Attività_Geo_Utente" FromRole="Geo_Attività" ToRole="Geo_Utente" />
+        </EntityType>
+        <Association Name="FK_Geo_Attività_Geo_Utente">
+          <End Type="GeoCodeModel.Geo_Utente" Role="Geo_Utente" Multiplicity="0..1" />
+          <End Type="GeoCodeModel.Geo_Attività" Role="Geo_Attività" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Geo_Utente">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Geo_Attività">
+              <PropertyRef Name="Id_Autore" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="AspNetRoles">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUsers" Relationship="GeoCodeModel.AspNetUserRoles" FromRole="AspNetRoles" ToRole="AspNetUsers" />
+        </EntityType>
         <EntityType Name="OpenStreetMapCSV">
           <Key>
             <PropertyRef Name="Id" />
@@ -664,20 +710,26 @@
           <Property Name="AltroIndirizzo" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="APIGoogle" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
         </EntityType>
+        <Association Name="AspNetUserRoles">
+          <End Type="GeoCodeModel.AspNetRoles" Role="AspNetRoles" Multiplicity="*" />
+          <End Type="GeoCodeModel.AspNetUsers" Role="AspNetUsers" Multiplicity="*" />
+        </Association>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="GeoCodeModelStoreContainer" CdmEntityContainer="GeoCodeEntities1">
-          <EntitySetMapping Name="AspNetRoles">
-            <EntityTypeMapping TypeName="GeoCodeModel.AspNetRoles">
-              <MappingFragment StoreEntitySet="AspNetRoles">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="AspNetUserClaims">
             <EntityTypeMapping TypeName="GeoCodeModel.AspNetUserClaims">
               <MappingFragment StoreEntitySet="AspNetUserClaims">
@@ -790,25 +842,27 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="GeoCodeModel.sysdiagrams">
-              <MappingFragment StoreEntitySet="sysdiagrams">
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
-                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
-                <ScalarProperty Name="version" ColumnName="version" />
-                <ScalarProperty Name="definition" ColumnName="definition" />
+          <EntitySetMapping Name="Geo_Attività">
+            <EntityTypeMapping TypeName="GeoCodeModel.Geo_Attività">
+              <MappingFragment StoreEntitySet="Geo_Attività">
+                <ScalarProperty Name="Id_Autore" ColumnName="Id_Autore" />
+                <ScalarProperty Name="OpenStreetMap" ColumnName="OpenStreetMap" />
+                <ScalarProperty Name="Here" ColumnName="Here" />
+                <ScalarProperty Name="PathFile" ColumnName="PathFile" />
+                <ScalarProperty Name="DescrizioneFile" ColumnName="DescrizioneFile" />
+                <ScalarProperty Name="Autore" ColumnName="Autore" />
+                <ScalarProperty Name="IdGeo" ColumnName="IdGeo" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="AspNetUserRoles" TypeName="GeoCodeModel.AspNetUserRoles" StoreEntitySet="AspNetUserRoles">
-            <EndProperty Name="AspNetRoles">
-              <ScalarProperty Name="Id" ColumnName="RoleId" />
-            </EndProperty>
-            <EndProperty Name="AspNetUsers">
-              <ScalarProperty Name="Id" ColumnName="UserId" />
-            </EndProperty>
-          </AssociationSetMapping>
+          <EntitySetMapping Name="AspNetRoles">
+            <EntityTypeMapping TypeName="GeoCodeModel.AspNetRoles">
+              <MappingFragment StoreEntitySet="AspNetRoles">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="OpenStreetMapCSV">
             <EntityTypeMapping TypeName="GeoCodeModel.OpenStreetMapCSV">
               <MappingFragment StoreEntitySet="OpenStreetMapCSV">
@@ -830,7 +884,26 @@
                 <ScalarProperty Name="Comune" ColumnName="Comune" />
                 <ScalarProperty Name="N_Civico" ColumnName="N_Civico" />
                 <ScalarProperty Name="Indirizzo" ColumnName="Indirizzo" />
-                <ScalarProperty Name="Id" ColumnName="id" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="AspNetUserRoles" TypeName="GeoCodeModel.AspNetUserRoles" StoreEntitySet="AspNetUserRoles">
+            <EndProperty Name="AspNetUsers">
+              <ScalarProperty Name="Id" ColumnName="UserId" />
+            </EndProperty>
+            <EndProperty Name="AspNetRoles">
+              <ScalarProperty Name="Id" ColumnName="RoleId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="GeoCodeModel.sysdiagrams">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="definition" ColumnName="definition" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

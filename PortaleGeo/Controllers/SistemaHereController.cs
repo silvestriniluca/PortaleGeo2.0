@@ -20,12 +20,13 @@ using Microsoft.VisualBasic.FileIO;
 using System.ComponentModel.DataAnnotations;
 using PortaleGeoWeb.ViewModels;
 
+
 namespace PortaleGeoWeb.Controllers
 {
     [Authorize(Roles = "Administrators,EnteLocale,Fornitore")]
     public class SistemaHereController : Controller
     {
-
+        GeoCodeEntities1 db = new GeoCodeEntities1();
         // GET: SistemaHere
         public ActionResult Index()
         {
@@ -94,31 +95,34 @@ namespace PortaleGeoWeb.Controllers
             }
             return Json(new { message = "File caricato con successo" });
         }
+        
 
-
-
+        
         //AVVIA GEOCODE
 
         [HttpPost]
         public ActionResult Upload(HttpPostedFileBase file)
         {
-
+            
             if (file != null && file.ContentLength > 0)
             {
-
-
+                var cf = Session["CF"].ToString();
+                var Geo_Utente = db.Geo_Utente
+                        .Where(x => x.CodiceFiscale == cf).FirstOrDefault();
                 //Stream stream = upload.InputStream; //Un InputStream è il metodo grezzo per ottenere informazioni da una risorsa.
                 //Cattura i dati byte per byte senza eseguire alcun tipo di traduzione. Se stai leggendo dati di immagine o
                 //qualsiasi file binario, questo è il flusso da usare.
-                string _FileName = Path.GetFileName(file.FileName);  
+                string _FileName = Path.GetFileName(file.FileName);   
+            
+                
                 //senza le ultime 4 caratteri
                 string newName = _FileName.Remove(_FileName.Length - 4); //elimino .csv e mantengo solamente il nome del file
                 string path_newfile = Path.Combine(Server.MapPath("~/Here/CsvModello"), newName) + "GeocodingbyHere.csv";
-         
+                HomeController.GetAttività(Geo_Utente.Id, Geo_Utente.UserName, _FileName, path_newfile,false,true);
                 //string _tempFileName = Path.GetFileName(Path.GetTempFileName());
                 //string path = Path.Combine(Server.MapPath("~/CsvModello"), _tempFileName) + ".csv";
                 // string PATHVERO = Path.Combine(Server.MapPath("~/CsvModello"), _FileName);
-                              //
+                //
                 // save file
                 file.SaveAs(path_newfile);
                 CsvConfiguration conf = new CsvConfiguration(CultureInfo.InvariantCulture);

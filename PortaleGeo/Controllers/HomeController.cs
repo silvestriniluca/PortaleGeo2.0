@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Data;
+using System.Data.Entity;
 using CsvHelper.Configuration;
 using PortaleGeoWeb;
 using PortaleGeoWeb.reader.csv;
@@ -18,10 +19,10 @@ using PortaleGeoWeb.ViewModels;
 
 namespace PortaleGeoWeb
 {
-
+   
     public class HomeController : Controller
     {
-      
+        GeoCodeEntities1 db = new GeoCodeEntities1();
 
         public ActionResult Index()
         {
@@ -66,6 +67,7 @@ namespace PortaleGeoWeb
         [Authorize(Roles = "Administrators,EnteLocale,Fornitore")]
         public ActionResult Mappa(string Origine)
         {
+
             ViewBag.OrigineDati = new SelectList(new List<SelectListItem>
             {
                  new SelectListItem { Text = "SistemaOpenStreetMap", Value = "1"},
@@ -76,8 +78,28 @@ namespace PortaleGeoWeb
 
             ViewBag.Origine = new SelectList(new List<SelectListItem>
             {
+
+            });
+           // Geo_Attività geo_Attività = new Geo_Attività();
+            var listattività = db.Geo_Attività.ToList();
+            var cf = Session["CF"].ToString();
+            var Geo_Utente = db.Geo_Utente
+                    .Where(x => x.CodiceFiscale == cf).FirstOrDefault();
+            var geo_attività = db.Geo_Attività.ToList();
             
-                });
+      //     IEnumerable<Geo_Attività> Attività = from attività in listattività where attività.Id_Autore == Geo_Utente.Id select attività;
+      //      var attività = db.Geo_Attività.Where(x => x.Id_Autore == Geo_Utente.Id);
+           
+            ViewBag.DescrizioneFile = new SelectList(db.Geo_Attività.Where(s=>s.Id_Autore==Geo_Utente.Id), "DescrizioneFile","DescrizioneFile");
+        
+            // ProvaDati = listattività.Where(x => x.Id_Autore == Geo_Utente.Id).ToList();
+            //    IEnumerable<Geo_Attività> Attività = db.Geo_Attività.Where(s => s.Id_Autore == Geo_Utente.Id);
+            /*      ViewBag.DescrizioneFile= db.Geo_Attività.Select(s => new SelectListItem 
+                  {
+                      Value = s.Id_Autore.ToString(),
+                      Text = s.DescrizioneFile
+                  }).Where(s=>s.Value== Geo_Utente.Id).ToList();  */
+          //  ViewBag.DescrizioneFile = new SelectList((System.Collections.IEnumerable)Attività, "DescrizioneFile");
 
             return View();
         }

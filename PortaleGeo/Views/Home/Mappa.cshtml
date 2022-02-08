@@ -1,4 +1,4 @@
-﻿@model PortaleGeoWeb.Models.HerePageModel
+﻿@model PortaleGeoWeb.Models.Geo_Attività
 @{ ViewBag.Title = "Mappa";
     Layout = "~/Views/Shared/_Layout.cshtml"; }
 
@@ -32,14 +32,16 @@
 
 
     <style>
-        #EliminaMarker{
+        #EliminaMarker {
             transform: translate(30%)
         }
+
         #mapid {
             width: 1300px;
             height: 620px;
         }
-        #ElimnaDatiStorage{
+
+        #ElimnaDatiStorage {
             transform: translate(600%);
         }
     </style>
@@ -50,15 +52,18 @@
             @Html.DropDownList("OrigineDati", (SelectList)ViewBag.OrigineDati, htmlAttributes: new { @class = "select form-control" })
         </div>
     </div>
-    <br/>
+    <br />
     <div class="form-group">
         <div class="col-md-10">
             <button type="button" class="btn btn-outline-secondary" id="Seleziona">Visualizza Dati su Mappa</button>
-        <button type="button" class="btn btn-outline-danger" id="EliminaMarker">EliminaMarkerinMappa</button>
+            <button type="button" class="btn btn-outline-danger" id="EliminaMarker">EliminaMarkerinMappa</button>
         </div>
-        
     </div>
-
+    @Html.LabelFor(model => model.DescrizioneFile, htmlAttributes: new { @class = "control-label col-md-2" })
+<div class="col-md-10">
+    @Html.DropDownList("DescrizioneFile",(SelectList)ViewBag.DescrizioneFile,"", new { htmlAttributes = new { @class = "form-control" } })
+    @*@Html.DropDownList("DescrizioneFile",ViewBag.DescrizioneFile as SelectList,"", htmlAttributes: new { @class = "form-control" })*@
+</div>
 
     <div>
         <br />
@@ -66,7 +71,7 @@
         <div id="mapid"></div>
     </div>
 
-  
+
 
 
     <script>
@@ -75,7 +80,7 @@
         }
         $("#OrigineDati").blur(function () {
             var fileGeo = $('#OrigineDati').val();
-            
+
 
         $("#Seleziona").click(function () {
 
@@ -85,8 +90,8 @@
 
 
 
-          
-            
+
+
             $.ajax({
                 dataType: "json",
                 type: "POST",
@@ -94,7 +99,7 @@
                 data: { 'Sistema': sistema_geo },
                 success: function (data) {
                     if (data.code === 1) {
-        
+
 
 
                         jQuery.ajax({
@@ -111,20 +116,21 @@
                             // imposto un'azione per il caso di successo
                             success: function (data) {
 
-                               
-            var layerControl_OpenStreetMap = L.control.layers().addTo(mymap);
-            var layerGroup_OpenStreetMap = L.layerGroup().addTo(mymap);
+
+                            var layerControl_OpenStreetMap = L.control.layers().addTo(mymap);
+                            var layerGroup_OpenStreetMap = L.layerGroup().addTo(mymap);
 
                                 for (var i in data) {
-                                   
-                                    var marker = L.marker([data[i].Lat.replace(",", "."), data[i].Lon.replace(",", ".")])                                
-                                    marker.bindPopup("<b>Indirizzo: </b>" + data[i].Indirizzo + (data[i].hasOwnProperty('DENOMINAZIONE') && data[i].DENOMINAZIONE ? "<br /><b>Denominazione: </b>" + data[i].DENOMINAZIONE : ""));
+
+                                    var marker = L.marker([data[i].Lat.replace(",", "."), data[i].Lon.replace(",", ".")])
+                                    marker.bindPopup("<b>Indirizzo: </b>" + data[i].Indirizzo + (data[i].hasOwnProperty('DENOMINAZIONE') && data[i].DENOMINAZIONE ? "<br /><b>Denominazione: </b>" + data[i].DENOMINAZIONE : "")+
+                                        "<br /><b>Info: </b>" + data[i].Note2 );
                                     layerGroup_OpenStreetMap.addLayer(marker);
                                 }
                                 layerControl_OpenStreetMap.addOverlay(layerGroup_OpenStreetMap, "OpenStreetMap");
 
                             },
-                           
+
                             error: function () {
                                 alert("Chiamata fallita!!!");
                             }
@@ -140,35 +146,35 @@
                             try {
                                 const data = JSON.parse(ritorno);
                                 if (data && Array.isArray(data)) {
-                                    
 
 
-                                   
-                                
+
+
+
                                     var layerControl = L.control.layers().addTo(mymap);
-                                   
+
 
                                     var layerGroup = L.layerGroup().addTo(mymap);
-                             
+
 
                                     for (var i in data) {
-                                      
+
                                         var marker = L.marker([data[i].geo_Latitude.replace(",", "."), data[i].geo_Longitude.replace(",", ".")])
                                         marker.bindPopup("<b>Indirizzo: </b>" + data[i].Indirizzo + (data[i].hasOwnProperty('DENOMINAZIONE') && data[i].DENOMINAZIONE ? "<br /><b>Denominazione: </b>" + data[i].DENOMINAZIONE : ""));
                                         layerGroup.addLayer(marker);
-                                       
+
                                     }
-                                    
+
                                     layerControl.addOverlay(layerGroup, fileGeo);
                                     console.log(layerControl)
-      
+
                                     $('#EliminaMarker').click(function () {
                                         mymap.eachLayer(function (layer) {
                                             mymap.removeLayer(layerGroup);
                                             mymap.removeControl(layerControl);
                                         });
                                     });
-                                    
+
 
                                     } else
                                         alert("Errore dati non come array");
@@ -177,7 +183,7 @@
                                 }
 
                             }
-                        
+
                         return;
                         }
 
@@ -190,8 +196,8 @@
                 });
             });
         });
-     
-        
+
+
         var mymap = L.map('mapid').setView([43.35, 13.30], 8);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -204,7 +210,7 @@
 
 
     </script>
-    
+
     <br />
     @Html.ActionLink("Seleziona Sistema", "SelezionaSistema", "Home", new { @class = "btn btn-secondary" })
 </body>

@@ -20,7 +20,9 @@ namespace PortaleGeoWeb.ViewModels
         [Name("DENOMINAZIONE")] [Optional]
         public string DENOMINAZIONE { get; set; }
 
-
+        [Name("Note2")]
+        [Optional]
+        public string Note2 { get; set; }
 
     }
 }

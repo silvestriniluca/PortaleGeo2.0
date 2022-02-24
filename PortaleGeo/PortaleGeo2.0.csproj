@@ -495,6 +495,7 @@
     <Compile Include="Here\CSV_Processor\CsvReader.cs" />
     <Compile Include="Here\CSV_Processor\CsvWriter.cs" />
     <Compile Include="ViewModels\VmGeoCodeOpenStreetMap.cs" />
+    <Compile Include="ViewModels\VmGeoreferenzazione.cs" />
     <Compile Include="ViewModels\VmHere.cs" />
     <Compile Include="ViewModels\VmRuolo.cs" />
     <Compile Include="ViewModels\VmUpload.cs" />

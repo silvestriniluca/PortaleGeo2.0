@@ -232,20 +232,14 @@ namespace NuovoPortaleGeo
                                 
                             }
 
-                            for (int i = 0; i < tablerisultati.Rows.Count; i++)
-                            {
-                            }
                                 // problema inserimento dati
 
-                                foreach (DataRow row1 in tablerisultati.Rows)
+                                foreach (DataRow row in tablerisultati.Rows)
                             {
-
-                                    foreach (DataRow row in dt.Rows)
-                                    {
-                                  
-                                        dtdatabase.Rows.Add(dati.IdUtente, dati.DescrizioneFile, row["Provincia"], row["Comune"], row["Indirizzo"], row["DENOMINAZIONE"], dati.OpenStreetMap, dati.Here, dati.Google, row1["Lat"],
-                                                row1["Lon"], row1["Approx01"], row1["Approx02"]);
-                                    }
+       
+                                        dtdatabase.Rows.Add(dati.IdUtente, dati.DescrizioneFile, row["Provincia"], row["Comune"], row["Indirizzo"], row["DENOMINAZIONE"], dati.OpenStreetMap, dati.Here, dati.Google, row["Lat"],
+                                                row["Lon"], row["Approx01"], row["Approx02"]);
+                                    
                                     
                              }
                             
@@ -257,8 +251,18 @@ namespace NuovoPortaleGeo
                         }
                        
                         VmUpload vm = new VmUpload(dati, dt);
+                        VmUpload vmGeo = new VmUpload(dati, tablerisultati);
                         //    db.CSVdati.Add(dati.DescrizioneFile);
-                        return View(vm);
+                        if (tablerisultati.Rows.Count>0 )
+                        {
+                            return View(vmGeo);
+                           
+                        }
+                        else
+                        {
+                            return View(vm);
+                        }
+                       
 
 
                     }

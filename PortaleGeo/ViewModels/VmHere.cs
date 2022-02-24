@@ -5,7 +5,7 @@ using System.Web;
 using System.ComponentModel.DataAnnotations;
 using CsvHelper.Configuration.Attributes;
 
-namespace PortaleGeoWeb.ViewModels
+namespace NuovoPortaleGeo.ViewModels
 {
     public class VmHere
     {

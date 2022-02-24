@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PortaleGeoWeb.Models
+namespace NuovoPortaleGeo.Models
 {
     using System;
     using System.Collections.Generic;
@@ -17,8 +17,9 @@ namespace PortaleGeoWeb.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Geo_Utente()
         {
-            this.Geo_UtenteRuolo = new HashSet<Geo_UtenteRuolo>();
             this.Geo_Attività = new HashSet<Geo_Attività>();
+            this.Geo_UtenteRuolo = new HashSet<Geo_UtenteRuolo>();
+            this.CSVdati = new HashSet<CSVdati>();
         }
     
         public string Id { get; set; }
@@ -36,10 +37,14 @@ namespace PortaleGeoWeb.Models
         public string Cognome { get; set; }
         public string Nome { get; set; }
         public string CodiceFiscale { get; set; }
+        public string IdRuolo { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Geo_Attività> Geo_Attività { get; set; }
+        public virtual Geo_Ruolo Geo_Ruolo { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Geo_UtenteRuolo> Geo_UtenteRuolo { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Geo_Attività> Geo_Attività { get; set; }
+        public virtual ICollection<CSVdati> CSVdati { get; set; }
     }
 }

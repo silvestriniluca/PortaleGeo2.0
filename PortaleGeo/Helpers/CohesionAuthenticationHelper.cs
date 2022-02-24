@@ -1,12 +1,12 @@
-﻿using PortaleGeoWeb.Models;
+﻿using NuovoPortaleGeo.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
-using PortaleGeoWeb;
+using NuovoPortaleGeo;
 
-namespace PortaleGeoWeb.Helpers
+namespace NuovoPortaleGeo.Helpers
 {
     public static class CohesionAuthenticationHelper
     {

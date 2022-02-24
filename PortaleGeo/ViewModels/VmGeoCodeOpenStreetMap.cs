@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations;
-using PortaleGeoWeb.Models;
+using NuovoPortaleGeo.Models;
 
-namespace PortaleGeoWeb.ViewModels
+namespace NuovoPortaleGeo.ViewModels
 {
     
         public class VmGeoCodeOpenStreetMap

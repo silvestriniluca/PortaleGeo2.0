@@ -56,57 +56,47 @@
           <Property Name="AccessFailedCount" Type="int" Nullable="false" />
           <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
         </EntityType>
+        <EntityType Name="CSVdati">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdUtente" Type="nvarchar" MaxLength="128" />
+          <Property Name="DescrizioneFile" Type="nvarchar" MaxLength="50" />
+          <Property Name="Provincia" Type="nvarchar" MaxLength="50" />
+          <Property Name="Comune" Type="nvarchar" MaxLength="256" />
+          <Property Name="Indirizzo" Type="nvarchar" MaxLength="256" />
+          <Property Name="Descrizione" Type="nvarchar" MaxLength="256" />
+          <Property Name="Cap" Type="nvarchar" MaxLength="20" />
+          <Property Name="Approx01" Type="nvarchar" MaxLength="50" />
+          <Property Name="Approx02" Type="nvarchar" MaxLength="50" />
+          <Property Name="Lat" Type="nvarchar" MaxLength="50" />
+          <Property Name="Lon" Type="nvarchar" MaxLength="50" />
+          <Property Name="OpenStreetMap" Type="bit" />
+          <Property Name="Here" Type="bit" />
+          <Property Name="Google" Type="bit" />
+          <Property Name="APIGoogle" Type="nvarchar" MaxLength="50" />
+          <Property Name="AltroIndirizzo" Type="nvarchar" MaxLength="128" />
+        </EntityType>
         <EntityType Name="Geo_Attività">
           <Key>
             <PropertyRef Name="IdGeo" />
           </Key>
           <Property Name="IdGeo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Autore" Type="nvarchar" MaxLength="256" />
+          <Property Name="Utente" Type="nvarchar" MaxLength="256" />
           <Property Name="DescrizioneFile" Type="nvarchar" MaxLength="256" />
-          <Property Name="PathFile" Type="nvarchar" MaxLength="256" />
+          <Property Name="PathFile" Type="nvarchar(max)" />
           <Property Name="Here" Type="bit" />
           <Property Name="OpenStreetMap" Type="bit" />
-          <Property Name="Id_Autore" Type="nvarchar" MaxLength="128" />
-        </EntityType>
-        <EntityType Name="Geo_Ente">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="CodiceIstat" Type="varchar" MaxLength="16" />
-          <Property Name="CodiceFisco" Type="varchar" MaxLength="16" />
-          <Property Name="SiglaProv" Type="varchar" MaxLength="2" />
-          <Property Name="Cap" Type="varchar" MaxLength="5" />
-          <Property Name="Nome" Type="varchar" MaxLength="256" />
-          <Property Name="ValidoDal" Type="date" />
-          <Property Name="ValidoAl" Type="date" />
-          <Property Name="AderisceDigipalm" Type="int" />
-          <Property Name="OnBoardingRicevuto" Type="int" />
-          <Property Name="OnBoardingInviato" Type="int" />
-          <Property Name="CodiceFiscale" Type="varchar" MaxLength="16" Nullable="false" />
-          <Property Name="PraticheUSR" Type="int" />
-          <Property Name="AuthIoWS" Type="varchar" MaxLength="30" />
-        </EntityType>
-        <EntityType Name="Geo_Fornitore">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="RagioneSociale" Type="varchar" MaxLength="250" />
-          <Property Name="PartitaIva" Type="varchar" MaxLength="11" />
-          <Property Name="ContattoTecnico" Type="varchar" MaxLength="250" />
-          <Property Name="EmailTecnico" Type="varchar" MaxLength="250" />
-          <Property Name="TelefonoTecnico" Type="varchar" MaxLength="250" />
-          <Property Name="ContattoTecnico1" Type="varchar" MaxLength="250" />
-          <Property Name="EmailTecnico1" Type="varchar" MaxLength="250" />
-          <Property Name="TelefonoTecnico1" Type="varchar" MaxLength="250" />
+          <Property Name="Id_Utente" Type="nvarchar" MaxLength="128" />
+          <Property Name="DataAttività" Type="datetime" />
         </EntityType>
         <EntityType Name="Geo_Ruolo">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="Id" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="20" />
         </EntityType>
         <EntityType Name="Geo_Utente">
           <Key>
@@ -127,16 +117,15 @@
           <Property Name="Cognome" Type="varchar" MaxLength="50" />
           <Property Name="Nome" Type="varchar" MaxLength="50" />
           <Property Name="CodiceFiscale" Type="varchar" MaxLength="50" />
+          <Property Name="IdRuolo" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Geo_UtenteRuolo">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Id" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="RoleId" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="IdEnte" Type="int" />
-          <Property Name="IdFornitore" Type="int" />
+          <Property Name="RoleId" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="OpenStreetMapCSV">
           <Key>
@@ -172,54 +161,6 @@
           <Property Name="version" Type="int" />
           <Property Name="definition" Type="varbinary(max)" />
         </EntityType>
-        <Association Name="FK__Utente__IdEnt__09A971A2">
-          <End Role="Geo_Ente" Type="Self.Geo_Ente" Multiplicity="0..1" />
-          <End Role="Geo_UtenteRuolo" Type="Self.Geo_UtenteRuolo" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Geo_Ente">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Geo_UtenteRuolo">
-              <PropertyRef Name="IdEnte" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Utente__IdEnt__0A9D95DB">
-          <End Role="Geo_Ente" Type="Self.Geo_Ente" Multiplicity="0..1" />
-          <End Role="Geo_UtenteRuolo" Type="Self.Geo_UtenteRuolo" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Geo_Ente">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Geo_UtenteRuolo">
-              <PropertyRef Name="IdEnte" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Utente__IdFor__0B91BA14">
-          <End Role="Geo_Fornitore" Type="Self.Geo_Fornitore" Multiplicity="0..1" />
-          <End Role="Geo_UtenteRuolo" Type="Self.Geo_UtenteRuolo" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Geo_Fornitore">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Geo_UtenteRuolo">
-              <PropertyRef Name="IdFornitore" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Utente__IdFor__0C85DE4D">
-          <End Role="Geo_Fornitore" Type="Self.Geo_Fornitore" Multiplicity="0..1" />
-          <End Role="Geo_UtenteRuolo" Type="Self.Geo_UtenteRuolo" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Geo_Fornitore">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Geo_UtenteRuolo">
-              <PropertyRef Name="IdFornitore" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK__Utente__RoleI__0D7A0286">
           <End Role="Geo_Ruolo" Type="Self.Geo_Ruolo" Multiplicity="1" />
           <End Role="Geo_UtenteRuolo" Type="Self.Geo_UtenteRuolo" Multiplicity="*" />
@@ -241,6 +182,18 @@
             </Principal>
             <Dependent Role="Geo_UtenteRuolo">
               <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CSVdati_Geo_Utente">
+          <End Role="Geo_Utente" Type="Self.Geo_Utente" Multiplicity="0..1" />
+          <End Role="CSVdati" Type="Self.CSVdati" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Geo_Utente">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CSVdati">
+              <PropertyRef Name="IdUtente" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -308,7 +261,19 @@
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="Geo_Attività">
-              <PropertyRef Name="Id_Autore" />
+              <PropertyRef Name="Id_Utente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Geo_Utente_Geo_Ruolo">
+          <End Role="Geo_Ruolo" Type="Self.Geo_Ruolo" Multiplicity="0..1" />
+          <End Role="Geo_Utente" Type="Self.Geo_Utente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Geo_Ruolo">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Geo_Utente">
+              <PropertyRef Name="IdRuolo" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -318,30 +283,13 @@
           <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CSVdati" EntityType="Self.CSVdati" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Geo_Attività" EntityType="Self.Geo_Attività" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Geo_Ente" EntityType="Self.Geo_Ente" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Geo_Fornitore" EntityType="Self.Geo_Fornitore" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Geo_Ruolo" EntityType="Self.Geo_Ruolo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Geo_Utente" EntityType="Self.Geo_Utente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Geo_UtenteRuolo" EntityType="Self.Geo_UtenteRuolo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OpenStreetMapCSV" EntityType="Self.OpenStreetMapCSV" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK__Utente__IdEnt__09A971A2" Association="Self.FK__Utente__IdEnt__09A971A2">
-            <End Role="Geo_Ente" EntitySet="Geo_Ente" />
-            <End Role="Geo_UtenteRuolo" EntitySet="Geo_UtenteRuolo" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Utente__IdEnt__0A9D95DB" Association="Self.FK__Utente__IdEnt__0A9D95DB">
-            <End Role="Geo_Ente" EntitySet="Geo_Ente" />
-            <End Role="Geo_UtenteRuolo" EntitySet="Geo_UtenteRuolo" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Utente__IdFor__0B91BA14" Association="Self.FK__Utente__IdFor__0B91BA14">
-            <End Role="Geo_Fornitore" EntitySet="Geo_Fornitore" />
-            <End Role="Geo_UtenteRuolo" EntitySet="Geo_UtenteRuolo" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Utente__IdFor__0C85DE4D" Association="Self.FK__Utente__IdFor__0C85DE4D">
-            <End Role="Geo_Fornitore" EntitySet="Geo_Fornitore" />
-            <End Role="Geo_UtenteRuolo" EntitySet="Geo_UtenteRuolo" />
-          </AssociationSet>
           <AssociationSet Name="FK__Utente__RoleI__0D7A0286" Association="Self.FK__Utente__RoleI__0D7A0286">
             <End Role="Geo_Ruolo" EntitySet="Geo_Ruolo" />
             <End Role="Geo_UtenteRuolo" EntitySet="Geo_UtenteRuolo" />
@@ -349,6 +297,10 @@
           <AssociationSet Name="FK__Utente__UserI__0E6E26BF" Association="Self.FK__Utente__UserI__0E6E26BF">
             <End Role="Geo_Utente" EntitySet="Geo_Utente" />
             <End Role="Geo_UtenteRuolo" EntitySet="Geo_UtenteRuolo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CSVdati_Geo_Utente" Association="Self.FK_CSVdati_Geo_Utente">
+            <End Role="Geo_Utente" EntitySet="Geo_Utente" />
+            <End Role="CSVdati" EntitySet="CSVdati" />
           </AssociationSet>
           <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
@@ -369,6 +321,10 @@
           <AssociationSet Name="FK_Geo_Attività_Geo_Utente" Association="Self.FK_Geo_Attività_Geo_Utente">
             <End Role="Geo_Utente" EntitySet="Geo_Utente" />
             <End Role="Geo_Attività" EntitySet="Geo_Attività" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Geo_Utente_Geo_Ruolo" Association="Self.FK_Geo_Utente_Geo_Ruolo">
+            <End Role="Geo_Ruolo" EntitySet="Geo_Ruolo" />
+            <End Role="Geo_Utente" EntitySet="Geo_Utente" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -416,51 +372,6 @@
           <NavigationProperty Name="AspNetUserLogins" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserLogins" />
           <NavigationProperty Name="AspNetRoles" Relationship="GeoCodeModel.AspNetUserRoles" FromRole="AspNetUsers" ToRole="AspNetRoles" />
         </EntityType>
-        <EntityType Name="Geo_Ente">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CodiceIstat" Type="String" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="CodiceFisco" Type="String" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="SiglaProv" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
-          <Property Name="Cap" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
-          <Property Name="Nome" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
-          <Property Name="ValidoDal" Type="DateTime" Precision="0" />
-          <Property Name="ValidoAl" Type="DateTime" Precision="0" />
-          <Property Name="AderisceDigipalm" Type="Int32" />
-          <Property Name="OnBoardingRicevuto" Type="Int32" />
-          <Property Name="OnBoardingInviato" Type="Int32" />
-          <Property Name="CodiceFiscale" Type="String" MaxLength="16" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="PraticheUSR" Type="Int32" />
-          <Property Name="AuthIoWS" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Geo_UtenteRuolo" Relationship="Self.FK__Utente__IdEnt__09A971A2" FromRole="Geo_Ente" ToRole="Geo_UtenteRuolo" />
-          <NavigationProperty Name="Geo_UtenteRuolo1" Relationship="Self.FK__Utente__IdEnt__0A9D95DB" FromRole="Geo_Ente" ToRole="Geo_UtenteRuolo" />
-        </EntityType>
-        <EntityType Name="Geo_Fornitore">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="RagioneSociale" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="PartitaIva" Type="String" MaxLength="11" FixedLength="false" Unicode="false" />
-          <Property Name="ContattoTecnico" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="EmailTecnico" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="TelefonoTecnico" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="ContattoTecnico1" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="EmailTecnico1" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="TelefonoTecnico1" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Geo_UtenteRuolo" Relationship="Self.FK__Utente__IdFor__0B91BA14" FromRole="Geo_Fornitore" ToRole="Geo_UtenteRuolo" />
-          <NavigationProperty Name="Geo_UtenteRuolo1" Relationship="Self.FK__Utente__IdFor__0C85DE4D" FromRole="Geo_Fornitore" ToRole="Geo_UtenteRuolo" />
-        </EntityType>
-        <EntityType Name="Geo_Ruolo">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Geo_UtenteRuolo" Relationship="Self.FK__Utente__RoleI__0D7A0286" FromRole="Geo_Ruolo" ToRole="Geo_UtenteRuolo" />
-        </EntityType>
         <EntityType Name="Geo_Utente">
           <Key>
             <PropertyRef Name="Id" />
@@ -480,24 +391,11 @@
           <Property Name="Cognome" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Nome" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="CodiceFiscale" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Geo_UtenteRuolo" Relationship="Self.FK__Utente__UserI__0E6E26BF" FromRole="Geo_Utente" ToRole="Geo_UtenteRuolo" />
+          <Property Name="IdRuolo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Geo_Attività" Relationship="GeoCodeModel.FK_Geo_Attività_Geo_Utente" FromRole="Geo_Utente" ToRole="Geo_Attività" />
-        </EntityType>
-        <EntityType Name="Geo_UtenteRuolo">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="RoleId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="IdEnte" Type="Int32" />
-          <Property Name="IdFornitore" Type="Int32" />
-          <NavigationProperty Name="Geo_Ente" Relationship="Self.FK__Utente__IdEnt__09A971A2" FromRole="Geo_UtenteRuolo" ToRole="Geo_Ente" />
-          <NavigationProperty Name="Geo_Ente1" Relationship="Self.FK__Utente__IdEnt__0A9D95DB" FromRole="Geo_UtenteRuolo" ToRole="Geo_Ente" />
-          <NavigationProperty Name="Geo_Fornitore" Relationship="Self.FK__Utente__IdFor__0B91BA14" FromRole="Geo_UtenteRuolo" ToRole="Geo_Fornitore" />
-          <NavigationProperty Name="Geo_Fornitore1" Relationship="Self.FK__Utente__IdFor__0C85DE4D" FromRole="Geo_UtenteRuolo" ToRole="Geo_Fornitore" />
-          <NavigationProperty Name="Geo_Ruolo" Relationship="Self.FK__Utente__RoleI__0D7A0286" FromRole="Geo_UtenteRuolo" ToRole="Geo_Ruolo" />
-          <NavigationProperty Name="Geo_Utente" Relationship="Self.FK__Utente__UserI__0E6E26BF" FromRole="Geo_UtenteRuolo" ToRole="Geo_Utente" />
+          <NavigationProperty Name="Geo_Ruolo" Relationship="GeoCodeModel.FK_Geo_Utente_Geo_Ruolo" FromRole="Geo_Utente" ToRole="Geo_Ruolo" />
+          <NavigationProperty Name="Geo_UtenteRuolo" Relationship="GeoCodeModel.FK__Utente__UserI__0E6E26BF" FromRole="Geo_Utente" ToRole="Geo_UtenteRuolo" />
+          <NavigationProperty Name="CSVdati" Relationship="GeoCodeModel.FK_CSVdati_Geo_Utente" FromRole="Geo_Utente" ToRole="CSVdati" />
         </EntityType>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
@@ -527,87 +425,11 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__Utente__IdEnt__09A971A2">
-          <End Role="Geo_Ente" Type="Self.Geo_Ente" Multiplicity="0..1" />
-          <End Role="Geo_UtenteRuolo" Type="Self.Geo_UtenteRuolo" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Geo_Ente">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Geo_UtenteRuolo">
-              <PropertyRef Name="IdEnte" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Utente__IdEnt__0A9D95DB">
-          <End Role="Geo_Ente" Type="Self.Geo_Ente" Multiplicity="0..1" />
-          <End Role="Geo_UtenteRuolo" Type="Self.Geo_UtenteRuolo" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Geo_Ente">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Geo_UtenteRuolo">
-              <PropertyRef Name="IdEnte" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Utente__IdFor__0B91BA14">
-          <End Role="Geo_Fornitore" Type="Self.Geo_Fornitore" Multiplicity="0..1" />
-          <End Role="Geo_UtenteRuolo" Type="Self.Geo_UtenteRuolo" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Geo_Fornitore">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Geo_UtenteRuolo">
-              <PropertyRef Name="IdFornitore" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Utente__IdFor__0C85DE4D">
-          <End Role="Geo_Fornitore" Type="Self.Geo_Fornitore" Multiplicity="0..1" />
-          <End Role="Geo_UtenteRuolo" Type="Self.Geo_UtenteRuolo" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Geo_Fornitore">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Geo_UtenteRuolo">
-              <PropertyRef Name="IdFornitore" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Utente__RoleI__0D7A0286">
-          <End Role="Geo_Ruolo" Type="Self.Geo_Ruolo" Multiplicity="1" />
-          <End Role="Geo_UtenteRuolo" Type="Self.Geo_UtenteRuolo" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Geo_Ruolo">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Geo_UtenteRuolo">
-              <PropertyRef Name="RoleId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Utente__UserI__0E6E26BF">
-          <End Role="Geo_Utente" Type="Self.Geo_Utente" Multiplicity="1" />
-          <End Role="Geo_UtenteRuolo" Type="Self.Geo_UtenteRuolo" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Geo_Utente">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Geo_UtenteRuolo">
-              <PropertyRef Name="UserId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityContainer Name="GeoCodeEntities1" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" />
           <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" />
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" />
-          <EntitySet Name="Geo_Ente" EntityType="Self.Geo_Ente" />
-          <EntitySet Name="Geo_Fornitore" EntityType="Self.Geo_Fornitore" />
-          <EntitySet Name="Geo_Ruolo" EntityType="Self.Geo_Ruolo" />
           <EntitySet Name="Geo_Utente" EntityType="Self.Geo_Utente" />
-          <EntitySet Name="Geo_UtenteRuolo" EntityType="Self.Geo_UtenteRuolo" />
           <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
@@ -616,35 +438,6 @@
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
           </AssociationSet>
-          <AssociationSet Name="FK__Utente__IdEnt__09A971A2" Association="Self.FK__Utente__IdEnt__09A971A2">
-            <End Role="Geo_Ente" EntitySet="Geo_Ente" />
-            <End Role="Geo_UtenteRuolo" EntitySet="Geo_UtenteRuolo" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Utente__IdEnt__0A9D95DB" Association="Self.FK__Utente__IdEnt__0A9D95DB">
-            <End Role="Geo_Ente" EntitySet="Geo_Ente" />
-            <End Role="Geo_UtenteRuolo" EntitySet="Geo_UtenteRuolo" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Utente__IdFor__0B91BA14" Association="Self.FK__Utente__IdFor__0B91BA14">
-            <End Role="Geo_Fornitore" EntitySet="Geo_Fornitore" />
-            <End Role="Geo_UtenteRuolo" EntitySet="Geo_UtenteRuolo" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Utente__IdFor__0C85DE4D" Association="Self.FK__Utente__IdFor__0C85DE4D">
-            <End Role="Geo_Fornitore" EntitySet="Geo_Fornitore" />
-            <End Role="Geo_UtenteRuolo" EntitySet="Geo_UtenteRuolo" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Utente__RoleI__0D7A0286" Association="Self.FK__Utente__RoleI__0D7A0286">
-            <End Role="Geo_Ruolo" EntitySet="Geo_Ruolo" />
-            <End Role="Geo_UtenteRuolo" EntitySet="Geo_UtenteRuolo" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Utente__UserI__0E6E26BF" Association="Self.FK__Utente__UserI__0E6E26BF">
-            <End Role="Geo_Utente" EntitySet="Geo_Utente" />
-            <End Role="Geo_UtenteRuolo" EntitySet="Geo_UtenteRuolo" />
-          </AssociationSet>
-          <EntitySet Name="Geo_Attività" EntityType="GeoCodeModel.Geo_Attività" />
-          <AssociationSet Name="FK_Geo_Attività_Geo_Utente" Association="GeoCodeModel.FK_Geo_Attività_Geo_Utente">
-            <End Role="Geo_Utente" EntitySet="Geo_Utente" />
-            <End Role="Geo_Attività" EntitySet="Geo_Attività" />
-          </AssociationSet>
           <EntitySet Name="AspNetRoles" EntityType="GeoCodeModel.AspNetRoles" />
           <EntitySet Name="OpenStreetMapCSV" EntityType="GeoCodeModel.OpenStreetMapCSV" />
           <AssociationSet Name="AspNetUserRoles" Association="GeoCodeModel.AspNetUserRoles">
@@ -652,32 +445,31 @@
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
           </AssociationSet>
           <EntitySet Name="sysdiagrams" EntityType="GeoCodeModel.sysdiagrams" />
+          <EntitySet Name="Geo_Attività" EntityType="GeoCodeModel.Geo_Attività" />
+          <AssociationSet Name="FK_Geo_Attività_Geo_Utente" Association="GeoCodeModel.FK_Geo_Attività_Geo_Utente">
+            <End Role="Geo_Utente" EntitySet="Geo_Utente" />
+            <End Role="Geo_Attività" EntitySet="Geo_Attività" />
+          </AssociationSet>
+          <EntitySet Name="Geo_Ruolo" EntityType="GeoCodeModel.Geo_Ruolo" />
+          <AssociationSet Name="FK_Geo_Utente_Geo_Ruolo" Association="GeoCodeModel.FK_Geo_Utente_Geo_Ruolo">
+            <End Role="Geo_Ruolo" EntitySet="Geo_Ruolo" />
+            <End Role="Geo_Utente" EntitySet="Geo_Utente" />
+          </AssociationSet>
+          <EntitySet Name="Geo_UtenteRuolo" EntityType="GeoCodeModel.Geo_UtenteRuolo" />
+          <AssociationSet Name="FK__Utente__RoleI__0D7A0286" Association="GeoCodeModel.FK__Utente__RoleI__0D7A0286">
+            <End Role="Geo_Ruolo" EntitySet="Geo_Ruolo" />
+            <End Role="Geo_UtenteRuolo" EntitySet="Geo_UtenteRuolo" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Utente__UserI__0E6E26BF" Association="GeoCodeModel.FK__Utente__UserI__0E6E26BF">
+            <End Role="Geo_Utente" EntitySet="Geo_Utente" />
+            <End Role="Geo_UtenteRuolo" EntitySet="Geo_UtenteRuolo" />
+          </AssociationSet>
+          <EntitySet Name="CSVdati" EntityType="GeoCodeModel.CSVdati" />
+          <AssociationSet Name="FK_CSVdati_Geo_Utente" Association="GeoCodeModel.FK_CSVdati_Geo_Utente">
+            <End Role="Geo_Utente" EntitySet="Geo_Utente" />
+            <End Role="CSVdati" EntitySet="CSVdati" />
+          </AssociationSet>
         </EntityContainer>
-        <EntityType Name="Geo_Attività">
-          <Key>
-            <PropertyRef Name="IdGeo" />
-          </Key>
-          <Property Name="IdGeo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Autore" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="DescrizioneFile" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="PathFile" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="Here" Type="Boolean" />
-          <Property Name="OpenStreetMap" Type="Boolean" />
-          <Property Name="Id_Autore" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Geo_Utente" Relationship="GeoCodeModel.FK_Geo_Attività_Geo_Utente" FromRole="Geo_Attività" ToRole="Geo_Utente" />
-        </EntityType>
-        <Association Name="FK_Geo_Attività_Geo_Utente">
-          <End Type="GeoCodeModel.Geo_Utente" Role="Geo_Utente" Multiplicity="0..1" />
-          <End Type="GeoCodeModel.Geo_Attività" Role="Geo_Attività" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Geo_Utente">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Geo_Attività">
-              <PropertyRef Name="Id_Autore" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="AspNetRoles">
           <Key>
             <PropertyRef Name="Id" />
@@ -724,6 +516,122 @@
           <Property Name="version" Type="Int32" />
           <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
         </EntityType>
+        <EntityType Name="Geo_Attività">
+          <Key>
+            <PropertyRef Name="IdGeo" />
+          </Key>
+          <Property Name="IdGeo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Utente" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="DescrizioneFile" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="PathFile" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Here" Type="Boolean" />
+          <Property Name="OpenStreetMap" Type="Boolean" />
+          <Property Name="Id_Utente" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Geo_Utente" Relationship="GeoCodeModel.FK_Geo_Attività_Geo_Utente" FromRole="Geo_Attività" ToRole="Geo_Utente" />
+          <Property Name="DataAttività" Type="DateTime" Precision="3" />
+        </EntityType>
+        <Association Name="FK_Geo_Attività_Geo_Utente">
+          <End Type="GeoCodeModel.Geo_Utente" Role="Geo_Utente" Multiplicity="0..1" />
+          <End Type="GeoCodeModel.Geo_Attività" Role="Geo_Attività" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Geo_Utente">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Geo_Attività">
+              <PropertyRef Name="Id_Utente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Geo_Ruolo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Geo_Utente" Relationship="GeoCodeModel.FK_Geo_Utente_Geo_Ruolo" FromRole="Geo_Ruolo" ToRole="Geo_Utente" />
+          <NavigationProperty Name="Geo_UtenteRuolo" Relationship="GeoCodeModel.FK__Utente__RoleI__0D7A0286" FromRole="Geo_Ruolo" ToRole="Geo_UtenteRuolo" />
+        </EntityType>
+        <Association Name="FK_Geo_Utente_Geo_Ruolo">
+          <End Type="GeoCodeModel.Geo_Ruolo" Role="Geo_Ruolo" Multiplicity="0..1" />
+          <End Type="GeoCodeModel.Geo_Utente" Role="Geo_Utente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Geo_Ruolo">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Geo_Utente">
+              <PropertyRef Name="IdRuolo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Geo_UtenteRuolo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="RoleId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Geo_Ruolo" Relationship="GeoCodeModel.FK__Utente__RoleI__0D7A0286" FromRole="Geo_UtenteRuolo" ToRole="Geo_Ruolo" />
+          <NavigationProperty Name="Geo_Utente" Relationship="GeoCodeModel.FK__Utente__UserI__0E6E26BF" FromRole="Geo_UtenteRuolo" ToRole="Geo_Utente" />
+        </EntityType>
+        <Association Name="FK__Utente__RoleI__0D7A0286">
+          <End Type="GeoCodeModel.Geo_Ruolo" Role="Geo_Ruolo" Multiplicity="1" />
+          <End Type="GeoCodeModel.Geo_UtenteRuolo" Role="Geo_UtenteRuolo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Geo_Ruolo">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Geo_UtenteRuolo">
+              <PropertyRef Name="RoleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Utente__UserI__0E6E26BF">
+          <End Type="GeoCodeModel.Geo_Utente" Role="Geo_Utente" Multiplicity="1" />
+          <End Type="GeoCodeModel.Geo_UtenteRuolo" Role="Geo_UtenteRuolo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Geo_Utente">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Geo_UtenteRuolo">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="CSVdati">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdUtente" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="DescrizioneFile" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Provincia" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Comune" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Indirizzo" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Descrizione" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="Cap" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Approx01" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Approx02" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Lat" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Lon" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="OpenStreetMap" Type="Boolean" />
+          <Property Name="Here" Type="Boolean" />
+          <Property Name="Google" Type="Boolean" />
+          <Property Name="APIGoogle" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AltroIndirizzo" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Geo_Utente" Relationship="GeoCodeModel.FK_CSVdati_Geo_Utente" FromRole="CSVdati" ToRole="Geo_Utente" />
+        </EntityType>
+        <Association Name="FK_CSVdati_Geo_Utente">
+          <End Type="GeoCodeModel.Geo_Utente" Role="Geo_Utente" Multiplicity="0..1" />
+          <End Type="GeoCodeModel.CSVdati" Role="CSVdati" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Geo_Utente">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CSVdati">
+              <PropertyRef Name="IdUtente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -767,52 +675,10 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Geo_Ente">
-            <EntityTypeMapping TypeName="GeoCodeModel.Geo_Ente">
-              <MappingFragment StoreEntitySet="Geo_Ente">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="CodiceIstat" ColumnName="CodiceIstat" />
-                <ScalarProperty Name="CodiceFisco" ColumnName="CodiceFisco" />
-                <ScalarProperty Name="SiglaProv" ColumnName="SiglaProv" />
-                <ScalarProperty Name="Cap" ColumnName="Cap" />
-                <ScalarProperty Name="Nome" ColumnName="Nome" />
-                <ScalarProperty Name="ValidoDal" ColumnName="ValidoDal" />
-                <ScalarProperty Name="ValidoAl" ColumnName="ValidoAl" />
-                <ScalarProperty Name="AderisceDigipalm" ColumnName="AderisceDigipalm" />
-                <ScalarProperty Name="OnBoardingRicevuto" ColumnName="OnBoardingRicevuto" />
-                <ScalarProperty Name="OnBoardingInviato" ColumnName="OnBoardingInviato" />
-                <ScalarProperty Name="CodiceFiscale" ColumnName="CodiceFiscale" />
-                <ScalarProperty Name="PraticheUSR" ColumnName="PraticheUSR" />
-                <ScalarProperty Name="AuthIoWS" ColumnName="AuthIoWS" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Geo_Fornitore">
-            <EntityTypeMapping TypeName="GeoCodeModel.Geo_Fornitore">
-              <MappingFragment StoreEntitySet="Geo_Fornitore">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="RagioneSociale" ColumnName="RagioneSociale" />
-                <ScalarProperty Name="PartitaIva" ColumnName="PartitaIva" />
-                <ScalarProperty Name="ContattoTecnico" ColumnName="ContattoTecnico" />
-                <ScalarProperty Name="EmailTecnico" ColumnName="EmailTecnico" />
-                <ScalarProperty Name="TelefonoTecnico" ColumnName="TelefonoTecnico" />
-                <ScalarProperty Name="ContattoTecnico1" ColumnName="ContattoTecnico1" />
-                <ScalarProperty Name="EmailTecnico1" ColumnName="EmailTecnico1" />
-                <ScalarProperty Name="TelefonoTecnico1" ColumnName="TelefonoTecnico1" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Geo_Ruolo">
-            <EntityTypeMapping TypeName="GeoCodeModel.Geo_Ruolo">
-              <MappingFragment StoreEntitySet="Geo_Ruolo">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Geo_Utente">
             <EntityTypeMapping TypeName="GeoCodeModel.Geo_Utente">
               <MappingFragment StoreEntitySet="Geo_Utente">
+                <ScalarProperty Name="IdRuolo" ColumnName="IdRuolo" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
                 <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />
@@ -828,30 +694,6 @@
                 <ScalarProperty Name="Cognome" ColumnName="Cognome" />
                 <ScalarProperty Name="Nome" ColumnName="Nome" />
                 <ScalarProperty Name="CodiceFiscale" ColumnName="CodiceFiscale" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Geo_UtenteRuolo">
-            <EntityTypeMapping TypeName="GeoCodeModel.Geo_UtenteRuolo">
-              <MappingFragment StoreEntitySet="Geo_UtenteRuolo">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
-                <ScalarProperty Name="IdEnte" ColumnName="IdEnte" />
-                <ScalarProperty Name="IdFornitore" ColumnName="IdFornitore" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Geo_Attività">
-            <EntityTypeMapping TypeName="GeoCodeModel.Geo_Attività">
-              <MappingFragment StoreEntitySet="Geo_Attività">
-                <ScalarProperty Name="Id_Autore" ColumnName="Id_Autore" />
-                <ScalarProperty Name="OpenStreetMap" ColumnName="OpenStreetMap" />
-                <ScalarProperty Name="Here" ColumnName="Here" />
-                <ScalarProperty Name="PathFile" ColumnName="PathFile" />
-                <ScalarProperty Name="DescrizioneFile" ColumnName="DescrizioneFile" />
-                <ScalarProperty Name="Autore" ColumnName="Autore" />
-                <ScalarProperty Name="IdGeo" ColumnName="IdGeo" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -904,6 +746,60 @@
                 <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
                 <ScalarProperty Name="principal_id" ColumnName="principal_id" />
                 <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Geo_Attività">
+            <EntityTypeMapping TypeName="GeoCodeModel.Geo_Attività">
+              <MappingFragment StoreEntitySet="Geo_Attività">
+                <ScalarProperty Name="DataAttività" ColumnName="DataAttività" />
+                <ScalarProperty Name="Id_Utente" ColumnName="Id_Utente" />
+                <ScalarProperty Name="OpenStreetMap" ColumnName="OpenStreetMap" />
+                <ScalarProperty Name="Here" ColumnName="Here" />
+                <ScalarProperty Name="PathFile" ColumnName="PathFile" />
+                <ScalarProperty Name="DescrizioneFile" ColumnName="DescrizioneFile" />
+                <ScalarProperty Name="Utente" ColumnName="Utente" />
+                <ScalarProperty Name="IdGeo" ColumnName="IdGeo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Geo_Ruolo">
+            <EntityTypeMapping TypeName="GeoCodeModel.Geo_Ruolo">
+              <MappingFragment StoreEntitySet="Geo_Ruolo">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Geo_UtenteRuolo">
+            <EntityTypeMapping TypeName="GeoCodeModel.Geo_UtenteRuolo">
+              <MappingFragment StoreEntitySet="Geo_UtenteRuolo">
+                <ScalarProperty Name="RoleId" ColumnName="RoleId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CSVdati">
+            <EntityTypeMapping TypeName="GeoCodeModel.CSVdati">
+              <MappingFragment StoreEntitySet="CSVdati">
+                <ScalarProperty Name="AltroIndirizzo" ColumnName="AltroIndirizzo" />
+                <ScalarProperty Name="APIGoogle" ColumnName="APIGoogle" />
+                <ScalarProperty Name="Google" ColumnName="Google" />
+                <ScalarProperty Name="Here" ColumnName="Here" />
+                <ScalarProperty Name="OpenStreetMap" ColumnName="OpenStreetMap" />
+                <ScalarProperty Name="Lon" ColumnName="Lon" />
+                <ScalarProperty Name="Lat" ColumnName="Lat" />
+                <ScalarProperty Name="Approx02" ColumnName="Approx02" />
+                <ScalarProperty Name="Approx01" ColumnName="Approx01" />
+                <ScalarProperty Name="Cap" ColumnName="Cap" />
+                <ScalarProperty Name="Descrizione" ColumnName="Descrizione" />
+                <ScalarProperty Name="Indirizzo" ColumnName="Indirizzo" />
+                <ScalarProperty Name="Comune" ColumnName="Comune" />
+                <ScalarProperty Name="Provincia" ColumnName="Provincia" />
+                <ScalarProperty Name="DescrizioneFile" ColumnName="DescrizioneFile" />
+                <ScalarProperty Name="IdUtente" ColumnName="IdUtente" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

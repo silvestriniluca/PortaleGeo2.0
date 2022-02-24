@@ -1,13 +1,13 @@
-﻿using PortaleGeoWeb.Controllers;
+﻿using NuovoPortaleGeo.Controllers;
 using Quartz;
 using System;
 using System.Configuration;
 using System.Threading.Tasks;
 using System.Linq;
-using PortaleGeoWeb.Helpers;
+using NuovoPortaleGeo.Helpers;
 
 
-namespace PortaleGeoWeb.Models
+namespace NuovoPortaleGeo.Models
 {
     public class ExecuteTaskServiceCallJob : IJob
     {

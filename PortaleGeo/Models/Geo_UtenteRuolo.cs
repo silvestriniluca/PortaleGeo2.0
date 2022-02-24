@@ -7,23 +7,17 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PortaleGeoWeb.Models
+namespace NuovoPortaleGeo.Models
 {
     using System;
     using System.Collections.Generic;
     
     public partial class Geo_UtenteRuolo
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string UserId { get; set; }
         public string RoleId { get; set; }
-        public Nullable<int> IdEnte { get; set; }
-        public Nullable<int> IdFornitore { get; set; }
     
-        public virtual Geo_Ente Geo_Ente { get; set; }
-        public virtual Geo_Ente Geo_Ente1 { get; set; }
-        public virtual Geo_Fornitore Geo_Fornitore { get; set; }
-        public virtual Geo_Fornitore Geo_Fornitore1 { get; set; }
         public virtual Geo_Ruolo Geo_Ruolo { get; set; }
         public virtual Geo_Utente Geo_Utente { get; set; }
     }

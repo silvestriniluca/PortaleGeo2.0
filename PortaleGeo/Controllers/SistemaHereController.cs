@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using PortaleGeoWeb.Models;
-using PortaleGeoWeb.reader.csv;
-using PortaleGeoWeb.Helpers;
+using NuovoPortaleGeo.Models;
+using NuovoPortaleGeo.reader.csv;
+using NuovoPortaleGeo.Helpers;
 using CsvHelper;
 using CsvHelper.Configuration;
 using System.IO;
@@ -18,12 +18,12 @@ using System.Data;
 using System.Web.Script.Serialization;
 using Microsoft.VisualBasic.FileIO;
 using System.ComponentModel.DataAnnotations;
-using PortaleGeoWeb.ViewModels;
+using NuovoPortaleGeo.ViewModels;
 
 
-namespace PortaleGeoWeb.Controllers
+namespace NuovoPortaleGeo.Controllers
 {
-    [Authorize(Roles = "Administrators,EnteLocale,Fornitore")]
+    [Authorize(Roles = "Amministratore,Utente,Consultatore")]
     public class SistemaHereController : Controller
     {
         GeoCodeEntities1 db = new GeoCodeEntities1();

@@ -5,10 +5,10 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using PortaleGeoWeb.Models;
+using NuovoPortaleGeo.Models;
 
 
-namespace PortaleGeoWeb
+namespace NuovoPortaleGeo
 {
     public class MvcApplication : HttpApplication
     {

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PortaleGeoWeb.Models
+namespace NuovoPortaleGeo.Models
 {
     using System;
     using System.Collections.Generic;
@@ -17,12 +17,15 @@ namespace PortaleGeoWeb.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Geo_Ruolo()
         {
+            this.Geo_Utente = new HashSet<Geo_Utente>();
             this.Geo_UtenteRuolo = new HashSet<Geo_UtenteRuolo>();
         }
     
         public string Id { get; set; }
         public string Name { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Geo_Utente> Geo_Utente { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Geo_UtenteRuolo> Geo_UtenteRuolo { get; set; }
     }

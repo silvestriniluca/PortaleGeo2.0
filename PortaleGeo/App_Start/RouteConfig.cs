@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace PortaleGeoWeb
+namespace NuovoPortaleGeo
 {
     public class RouteConfig
     {

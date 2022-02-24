@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
-namespace PortaleGeoWeb.Helpers
+namespace NuovoPortaleGeo.Helpers
 {
     public class ExcelExportHelper
     {

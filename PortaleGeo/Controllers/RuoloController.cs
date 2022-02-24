@@ -6,13 +6,13 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using PortaleGeoWeb.Models;
-using PortaleGeoWeb.ViewModels;
+using NuovoPortaleGeo.Models;
+using NuovoPortaleGeo.ViewModels;
 
 
-namespace PortaleGeoWeb.Controllers
+namespace NuovoPortaleGeo.Controllers
 {
-    [Authorize(Roles = "Administrators")]
+    [Authorize(Roles = "Amministratore")]
     public class RuoloController : Controller
     {
         private GeoCodeEntities1 db = new GeoCodeEntities1();

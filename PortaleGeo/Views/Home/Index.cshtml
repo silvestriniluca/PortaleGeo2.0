@@ -24,14 +24,28 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-
-    <title>Portale Di Geocodifica</title>
+   
+        <title>Portale Di Geocodifica</title>
+       
+  
 </head>
 <body>
     <br />
-    <h1>GeoCode</h1>
+    <div class="row">
+        <div class="col">
+            <h1>GeoCode</h1>
+        </div>  
+        <div class="col-10">
+            <img src="~/Images/Web-2.0-icon.png" class="rounded-circle" id="duepuntozero" />
+        </div>     
+    </div>
+ 
     <br />
-    <p class="lead">Portale per la georeferenzazione</p>
+    <div class="row">
+        <p class="lead">Portale per la georeferenzazione</p>
+       
+    </div>
+    
     <div class="jumbotron">
         <div class="container-fluid">
             <div class="row">
@@ -45,9 +59,9 @@
                     <p> <b>PortaleGeoWeb</b> è un portale messo a disposizione da Regione Marche che permette di georeferenziare luoghi di lavoro, sanità ,istruzione e anche strutture private a partire da informazioni primarie come Provincia, Comune e Indirizzo con lo scopo di migliorare le qualità di vita e sociali di tali strutture.</p>
 
                     <p>La Georeferenzazione è basata su tre sistemi in particolare:</p>
-                    <ul><b>OpenStreetMap:</b>INFO</ul>
-                    <ul><b>SistemareHere:</b>INFO</ul>
-                    <ul><b>GoogleMaps:</b>INFO</ul>
+                    <ul>OpenStreetMap:INFO</ul>
+                    <ul>SistemareHere:</>INFO</ul>
+                    <ul>GoogleMaps:INFO</ul>
                     <p>
                         Il portale è in grado di leggere file csv  con relatvi informazioni su Indirizzo, Comune, Provincia ecc.. . Tramite i tre sistemi di Georeferenzazioni sopra elencati è in grado di restituirci un nuovo file csv in cui sono state aggiunte informazioni su LATITUDINE e LONGITUDINE
                         Infatti proprio grazie a queste due ultime importanti parametri siamo in grado di visualizzare su mappa i luoghi interessati alla geocodifica.
@@ -59,7 +73,12 @@
 
         <a class="btn-group-lg" href="/Home/About"><strong>Informazioni</strong></a>
     </div>
-
+    <style>
+        #duepuntozero{
+            height:100px;
+            transform: translate(-60%);
+        }
+    </style>
 
 </body>
 </html>

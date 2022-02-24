@@ -7,9 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
-using PortaleGeoWeb.Models;
+using NuovoPortaleGeo.Models;
 
-namespace PortaleGeoWeb.reader.csv
+namespace NuovoPortaleGeo.reader.csv
 {
     public class MyCsvReader
     {

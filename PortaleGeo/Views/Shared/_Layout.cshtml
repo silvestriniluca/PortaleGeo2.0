@@ -25,22 +25,24 @@
 
 
 
-                @if (this.User.IsInRole("Administrators") || this.User.IsInRole("EnteLocale") || this.User.IsInRole("Fornitore"))
-                {
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Home/Upload"><strong>Visualizza File</strong></a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Home/SelezionaSistema"><strong>Seleziona Sistema</strong></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Home/Mappa"><strong>Visualizza Mappa</strong></a>
-                    </li>
-
+                     @if (this.User.IsInRole("Amministratore") || this.User.IsInRole("Utente") || this.User.IsInRole("Consultatore"))
+                
+                { 
+                <li class="nav-item">
+                    <a class="nav-link" href="/Home/Upload"><strong>Carica File</strong></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/Home/SelezionaSistema"><strong>Seleziona Sistema</strong></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/Home/Mappa"><strong>Visualizza Mappa</strong></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="~/GeoDati/Index"><strong>GeoDati</strong></a>
+                </li>
 
                 }
+                
             </ul>
         </div>
         <div class="nav navbar-nav navbar-right">
@@ -126,7 +128,7 @@
     {
 
 
-        <script type="text/javascript">
+<script type="text/javascript">
 
 
              if (hdPlugins) { {
@@ -135,41 +137,43 @@
                 //alert('QUI');
                 let info = hdPlugins.additionalInfo;
 
-                //HINT come esempio...
-                if ("Amministratore")
-                    info += "\n- ruolo: Amministratore \n- uo: R_MARCHE";
+               @*  //HINT come esempio...
+                 if ("Amministratore")
+                     info += "\n- ruolo: Amministratore \n- uo: R_MARCHE";
 
-                var hd_div = document.createElement('div');
-                hd_div.id = "helpdesk";
-                hd_div.style.cssText = "width: 300px;position: fixed;bottom: 0;right: 15px;";
-                //document.getElementById("body").appendChild(hd_div);
-                document.getElementsByClassName("body-content")[0].appendChild(hd_div);
+                 var hd_div = document.createElement('div');
+                 hd_div.id = "helpdesk";
+                 hd_div.style.cssText = "width: 300px;position: fixed;bottom: 0;right: 15px;";
+                 //document.getElementById("body").appendChild(hd_div);
+                 document.getElementsByClassName("body-content")[0].appendChild(hd_div);
 
-                var iconic = document.createElement('img');
-                iconic.src = "https://pass.regione.marche.it/hd/open-iconic.svg";
-                iconic.className = "iconic-sprite";
-                iconic.style = "display:none;";
-                document.getElementsByClassName("body-content")[0].appendChild(iconic);
+                 var iconic = document.createElement('img');
+                 iconic.src = "https://pass.regione.marche.it/hd/open-iconic.svg";
+                 iconic.className = "iconic-sprite";
+                 iconic.style = "display:none;";
+                 document.getElementsByClassName("body-content")[0].appendChild(iconic);
 
-                var app_hd = Elm.NewTicket.embed
-                    (document.getElementById(hd_div.id)
-                        , hdProjectData
+                 var app_hd = Elm.NewTicket.embed
+                     (document.getElementById(hd_div.id)
+                         , hdProjectData *@
                             ({
 
                                 //HINT - da modificare
                                 user_email: '@HttpContext.Current.User.Identity.Name'
                                 , additional_info: info
                             })
-                    );
 
+                 @* );
                 // Elements to inject
                 var mySVGsToInject = document.querySelectorAll('img.iconic-sprite');
 
                 // Do the injection
-                SVGInjector(mySVGsToInject);
+                SVGInjector(mySVGsToInject);*@
             }
-        </script>
 
+
+    }
+</script>
     }
 
     @RenderSection("finalscripts", required: false)

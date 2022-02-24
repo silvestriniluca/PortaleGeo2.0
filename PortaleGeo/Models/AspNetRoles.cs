@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PortaleGeoWeb.Models
+namespace NuovoPortaleGeo.Models
 {
     using System;
     using System.Collections.Generic;

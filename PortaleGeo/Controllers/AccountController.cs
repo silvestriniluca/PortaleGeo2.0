@@ -8,11 +8,11 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using PortaleGeoWeb.Models;
+using NuovoPortaleGeo.Models;
 using Microsoft.Ajax.Utilities;
-using PortaleGeoWeb.Helpers;
+using NuovoPortaleGeo.Helpers;
 
-namespace PortaleGeoWeb.Controllers
+namespace NuovoPortaleGeo.Controllers
 {
     [Authorize]
     public class AccountController : Controller

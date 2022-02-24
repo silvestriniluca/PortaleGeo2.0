@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace PortaleGeoWeb.Models
+namespace NuovoPortaleGeo.Models
 {
     public class ExternalLoginConfirmationViewModel
     {

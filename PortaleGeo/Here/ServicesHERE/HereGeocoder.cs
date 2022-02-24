@@ -5,9 +5,9 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using PortaleGeoWeb.message;
+using NuovoPortaleGeo.message;
 
-namespace PortaleGeoWeb.service
+namespace NuovoPortaleGeo.service
 {
     public class HereGeoCoder
     {

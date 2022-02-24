@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CsvHelper.Configuration;
-using PortaleGeoWeb.reader.csv;
-using PortaleGeoWeb.service;
-using PortaleGeoWeb.Models;
+using NuovoPortaleGeo.reader.csv;
+using NuovoPortaleGeo.service;
+using NuovoPortaleGeo.Models;
 
-namespace PortaleGeoWeb
+namespace NuovoPortaleGeo
 {
     public class GeocodeProcessor
     {

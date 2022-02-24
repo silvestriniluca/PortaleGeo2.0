@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using PortaleGeoWeb.ViewModels;
-using PortaleGeoWeb;
-using PortaleGeoWeb.Helpers;
+using NuovoPortaleGeo.ViewModels;
+using NuovoPortaleGeo;
+using NuovoPortaleGeo.Helpers;
 using System.Data;
 using System.Data.Entity;
 using System.IO;
@@ -17,31 +17,31 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using ExcelDataReader;
 using Newtonsoft.Json;
-using PortaleGeoWeb.Models;
+using NuovoPortaleGeo.Models;
 using System.Web.Script.Serialization;
 
-namespace PortaleGeoWeb.Controllers
+namespace NuovoPortaleGeo.Controllers
 {
-    [Authorize(Roles = "Administrators,EnteLocale,Fornitore")]
-    // GET: SistemaOpenStreetMap
 
+    // GET: SistemaOpenStreetMap
+  
     public class GeoCode
     {
-        public int Id { get; set; }
+        
         public double Lat { get; set; }
         public double Lon { get; set; }
 
-        public string Approx01 { get; set; }
-        public string Approx02 { get; set; }
+        public object Approx01 { get; set; }
+        public object Approx02 { get; set; }
 
-        public string Cap { get; set; }
-        public string Village { get; set; }
+        public object Cap { get; set; }
+        public object Village { get; set; }
 
 
 
-        public GeoCode(int Id, double Lat, double Lon, string Approx01, string Approx02, string Cap, string Village)
+        public GeoCode( double Lat, double Lon, object Approx01, object Approx02, object Cap, object Village)
         {
-            this.Id = Id;
+           
             this.Lat = Lat;
             this.Lon = Lon;
             this.Approx01 = Approx01;
@@ -50,11 +50,16 @@ namespace PortaleGeoWeb.Controllers
             this.Village = Village;
         }
 
-    }
-    
 
+     
+       
+    }
+
+
+    [Authorize(Roles = "Amministratore,Utente,Consultatore")]
     public class OpenStreetMapController : Controller
     {
+        
 
         private GeoCodeEntities1 db = new GeoCodeEntities1();
 
@@ -285,124 +290,182 @@ namespace PortaleGeoWeb.Controllers
 
         //GeoCodeRow
 
-        public ActionResult GeoCodeRow(string path, string name)
+        public static DataTable  GeoCodeRow(string path, string name, string cf, DataTable dataTable, DataTable tablerisultati)
         {
-           
 
-            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
-            var cf = Session["CF"].ToString();
-            var Geo_Utente = db.Geo_Utente
-                    .Where(x => x.CodiceFiscale == cf).FirstOrDefault();
-            
-            HomeController.GetAttività(Geo_Utente.Id, Geo_Utente.UserName, Nomepercorso, Percorso, true, false);
-            foreach (var row in db.OpenStreetMapCSV)
+            //devo mettere la tabella
+
+            using (GeoCodeEntities1 db = new GeoCodeEntities1())
+                
             {
+               
 
-                if (row.APIGoogle == "S")
+                ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
+                
+                var Geo_Utente = db.Geo_Utente
+                        .Where(x => x.CodiceFiscale == cf).FirstOrDefault();
+
+                HomeController.GetAttività(Geo_Utente.Id, Geo_Utente.UserName, Nomepercorso, Percorso, true, false);
+                
+                tablerisultati.Columns.Add(new DataColumn("Lat"));
+                tablerisultati.Columns.Add(new DataColumn("Lon"));
+                tablerisultati.Columns.Add(new DataColumn("Approx01"));
+                tablerisultati.Columns.Add(new DataColumn("Approx02"));
+
+                foreach (DataRow row in dataTable.Rows)
                 {
-
-                    GeoCode geo = GeoCode_Google(row.Id, row.Indirizzo, row.Comune, row.Provincia, "Diretta", row.Cap, "API_Google");
-                    row.Lat = geo.Lat.ToString();
-                    row.Lon = geo.Lon.ToString();
-                    row.Approx01 = geo.Approx01;
-                    row.Approx02 = geo.Approx02;
-
-
-                }
-                else
-                {
-                    //Inizialmente calcolo il Baricentro Comune
-                    GeoCode geox = GeoCode(row.Id, "", row.Comune, row.Provincia, "Baricentro Comune", row.Cap);
-
-                    //Provo la ricerca DIRETTA
-                    GeoCode geo = GeoCode(row.Id, row.Indirizzo, row.Comune, row.Provincia, "Diretta", row.Cap);
-                    //Se con la ricerca Diretta trovo il Baricentro Comune, continuo la ricerca
-                    if (geo.Lat == geox.Lat && geo.Lon == geox.Lon) geo.Lat = 0;
-
-                    //Provo la ricerca con quanto presente in Altro Indirizzo
-                    if ((geo.Lat == 0 || geo.Lon == 0) && row.AltroIndirizzo != "") geo = GeoCode(row.Id, row.AltroIndirizzo, row.Comune, row.Provincia, "Altro Indirizzo", row.Cap);
-                    //Se con la ricerca AltroIndirizzo trovo il Baricentro Comune, continuo la ricerca
-                    if (geo.Lat == geox.Lat && geo.Lon == geox.Lon) geo.Lat = 0;
-
-                    //Provo la ricerca con Toponomastica AltroIndirizzo
-                    string AltroIndirizzo = row.AltroIndirizzo.Trim();
-                    string Toponomastica_AltroIndirizzo = AltroIndirizzo.Remove(0, AltroIndirizzo.IndexOf(' ') + 1);
-                    if ((geo.Lat == 0 || geo.Lon == 0) && Toponomastica_AltroIndirizzo.Trim() != "") geo = GeoCode(row.Id, Toponomastica_AltroIndirizzo, row.Comune, row.Provincia, "Altro Indirizzo", row.Cap);
-                    //Se con la ricerca Toponomastica_AltroIndirizzo trovo il Baricentro Comune, continuo la ricerca
-                    if (geo.Lat == geox.Lat && geo.Lon == geox.Lon) geo.Lat = 0;
-
-                    //Provo con la ricerca DIRETTA_TOPONOMASTICA, tolgo la prima parte dell'indirizzo (qualunque cosa essa sia) così da prendere solo la toponomastica 
-                    if ((geo.Lat == 0 || geo.Lon == 0))
+                  
+                    if (cf is null)
                     {
-                        string Indirizzo = row.Indirizzo.Trim();
-                        string Toponomastica = Indirizzo.Remove(0, Indirizzo.IndexOf(' ') + 1);
-                        //Toponomastica = Toponomastica.Substring(0, Toponomastica.LastIndexOf(' '));
 
-                        geo = GeoCode(row.Id, Toponomastica, row.Comune, row.Provincia, "Diretta_Toponomastica", row.Cap);
-                        //Se con la ricerca Diretta_Toponomastica trovo il Baricentro Comune, continuo la ricerca
+                        GeoCode geo = GeoCode_Google( row["Indirizzo"], row["Comune"], row["Provincia"], "Diretta", row["Cap"], "API_Google");
+                        row["Lat"] = geo.Lat.ToString();
+                        row["Lon"] = geo.Lon.ToString();
+                        row["Approx01"] = geo.Approx01;
+                        row["Approx02"]= geo.Approx02;
+
+
+                    }
+                    else
+                    {
+                        //Inizialmente calcolo il Baricentro Comune
+                        GeoCode geox = GeoCode( "", row["Comune"], row["Provincia"], "Baricentro Comune", row["Cap"]);
+
+                        //Provo la ricerca DIRETTA
+                        GeoCode geo = GeoCode( row["Indirizzo"], row["Comune"], row["Provincia"], "Diretta", row["Cap"]);
+                        //Se con la ricerca Diretta trovo il Baricentro Comune, continuo la ricerca
+                        if (geo.Lat == geox.Lat && geo.Lon == geox.Lon) geo.Lat = 0;
+                        
+                            //Provo la ricerca con quanto presente in Altro Indirizzo
+                            if ((geo.Lat == 0 || geo.Lon == 0) && row["AltroIndirizzo"].ToString() != "") geo = GeoCode( row["AltroIndirizzo"], row["Comune"], row["Provincia"], "Altro Indirizzo", row["Cap"]);
+                        //Se con la ricerca AltroIndirizzo trovo il Baricentro Comune, continuo la ricerca
                         if (geo.Lat == geox.Lat && geo.Lon == geox.Lon) geo.Lat = 0;
 
-                        //Provo togliendo l'ultima parte della toponomastica
-                        if ((geo.Lat == 0 || geo.Lon == 0) && Toponomastica.Contains(" "))
+                        //Provo la ricerca con Toponomastica AltroIndirizzo
+                        
+                        string AltroIndirizzo = row["AltroIndirizzo"].ToString().Trim();
+                        string Toponomastica_AltroIndirizzo = AltroIndirizzo.Remove(0, AltroIndirizzo.IndexOf(' ') + 1);
+                        if ((geo.Lat == 0 || geo.Lon == 0) && Toponomastica_AltroIndirizzo.Trim() != "") geo = GeoCode( Toponomastica_AltroIndirizzo, row["Comune"], row["Provincia"], "Altro Indirizzo", row["Cap"]);
+                        //Se con la ricerca Toponomastica_AltroIndirizzo trovo il Baricentro Comune, continuo la ricerca
+                        if (geo.Lat == geox.Lat && geo.Lon == geox.Lon) geo.Lat = 0;
+
+                        //Provo con la ricerca DIRETTA_TOPONOMASTICA, tolgo la prima parte dell'indirizzo (qualunque cosa essa sia) così da prendere solo la toponomastica 
+                        if ((geo.Lat == 0 || geo.Lon == 0))
                         {
-                            Toponomastica = Toponomastica.Substring(0, Toponomastica.LastIndexOf(' '));
-                            geo = GeoCode(row.Id, Toponomastica, row.Comune, row.Provincia, "Senza Numero Civico", row.Cap);
-                            //Se con la ricerca Senza Numero Civico trovo il Baricentro Comune, continuo la ricerca
+                            string Indirizzo = row["Indirizzo"].ToString().Trim();
+                            string Toponomastica = Indirizzo.Remove(0, Indirizzo.IndexOf(' ') + 1);
+                            //Toponomastica = Toponomastica.Substring(0, Toponomastica.LastIndexOf(' '));
+
+                            geo = GeoCode( Toponomastica, row["Comune"], row["Provincia"], "Diretta_Toponomastica", row["Cap"]);
+                            //Se con la ricerca Diretta_Toponomastica trovo il Baricentro Comune, continuo la ricerca
                             if (geo.Lat == geox.Lat && geo.Lon == geox.Lon) geo.Lat = 0;
 
-                            //Provo togliendo un'ulterore prima parte dalla toponomastica
+                            //Provo togliendo l'ultima parte della toponomastica
                             if ((geo.Lat == 0 || geo.Lon == 0) && Toponomastica.Contains(" "))
                             {
-                                Toponomastica = Toponomastica.Remove(0, Toponomastica.IndexOf(' ') + 1);
-                                geo = GeoCode(row.Id, Toponomastica, row.Comune, row.Provincia, "Successiva_Toponomastica", row.Cap);
+                                Toponomastica = Toponomastica.Substring(0, Toponomastica.LastIndexOf(' '));
+                                geo = GeoCode( Toponomastica, row["Comune"], row["Provincia"], "Senza Numero Civico", row["Cap"]);
+                                //Se con la ricerca Senza Numero Civico trovo il Baricentro Comune, continuo la ricerca
+                                if (geo.Lat == geox.Lat && geo.Lon == geox.Lon) geo.Lat = 0;
+
+                                //Provo togliendo un'ulterore prima parte dalla toponomastica
+                                if ((geo.Lat == 0 || geo.Lon == 0) && Toponomastica.Contains(" "))
+                                {
+                                    Toponomastica = Toponomastica.Remove(0, Toponomastica.IndexOf(' ') + 1);
+                                    geo = GeoCode( Toponomastica, row["Comune"], row["Provincia"], "Successiva_Toponomastica", row["Cap"]);
+                                }
                             }
                         }
+                        //Se con la ricerce effettuate trovo il Baricentro Comune, continuo con la ricerca Successiva
+                        if (geo.Lat == geox.Lat && geo.Lon == geox.Lon) geo.Lat = 0;
+                        if ((geo.Lat == 0 || geo.Lon == 0) && row["Indirizzo"].ToString().Contains("DELL' ")) geo = GeoCodeReplace( row["Indirizzo"], row["Comune"], row["Provincia"], "DELL' ", "DELL'", row["Cap"]);
+                        if ((geo.Lat == 0 || geo.Lon == 0) && row["Indirizzo"].ToString().Contains(" I ")) geo = GeoCodeReplace( row["Indirizzo"], row["Comune"], row["Provincia"], " I ", " PRIMO ", row["Cap"]);
+                        if ((geo.Lat == 0 || geo.Lon == 0) && row["Indirizzo"].ToString().Contains(" 8 ")) geo = GeoCodeReplace( row["Indirizzo"], row["Comune"], row["Provincia"], " 8 ", " OTTO ", row["Cap"]);
+
+
+                        if ((geo.Lat == 0 || geo.Lon == 0) && row["Indirizzo"].ToString().Contains("A.")) geo = GeoCodeReplace( row["Indirizzo"], row["Comune"], row["Provincia"], "A.", "", row["Cap"]);
+                        if ((geo.Lat == 0 || geo.Lon == 0) && row["Indirizzo"].ToString().Contains("C.")) geo = GeoCodeReplace( row["Indirizzo"], row["Comune"], row["Provincia"], "C.", "", row["Cap"]);
+                        if ((geo.Lat == 0 || geo.Lon == 0) && row["Indirizzo"].ToString().Contains("E.")) geo = GeoCodeReplace( row["Indirizzo"], row["Comune"], row["Provincia"], "E.", "", row["Cap"]);
+                        if ((geo.Lat == 0 || geo.Lon == 0) && row["Indirizzo"].ToString().Contains("D.")) geo = GeoCodeReplace( row["Indirizzo"], row["Comune"], row["Provincia"], "D.", "", row["Cap"]);
+
+                        if ((geo.Lat == 0 || geo.Lon == 0) && row["Indirizzo"].ToString().Contains("F.LLI")) geo = GeoCodeReplace( row["Indirizzo"], row["Comune"], row["Provincia"], "F.LLI", "FRATELLI", row["Cap"]);
+                        if ((geo.Lat == 0 || geo.Lon == 0) && row["Indirizzo"].ToString().Contains("NAZ.LE")) geo = GeoCodeReplace( row["Indirizzo"], row["Comune"], row["Provincia"], "NAZ.LE", "NAZIONALE", row["Cap"]);
+
+                        //Assegno i valori da Baricentro Comune ad Approx01 se coordinate uguali (se con la ricerca Successiva trovo il Baricentro Comune)
+                        if (geo.Lat == geox.Lat && geo.Lon == geox.Lon) geo = geox;
+
+                        //Se non viene trovato niente in nessun modo assegno i valori da Baricentro Comune
+                        if ((geo.Lat == 0 || geo.Lon == 0)) geo = geox;
+
+                        double Lat = geo.Lat;
+                        double Lon = geo.Lon;
+                        string Approx01= geo.Approx01.ToString();
+                        string Approx02 = geo.Approx02.ToString();
+                        
+
+                   
+                                
+                              
+
+                            
+                        
+
+
+                        
+
+                        foreach (DataRow dataRow in dataTable.Rows)
+                        {
+                            
+                            {
+                                tablerisultati.Rows.Add(geo.Lat, geo.Lon, geo.Approx01, Approx02);
+                            }
+                            //   var Geo_Utente = db.Geo_Utente
+                            //         .Where(x => x.CodiceFiscale == cf).FirstOrDefault();
+                            // dati.IdUtente = Geo_Utente.Id;
+
+                        }
+                        return tablerisultati;
+
+                    
+                        /*   CSVdati cSVdati = new CSVdati();
+                           cSVdati.Lat= geo.Lat.ToString();
+                           cSVdati.Lon = geo.Lon.ToString();
+                           cSVdati.Approx01 = geo.Approx01.ToString();
+                           cSVdati.Approx02 = geo.Approx02.ToString();
+                           db.CSVdati.Add(cSVdati);
+                           db.SaveChanges(); */
+                        //    row["Lat"] = geo.Lat.ToString();
+                        //    row["Lon"] = geo.Lon.ToString();
+                        //    row["Approx01"] = geo.Approx01;
+                        //    row["Approx02"] = geo.Approx02;
+                       
                     }
-                    //Se con la ricerce effettuate trovo il Baricentro Comune, continuo con la ricerca Successiva
-                    if (geo.Lat == geox.Lat && geo.Lon == geox.Lon) geo.Lat = 0;
-                    if ((geo.Lat == 0 || geo.Lon == 0) && row.Indirizzo.Contains("DELL' ")) geo = GeoCodeReplace(row.Id, row.Indirizzo, row.Comune, row.Provincia, "DELL' ", "DELL'", row.Cap);
-                    if ((geo.Lat == 0 || geo.Lon == 0) && row.Indirizzo.Contains(" I ")) geo = GeoCodeReplace(row.Id, row.Indirizzo, row.Comune, row.Provincia, " I ", " PRIMO ", row.Cap);
-                    if ((geo.Lat == 0 || geo.Lon == 0) && row.Indirizzo.Contains(" 8 ")) geo = GeoCodeReplace(row.Id, row.Indirizzo, row.Comune, row.Provincia, " 8 ", " OTTO ", row.Cap);
-
-
-                    if ((geo.Lat == 0 || geo.Lon == 0) && row.Indirizzo.Contains("A.")) geo = GeoCodeReplace(row.Id, row.Indirizzo, row.Comune, row.Provincia, "A.", "", row.Cap);
-                    if ((geo.Lat == 0 || geo.Lon == 0) && row.Indirizzo.Contains("C.")) geo = GeoCodeReplace(row.Id, row.Indirizzo, row.Comune, row.Provincia, "C.", "", row.Cap);
-                    if ((geo.Lat == 0 || geo.Lon == 0) && row.Indirizzo.Contains("E.")) geo = GeoCodeReplace(row.Id, row.Indirizzo, row.Comune, row.Provincia, "E.", "", row.Cap);
-                    if ((geo.Lat == 0 || geo.Lon == 0) && row.Indirizzo.Contains("D.")) geo = GeoCodeReplace(row.Id, row.Indirizzo, row.Comune, row.Provincia, "D.", "", row.Cap);
-
-                    if ((geo.Lat == 0 || geo.Lon == 0) && row.Indirizzo.Contains("F.LLI")) geo = GeoCodeReplace(row.Id, row.Indirizzo, row.Comune, row.Provincia, "F.LLI", "FRATELLI", row.Cap);
-                    if ((geo.Lat == 0 || geo.Lon == 0) && row.Indirizzo.Contains("NAZ.LE")) geo = GeoCodeReplace(row.Id, row.Indirizzo, row.Comune, row.Provincia, "NAZ.LE", "NAZIONALE", row.Cap);
-
-                    //Assegno i valori da Baricentro Comune ad Approx01 se coordinate uguali (se con la ricerca Successiva trovo il Baricentro Comune)
-                    if (geo.Lat == geox.Lat && geo.Lon == geox.Lon) geo = geox;
-
-                    //Se non viene trovato niente in nessun modo assegno i valori da Baricentro Comune
-                    if ((geo.Lat == 0 || geo.Lon == 0)) geo = geox;
-
-                    row.Lat = geo.Lat.ToString();
-                    row.Lon = geo.Lon.ToString();
-                    row.Approx01 = geo.Approx01;
-                    row.Approx02 = geo.Approx02;
+                   
                 }
+
+                
             }
-            db.SaveChanges();
-            return RedirectToAction("Index");
+
+            return null;
+            
         }
 
 
-        public GeoCode GeoCodeReplace(int Id, string Indirizzo, string Comune, string Provincia, string original, string replace, string Cap)
+        public static GeoCode GeoCodeReplace( object Indirizzo, object Comune, object Provincia, string original, string replace, object Cap)
         {
 
-            GeoCode geo = GeoCode(Id, Indirizzo.Replace(original, replace), Comune, Provincia, "Successiva", Cap);
+            GeoCode geo = GeoCode( Indirizzo.ToString().Replace(original, replace), Comune, Provincia, "Successiva", Cap);
 
             return geo;
         }
 
 
-        public GeoCode GeoCode(int Id, string Indirizzo, string Comune, string Provincia, string Approx01, string Cap)
+        public static GeoCode GeoCode( object Indirizzo, object Comune, object Provincia, object Approx01, object Cap)
         {
             dynamic result_json;
-            var Indirizzo_Full = Indirizzo.Trim() + ", " + Comune.Trim() + ", " + Provincia + ", ITALY";
+            string ind = Indirizzo.ToString();
+            string Com = Comune.ToString();
+            var Indirizzo_Full = ind.Trim() + ", " + Com.Trim() + ", " + Provincia + ", ITALY";
 
             string uri = $"http://nominatim.openstreetmap.org/?format=json&addressdetails=1&q=" + Indirizzo_Full + "&limit=1";
 
@@ -439,15 +502,15 @@ namespace PortaleGeoWeb.Controllers
                 town = it.address.town == null ? "" : it.address.town;
                 city = it.address.city == null ? "" : it.address.city;
 
-                if (Approx01 != "Baricentro Comune")
+                if (Approx01.ToString() != "Baricentro Comune")
                 {
-                    if (Postcode != "" & Postcode == Cap) return new GeoCode(Id, lat, lon, Approx01, Approx02, Cap, Village);
-                    if (municipality.ToUpper() != "" & municipality.ToUpper() == Comune.ToUpper()) return new GeoCode(Id, lat, lon, Approx01, Approx02, Cap, Village);
-                    if (town.ToUpper() != "" & town.ToUpper() == Comune.ToUpper()) return new GeoCode(Id, lat, lon, Approx01, Approx02, Cap, Village);
-                    if (Village.ToUpper() != "" & Village.ToUpper() == Comune.ToUpper()) return new GeoCode(Id, lat, lon, Approx01, Approx02, Cap, Village);
-                    if (Village.ToUpper() != "" & Village.ToUpper().Contains(Comune.ToUpper())) return new GeoCode(Id, lat, lon, Approx01, Approx02, Cap, Village);
-                    if (Village.ToUpper() != "" & Village.ToUpper() == Indirizzo.ToUpper()) return new GeoCode(Id, lat, lon, Approx01, Approx02, Cap, Village);
-                    if (city.ToUpper() != "" & city.ToUpper() == Comune.ToUpper()) return new GeoCode(Id, lat, lon, Approx01, Approx02, Cap, Village);
+                    if (Postcode != "" & Postcode == Cap.ToString()) return new GeoCode( lat, lon, Approx01, Approx02, Cap, Village);
+                    if (municipality.ToUpper() != "" & municipality.ToUpper() == Comune.ToString().ToUpper()) return new GeoCode( lat, lon, Approx01, Approx02, Cap, Village);
+                    if (town.ToUpper() != "" & town.ToUpper() == Comune.ToString().ToUpper()) return new GeoCode( lat, lon, Approx01, Approx02, Cap, Village);
+                    if (Village.ToUpper() != "" & Village.ToUpper() == Comune.ToString().ToUpper()) return new GeoCode( lat, lon, Approx01, Approx02, Cap, Village);
+                    if (Village.ToUpper() != "" & Village.ToUpper().Contains(Comune.ToString().ToUpper())) return new GeoCode( lat, lon, Approx01, Approx02, Cap, Village);
+                    if (Village.ToUpper() != "" & Village.ToUpper() == Indirizzo.ToString().ToUpper()) return new GeoCode( lat, lon, Approx01, Approx02, Cap, Village);
+                    if (city.ToUpper() != "" & city.ToUpper() == Comune.ToString().ToUpper()) return new GeoCode( lat, lon, Approx01, Approx02, Cap, Village);
                     //if (display_name != "" & display_name.ToUpper().Contains(Comune.ToUpper())) return new GeoCode(Id, lat, lon, Approx01, Approx02, Cap, Village);
 
                     // se non è verificata nessuna delle condizioni precedenti annullo lat/lon
@@ -458,14 +521,16 @@ namespace PortaleGeoWeb.Controllers
 
             }
 
-            return new GeoCode(Id, lat, lon, Approx01, Approx02, Cap, Village);
+            return new GeoCode( lat, lon, Approx01, Approx02, Cap, Village);
         }
 
 
-        public GeoCode GeoCode_Google(int Id, string Indirizzo, string Comune, string Provincia, string Approx01, string Cap, string apiKey)
+        public static GeoCode GeoCode_Google( object Indirizzo, object Comune, object Provincia, object Approx01, object Cap, object apiKey)
         {
-
-            var Indirizzo_Full = Indirizzo.Trim() + ", " + Comune.Trim() + ", " + Provincia + ", ITALY";
+            string Ind = Indirizzo.ToString();
+            string Com = Comune.ToString();
+           
+            var Indirizzo_Full = Ind.Trim() + ", " + Com.Trim() + ", " + Provincia + ", ITALY";
             string requestUri = string.Format("https://maps.googleapis.com/maps/api/geocode/xml?key={1}&address={0}&sensor=false", Uri.EscapeDataString(Indirizzo_Full), apiKey);
 
             WebRequest request = WebRequest.Create(requestUri);
@@ -499,24 +564,24 @@ namespace PortaleGeoWeb.Controllers
 
                 }
 
-                if (comune_google.Trim().ToUpper() == Comune.Trim().ToUpper())
+                if (comune_google.Trim().ToUpper() == Com.Trim().ToUpper())
                 {
                     double lat_d = (double)lat;
                     double lon_d = (double)lon;
                     string location_type_s = (string)location_type.Value;
 
-                    return new GeoCode(Id, lat_d, lon_d, Approx01, location_type_s, Cap, "");
+                    return new GeoCode(lat_d, lon_d, Approx01, location_type_s, Cap, "");
                 }
                 else
                 {
-                    return new GeoCode(Id, 0, 0, Approx01, "NOT FOUND", Cap, "");
+                    return new GeoCode(0, 0, Approx01, "NOT FOUND", Cap, "");
 
                 }
 
             }
             catch (Exception ex)
             {
-                return new GeoCode(Id, 0, 0, Approx01, "NOT FOUND", Cap, "");
+                return new GeoCode( 0, 0, Approx01, "NOT FOUND", Cap, "");
 
             }
 

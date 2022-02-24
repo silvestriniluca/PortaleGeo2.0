@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PortaleGeoWeb.Models
+namespace NuovoPortaleGeo.Models
 {
     public class DataDescriptor
     {

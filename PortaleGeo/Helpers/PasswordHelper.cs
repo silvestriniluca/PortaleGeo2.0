@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 
-namespace PortaleGeoWeb.Helpers
+namespace NuovoPortaleGeo.Helpers
 {
     public class PasswordHelper
     {

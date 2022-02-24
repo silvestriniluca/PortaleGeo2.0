@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PortaleGeoWeb.Models
+namespace NuovoPortaleGeo.Models
 {
     using System;
     using System.Data.Entity;
@@ -28,14 +28,13 @@ namespace PortaleGeoWeb.Models
         public virtual DbSet<AspNetUserClaims> AspNetUserClaims { get; set; }
         public virtual DbSet<AspNetUserLogins> AspNetUserLogins { get; set; }
         public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
-        public virtual DbSet<Geo_Ente> Geo_Ente { get; set; }
-        public virtual DbSet<Geo_Fornitore> Geo_Fornitore { get; set; }
-        public virtual DbSet<Geo_Ruolo> Geo_Ruolo { get; set; }
         public virtual DbSet<Geo_Utente> Geo_Utente { get; set; }
-        public virtual DbSet<Geo_UtenteRuolo> Geo_UtenteRuolo { get; set; }
-        public virtual DbSet<Geo_Attività> Geo_Attività { get; set; }
         public virtual DbSet<AspNetRoles> AspNetRoles { get; set; }
         public virtual DbSet<OpenStreetMapCSV> OpenStreetMapCSV { get; set; }
         public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
+        public virtual DbSet<Geo_Attività> Geo_Attività { get; set; }
+        public virtual DbSet<Geo_Ruolo> Geo_Ruolo { get; set; }
+        public virtual DbSet<Geo_UtenteRuolo> Geo_UtenteRuolo { get; set; }
+        public virtual DbSet<CSVdati> CSVdati { get; set; }
     }
 }

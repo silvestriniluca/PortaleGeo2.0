@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PortaleGeoWeb.Models
+namespace NuovoPortaleGeo.Models
 {
     using System;
     using System.Collections.Generic;
@@ -15,12 +15,13 @@ namespace PortaleGeoWeb.Models
     public partial class Geo_Attività
     {
         public int IdGeo { get; set; }
-        public string Autore { get; set; }
+        public string Utente { get; set; }
         public string DescrizioneFile { get; set; }
         public string PathFile { get; set; }
         public Nullable<bool> Here { get; set; }
         public Nullable<bool> OpenStreetMap { get; set; }
-        public string Id_Autore { get; set; }
+        public string Id_Utente { get; set; }
+        public Nullable<System.DateTime> DataAttività { get; set; }
     
         public virtual Geo_Utente Geo_Utente { get; set; }
     }

@@ -1,10 +1,13 @@
-﻿@model System.Data.DataTable
+﻿@model NuovoPortaleGeo.ViewModels.VmUpload
+
+
+
 @using System.Data;
 @{
     ViewBag.Title = "Upload";
 }
 
-<h2>Visualizzazione file CSV da Geocodificare</h2>
+<h2>Caricamento File CSV</h2>
 
 
 <style>
@@ -33,88 +36,340 @@
             text-align: left;
             background-color: #ff6600;
             color: white;
-     
         }
 </style>
 
-@using (Html.BeginForm("Upload", "Home", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm(Html.BeginForm("Upload", "Home", null, FormMethod.Post, new { enctype = "multipart/form-data" })))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary()
+
+    <div class="row">
+        <div class="form-control">
+            @Html.LabelFor(model => model.IdUtente, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.IdUtente, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                @Html.ValidationMessageFor(model => model.IdUtente, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.DescrizioneFile, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.DescrizioneFile, new { htmlAttributes = new { @class = "form-control", @required = "required", @id = "DescrizioneFile" } })
+                @Html.ValidationMessageFor(model => model.DescrizioneFile, "", new { @class = "text-danger" })
+            </div>
+
+        </div>
+    </div>
+
     <div>
-        @Html.TextBox("upload", "", new { @class = "form-control", @type = "file", @id = "dataFile", @accept = ".csv" })
+        @Html.TextBox("upload", "", new { @class = "form-control", @type = "file", @id = "upload", @name = "upload", @accept = ".csv" })
         <br />
     </div>
     <div class="row">
         <div class="col-sm-1">
-            <input type="submit" value="Upload" class="btn btn-dark" id="upload" />
+            <input type="submit" value="upload" class="btn btn-dark" id="upload" name="upload" />
         </div>
-        <div class="col-md-2" id="loading"  >
-            <p><strong>Loading ...</strong> </p>
-            @*  <img src="~/Images/loading.jpg" alt="" loading="lazy"  height="50" class="rounded-circle" />*@
+
+        @* <div class="col-md-2" id="loading">
+                <p><strong>Loading ...</strong> </p>
+
+            </div>*@
+        <div class="col-sm-2">
+            <input type="submit" value="SvuotaTabella" class="btn btn-success" id="Delete" />
         </div>
+        <div class="col-sm-5">
+            <label title="Attiva Geo">
+                Attiva Georeferenzazione
+                <input type="checkbox" id="CheckGeo" />
+            </label>
+        </div>
+
+        <br />
+        <br />
+        <br />
+
+        @*  <div id="selezione" style="display:none">
+                    <p>Seleziona Sistema di Georeferenzazione:</p>
+
+                    <div>
+                        <input type="radio" id="OpenStreetMap" name="drone" value="OpenStreetMap">
+                        <label for="OpenStreetMap">OpenStreetMap</label>
+                    </div>
+
+                    <div>
+                        <input type="radio" id="dewey" name="drone" value="Here">
+                        <label for="Here">Here</label>
+                    </div>
+                </div>
+            </div>*@
+
+    <div class="col-md" id="seleziona" style="display:none">
+
+       
+        <h4>@Html.Label("Seleziona Sistema (attiva solamente un sistema alla volta):", htmlAttributes: new { @class = "control-label col-md-5" })</h4>
+        @Html.Label("Here:", htmlAttributes: new { @class = "control-label col-md-5" })
+        @Html.DropDownListFor(model => model.Here, new List<SelectListItem>()
+ {
+    new SelectListItem() { Text = "NON ATTIVO", Value = "False"},
+    new SelectListItem() { Text = "ATTIVA", Value = "True" }
+
+ }, new { @id = "Here", @class = "form-control" })
+
+        @Html.ValidationMessageFor(model => model.Here)
+
+        @Html.Label("OpenStreetMap:", htmlAttributes: new { @class = "control-label col-md-5" })
+        @Html.DropDownListFor(model => model.OpenStreetMap, new List<SelectListItem>()
+  {
+     new SelectListItem() { Text = "NON ATTIVO", Value = "False"},
+     new SelectListItem() { Text = "ATTIVA", Value = "True" }
+
+ }, new { @id = "OpenStreetMap", @class = "form-control" })
+
+        @Html.ValidationMessageFor(model => model.OpenStreetMap)
+
+        @Html.Label("Google:", htmlAttributes: new { @class = "control-label col-md-5" })
+        @Html.DropDownListFor(model => model.Google, new List<SelectListItem>()
+   {
+      new SelectListItem() { Text = "NON ATTIVO", Value = "False"},
+      new SelectListItem() { Text = "ATTIVA", Value = "True" }
+
+ }, new { @id = "Google", @class = "form-control" })
+       @Html.ValidationMessageFor(model => model.Google)
+      
     </div>
-  
+    </div>
 
-   <style>
-       #loading{
-           transform: translate(30%);
-           color: darkorange;
-       }
-   </style>
+
+
+    <style>
+        #loading {
+            transform: translate(30%);
+            color: darkorange;
+        }
+
+        #table-wrapper {
+            position: relative;
+        }
+
+        #table-scroll {
+            height: 800px;
+            overflow: auto;
+            margin-top: 20px;
+        }
+
+        #table-wrapper table {
+            width: 100%;
+        }
+
+            #table-wrapper table thead th .text {
+                position: absolute;
+                top: -20px;
+                z-index: 2;
+                height: 20px;
+                width: 35%;
+                border: 1px solid red;
+            }
+    </style>
 
     <br />
     <br />
 
 
+    int count = 0;
 
     if (Model != null)
     {
-        <table id="DatiCsv" data-page-length='25'>
-            <thead>
-                <tr>
-                    @foreach (DataColumn col in Model.Columns)
-                    {
-                        <th>@col.ColumnName</th>
-                    }
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (DataRow row in Model.Rows)
-                {
-                    <tr>
-                        @foreach (DataColumn col in Model.Columns)
+        <div id="table-wrapper">
+            <div id="table-scroll">
+                <table id="DatiCsv" data-page-length='25'>
+                    <thead>
+                        <tr>
+                            @foreach (DataColumn col in Model.Columns)
+                            {
+
+
+                                <th>@col.ColumnName</th>
+
+
+
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (DataRow row in Model.Rows)
                         {
-                            <td>@row[col.ColumnName]</td>
+                            if (count < 100)
+                            {
+
+
+                                <tr>
+                                    @foreach (DataColumn col in Model.Columns)
+                                    {
+
+                                        <td>@row[col.ColumnName]</td>
+
+
+                                    }
+                                </tr>
+                                count++;
+                            }
                         }
-                    </tr>
-                }
-            </tbody>
-        </table>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     }
+
+
 }
-
-
 
 <!-- skipped -->
 
 
 <hr />
-
+@* $('document').hide().ready(function () {
+    $('#loading').hide().ajaxStart(function () {
+        $(this).show();
+    })
+        .ajaxStop(function () {
+            $(this).hide();
+        });*@
 
 @section scripts{
     <script>
-        $('document').hide().ready(function () {
-            $('#loading').hide().ajaxStart(function () {
-                $(this).show();
-            })
-                .ajaxStop(function () {
-                    $(this).hide();
-                });
-         
+
+       
+                const checkbox = document.getElementById('CheckGeo')           
+                            checkbox.addEventListener('change', (event) => {
+                                if (event.currentTarget.checked) {
+                                    $('#seleziona').show();
+                                } else {
+                                    $('#seleziona').hide();
+                                    $("#Here").val(false);
+                                    $("#OpenStreetMap").val(false);
+                                    $("#Google").val(false);
+                                }
+                            });
+        const dropdownlist = document.getElementById('OpenStreetMap')
+
+        dropdownlist.addEventListener('change',(event) => {
+            var selectedVal = $(this).find(':selected').val();
+            var selectedText = $(this).find(':selected').text();
+            var Open = $("#OpenStreetMap").val();
+            console.log(Open);
+
+            if (Open =="True") {
+                $('#Here').prop("disabled", true);
+                $('#Google').prop("disabled", true)
+                console.log("disattivati");
+            }
+            else if (Open == "False") {
+                $('#Here').removeAttr("disabled");
+                $('#Google').removeAttr("disabled");
+                console.log("attivati");
+            }
         });
 
-        $("#DatiCsv").DataTable({
+        $("#Google").change(function () {
+            var selectedVal = $(this).find(':selected').val();
+            var selectedText = $(this).find(':selected').text();
+           
+
+            if (selectedText == "ATTIVA") {
+                $('#OpenStreetMap').prop("disabled", true);
+                $('#Here').prop("disabled", true);
+            }
+              else
+            {
+                $('#OpenStreetMap').prop("disabled", false);
+                $('#Here').prop("disabled", false);
+            }
+        });
+
+        $("#Here").change(function () {
+            var selectedVal = $(this).find(':selected').val();
+            var selectedText = $(this).find(':selected').text();
+            
+            if (selectedText == "ATTIVA") {
+                $('#OpenStreetMap').prop("disabled", true);
+                $('#Google').prop("disabled", true);
+            }
+              else
+            {
+                $('#OpenStreetMap').prop("disabled", false);
+                $('#Google').prop("disabled", false);
+            }
+        });
+
+        @*        $(document).on("click", "#upload", function () {
+
+                    const checkbox = document.getElementById('CheckGeo')
+
+                    checkbox.addEventListener('change', (event) => {
+                        if (event.currentTarget.checked) {
+                            var sistema_geo = "0";
+                        } else {
+                            var sistema_geo = $('#SistemaDiGeoreferenzazione').val();
+                        }
+              console.log($('#SistemaDiGeoreferenzazione').val());
+
+
+
+                $.ajax({
+                    dataType: "json",
+                    type: "POST",
+                    url: '@Url.Action("Upload","Home")',
+                    data: { 'SistemaAttivo': sistema_geo },
+                    success: function (data) {
+                 @*       if (data.code === 1) {
+
+                            window.location.href = '@Url.Action("Index","OpenStreetMap")';
+                        } else if (data.code === 2) {
+
+                            window.location.href = '@Url.Action("Index","SistemaHere")';
+                        }
+                        else {
+
+                            window.location.href = '@Url.Action("Index","Google")';
+                        }
+                    }
+                });
+            });
+                });
+        *@
+
+        @*     $(document).on("click", "#upload", function () {
+            if (checkbox.checked || $('#OpenStreetMap').checked) {
+                window.location.href = '@Url.Action("Index","OpenStreetMap")';
+            }
+            else if (checkbox.checked || $('#Here').checked)
+            {
+                window.location.href = '@Url.Action("Index","Here")';
+            }
+              if (checkbox.checked || $('#OpenStreetMap').checked) {
+                        alert("Openstreetmap");
+
+                    } else if (checkbox.checked || $('#Here').checked) {
+                        alert("Here");
+
+        });*@
+
+                    var table = $('#DatiCSV').dataTable();
+                    $('#Delete').click(function () {
+                        table.destroy();
+                        $("#DescrizioneFile").value = "";
+                    });
+
+
+
+
+
+
+
+
+
+     @*   $("#DatiCsv").DataTable({
             language: {
                 url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Italian.json'
             },
@@ -123,6 +378,7 @@
             scrollY: 400,
             dom: 'Bfrtip',
             buttons: [
+
                 'excel',
                 {
                     text: 'JSON',
@@ -139,12 +395,8 @@
 
 
         });
-
+    *@
 
 
     </script>
 }
-
-
-
-

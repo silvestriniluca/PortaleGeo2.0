@@ -3,7 +3,7 @@ using Quartz.Impl;
 using System;
 using System.Configuration;
 
-namespace PortaleGeoWeb.Models
+namespace NuovoPortaleGeo.Models
 {
     public class ExecuteTaskServiceCallScheduler
     {

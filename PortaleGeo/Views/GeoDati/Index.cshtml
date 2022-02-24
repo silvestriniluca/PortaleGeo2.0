@@ -1,0 +1,221 @@
+﻿@model PagedList.IPagedList<NuovoPortaleGeo.Models.CSVdati>
+@using PagedList.Mvc
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Dati Georeferenziati</h2>
+<style>
+    thead {
+        background-color: orange;
+    }
+
+    table {
+        font-family: Arial, Helvetica, sans-serif;
+       @* border-collapse: collapse;*@
+        width: 100%;
+    }
+
+        table td, #customers th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        table tr:hover {
+            background-color: #ddd;
+        }
+
+        table th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: orange;
+            color: white;
+        }
+
+    #table-wrapper {
+        position: relative;
+    }
+
+    #table-scroll {
+        height: 800px;
+        overflow: auto;
+        margin-top: 20px;
+    }
+
+    #table-wrapper table {
+        width: 100%;
+    }
+
+        #table-wrapper table thead th .text {
+            position: absolute;
+            top: -20px;
+            z-index: 2;
+            height: 20px;
+            width: 35%;
+            border: 1px solid red;
+        }
+        #filter{
+            display:block;
+        }
+        .fa-pen-square
+        {
+            color:orange;
+        }
+        .fa-search
+        {
+            color:forestgreen;
+
+        }
+         .fa-trash-alt
+         {
+             color:red;
+         }
+       
+
+</style>
+
+<strong>@Html.ActionLink("Crea Nuovo", "Create", new { @class = "MenuButtons" })</strong>
+<br />
+<br />
+
+@using(Html.BeginForm())
+            {
+
+         
+<div id="filter" visible="true" style="display:block" >
+    <div class="input-group mb-3">
+        <div class="row mb-4">
+
+            <div class="col-md-4">
+                Provincia
+                @Html.TextBox("Provincia", ViewBag.Provincia as SelectList, "", new { @class = "form-control" })
+            </div>
+
+            <div class="col-md-4">
+                Comune
+                @Html.TextBox("Comune", ViewBag.CurrentComune as SelectList, "", new { @class = "form-control" })
+            </div>
+            <div class="col-md-4">
+                Indirizzo
+                @Html.TextBox("Indirizzo", ViewBag.Indirizzo as SelectList, "", new { @class = "form-control" })
+            </div>
+
+            <br />
+            <br />
+            <br />
+            <div class="col-md-3 mt-3">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">
+                        <i class="fas fa-search" aria-label="Cerca"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+
+<div id="table-wrapper">
+    <div id="table-scroll">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                       DescrizioneFile
+                    </th>
+                    <th>
+                        Provincia
+                    </th>
+                    <th>
+                        Comune
+                    </th>
+                    <th>
+                        Indirizzo 
+                    </th>
+                    <th>
+                        Descrizione
+                    </th>
+                    
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DescrizioneFile)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Provincia)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Comune)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Indirizzo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Descrizione)
+                        </td>
+                        
+                        <td>
+                            <a class="btn btn-sm btn-outline-secondary mb-1" aria-label="Dettagli"
+                               href=" @Url.Action("Edit", new { id = item.Id }) ">
+                                <i class="fas fa-pen-square"></i>
+                            </a>
+                            <a class="btn btn-sm btn-outline-secondary mb-1" aria-label="Dettagli"
+                               href="@Url.Action("Details", new { id = item.Id })">
+                                <i class="fas fa-search"></i>
+                            </a>
+                            <a  class="btn btn-sm btn-outline-secondary mb-1" aria-label="Dettagli"
+                               href="@Url.Action("Delete", new { id = item.Id })">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                         
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+
+    @Html.PagedListPager(Model, page => Url.Action("Index",
+    new
+    {
+            page,
+            Provincia = ViewBag.CurrentProvincia,
+             Comune = ViewBag.CurrentComune,
+             Indirizzo = ViewBag.CurrentIndirizzo,
+            DescrizioneFile = ViewBag.CurrentDescrizioneFile,
+
+    }))
+
+
+@section Scripts
+{
+    <script>
+
+        filter_elements();
+
+        function filter_elements() {
+            var x = document.getElementById("filter");
+            
+        }
+
+
+     
+
+    </script>
+}

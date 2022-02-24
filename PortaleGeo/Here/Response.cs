@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 
-namespace PortaleGeoWeb.message
+namespace NuovoPortaleGeo.message
 {
     using System;
     using System.Collections.Generic;

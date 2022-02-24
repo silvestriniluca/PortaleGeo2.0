@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using PortaleGeoWeb.Models;
+using NuovoPortaleGeo.Models;
 using System.ComponentModel.DataAnnotations;
 
 
-namespace PortaleGeoWeb.ViewModels
+namespace NuovoPortaleGeo.ViewModels
 {
     public class VmRuolo
     {

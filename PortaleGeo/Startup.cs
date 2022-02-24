@@ -1,8 +1,8 @@
 ﻿using Microsoft.Owin;
 using Owin;
 
-[assembly: OwinStartupAttribute(typeof(PortaleGeoWeb.Startup))]
-namespace PortaleGeoWeb
+[assembly: OwinStartupAttribute(typeof(NuovoPortaleGeo.Startup))]
+namespace NuovoPortaleGeo
 {
     public partial class Startup
     {

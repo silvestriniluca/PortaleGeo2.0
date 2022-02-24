@@ -4,9 +4,9 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace PortaleGeoWeb.Controllers
+namespace NuovoPortaleGeo.Controllers
 {
-    [Authorize(Roles = "Administrators,EnteLocale,Fornitore")]
+    [Authorize(Roles = "Amministratore,Utente,Consultatore")]
     public class GoogleController : Controller
     {
         // GET: Google

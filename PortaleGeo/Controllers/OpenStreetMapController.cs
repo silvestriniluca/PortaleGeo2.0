@@ -290,7 +290,7 @@ namespace NuovoPortaleGeo.Controllers
 
         //GeoCodeRow
 
-        public static DataTable  GeoCodeRow(string path, string name, string cf, DataTable dataTable, DataTable tablerisultati)
+        public static DataTable  GeoCodeRow(string path, string name, string cf, DataTable dataTable, DataTable tablerisultati,string FileName, string Path)
         {
 
             //devo mettere la tabella
@@ -305,7 +305,7 @@ namespace NuovoPortaleGeo.Controllers
                 var Geo_Utente = db.Geo_Utente
                         .Where(x => x.CodiceFiscale == cf).FirstOrDefault();
 
-                HomeController.GetAttività(Geo_Utente.Id, Geo_Utente.UserName, Nomepercorso, Percorso, true, false);
+                HomeController.GetAttività(Geo_Utente.Id, Geo_Utente.UserName, FileName, Path, true, false);
                 
                 tablerisultati.Columns.Add(new DataColumn("Lat"));
                 tablerisultati.Columns.Add(new DataColumn("Lon"));

@@ -1,0 +1,6 @@
+﻿CREATE TABLE [dbo].[Geo_Ruolo] (
+    [Id]   NVARCHAR (50) NOT NULL,
+    [Name] NVARCHAR (20) NULL,
+    CONSTRAINT [PK__Geo_Ruol__3214EC07BE2B7E9C] PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+

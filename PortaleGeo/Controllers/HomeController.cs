@@ -194,7 +194,7 @@ namespace NuovoPortaleGeo
                         dt.Load(dr);
                         if (dati.OpenStreetMap is true)
                         {
-                            OpenStreetMapController.GeoCodeRow(path, _FileName, cf, dt, tablerisultati);
+                            OpenStreetMapController.GeoCodeRow(path, _FileName, cf, dt, tablerisultati,_FileName,path);
 
                             var dtdatabase = new DataTable();
                             dtdatabase.Columns.Add("IdUtente");
@@ -240,7 +240,6 @@ namespace NuovoPortaleGeo
                                 foreach (DataRow row1 in tablerisultati.Rows)
                             {
 
-                              
                                     foreach (DataRow row in dt.Rows)
                                     {
                                   
@@ -248,7 +247,7 @@ namespace NuovoPortaleGeo
                                                 row1["Lon"], row1["Approx01"], row1["Approx02"]);
                                     }
                                     
-                                }
+                             }
                             
                             //string connectionString = @"Data Source=SQL2016CLUST01\MSSQLSERV_C;Initial Catalog=IntraGeoRef;User Id=ut_IntraGeoRef;Password=K1-u9_b745P;";
                             SqlConnection connectionstring = new SqlConnection(@"Data Source=sql2016listen_c, 1733;Initial Catalog=IntraGeoRef;Integrated Security=True");
@@ -265,16 +264,13 @@ namespace NuovoPortaleGeo
                     }
 
 
-                    //   catch (Exception ex)
-                    // {
-                    //   return Json(new { Status = 0, Message = ex.Message });
-                    //}
+                 
                 }
 
                 else
                 {
                     ModelState.AddModelError("File", "This file format is not supported");
-                    //    return Json(new { Message = "File non supportato correttamente" });
+                  
                     return View();
                 }
             }
@@ -285,14 +281,7 @@ namespace NuovoPortaleGeo
             return View();
         }
     
-//                return Json(new { Status = 1, Message = "File Importato con Successo " });
-  //          }
-    //    }
-            // return Json(new { Message = "File non caricato" });
-            
-    
 
-       //     Json(new { Status = 1, Message = "File Importato con Successo " });
 
      
 

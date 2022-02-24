@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortaleGeo2.0", "PortaleGeo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{05FC27BA-FEAC-455C-B457-74619311CB9D}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "GeoCodeIntra", "..\GeoCodeIntra\GeoCodeIntra.sqlproj", "{739B9B7F-0E7B-406A-A348-B94F40079BD3}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "GeoCodeIntra", "GeoCodeIntra\GeoCodeIntra.sqlproj", "{739B9B7F-0E7B-406A-A348-B94F40079BD3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

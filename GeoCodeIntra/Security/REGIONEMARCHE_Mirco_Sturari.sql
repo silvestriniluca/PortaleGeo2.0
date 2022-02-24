@@ -1,0 +1,2 @@
+﻿CREATE USER [REGIONEMARCHE\Mirco_Sturari] FOR LOGIN [REGIONEMARCHE\Mirco_Sturari];
+

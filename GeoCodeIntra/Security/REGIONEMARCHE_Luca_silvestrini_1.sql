@@ -1,0 +1,3 @@
+﻿CREATE LOGIN [REGIONEMARCHE\Luca_silvestrini]
+    FROM WINDOWS WITH DEFAULT_LANGUAGE = [us_english];
+

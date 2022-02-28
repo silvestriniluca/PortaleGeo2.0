@@ -45,13 +45,27 @@
     @Html.ValidationSummary()
 
     <div class="row">
-        <div class="form-control">
-            @Html.LabelFor(model => model.IdUtente, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.IdUtente, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                @Html.ValidationMessageFor(model => model.IdUtente, "", new { @class = "text-danger" })
+        @* <div class="form-control">
+                @Html.LabelFor(model => model.IdUtente, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.IdUtente, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                    @Html.ValidationMessageFor(model => model.IdUtente, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        *@
+
+    </div>
+
+    <div>
+        <div class="row">
+            <div class="col-sm-3">
+                @Html.TextBox("upload", "", new { @class = "form-control", @type = "file", @id = "upload", @name = "upload", @accept = ".csv" })
+            </div>
+            <div class="col-sm-1">
+                <img src="~/Images/download.png" class="rounded-circle" id="conferma" height="25" style="display:none" />
             </div>
         </div>
+        <br />
         <div class="form-group">
             @Html.LabelFor(model => model.DescrizioneFile, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -62,28 +76,21 @@
         </div>
     </div>
 
-    <div>
-        @Html.TextBox("upload", "", new { @class = "form-control", @type = "file", @id = "upload", @name = "upload", @accept = ".csv" })
-        <br />
+    <br />
+
+
+
+
+
+
+    <div class="col-sm-5">
+        <label title="Attiva Geo">
+            Attiva Georeferenzazione
+            <input type="checkbox" id="CheckGeo" />
+        </label>
     </div>
     <div class="row">
-        <div class="col-sm-1">
-            <input type="submit" value="upload" class="btn btn-dark" id="upload" name="upload" />
-        </div>
 
-        @* <div class="col-md-2" id="loading">
-                <p><strong>Loading ...</strong> </p>
-
-            </div>*@
-        <div class="col-sm-2">
-            <input type="submit" value="SvuotaTabella" class="btn btn-success" id="Delete" />
-        </div>
-        <div class="col-sm-5">
-            <label title="Attiva Geo">
-                Attiva Georeferenzazione
-                <input type="checkbox" id="CheckGeo" />
-            </label>
-        </div>
 
         <br />
         <br />
@@ -104,41 +111,94 @@
                 </div>
             </div>*@
 
-    <div class="col-md" id="seleziona" style="display:none">
+        <div class="col-md" id="seleziona" style="display:none">
 
-       
-        <h4>@Html.Label("Seleziona Sistema (attiva solamente un sistema alla volta):", htmlAttributes: new { @class = "control-label col-md-5" })</h4>
-        @Html.Label("Here:", htmlAttributes: new { @class = "control-label col-md-5" })
-        @Html.DropDownListFor(model => model.Here, new List<SelectListItem>()
- {
-    new SelectListItem() { Text = "NON ATTIVO", Value = "False"},
-    new SelectListItem() { Text = "ATTIVA", Value = "True" }
 
- }, new { @id = "Here", @class = "form-control" })
+            <h4>@Html.Label("Seleziona Sistema:", htmlAttributes: new { @class = "control-label col-md-5" })</h4>
+            @Html.Label("Here:", htmlAttributes: new { @class = "control-label col-md-5" })
+            @Html.DropDownListFor(model => model.Here, new List<SelectListItem>()
+     {
+        new SelectListItem() { Text = "NON ATTIVO", Value = "False"},
+        new SelectListItem() { Text = "ATTIVA", Value = "True" }
 
-        @Html.ValidationMessageFor(model => model.Here)
+     }, new { @id = "Here", @class = "form-control" })
 
-        @Html.Label("OpenStreetMap:", htmlAttributes: new { @class = "control-label col-md-5" })
-        @Html.DropDownListFor(model => model.OpenStreetMap, new List<SelectListItem>()
-  {
-     new SelectListItem() { Text = "NON ATTIVO", Value = "False"},
-     new SelectListItem() { Text = "ATTIVA", Value = "True" }
+            @Html.ValidationMessageFor(model => model.Here)
 
- }, new { @id = "OpenStreetMap", @class = "form-control" })
+            @Html.Label("OpenStreetMap:", htmlAttributes: new { @class = "control-label col-md-5" })
+            @Html.DropDownListFor(model => model.OpenStreetMap, new List<SelectListItem>()
+      {
+         new SelectListItem() { Text = "NON ATTIVO", Value = "False"},
+         new SelectListItem() { Text = "ATTIVA", Value = "True" }
 
-        @Html.ValidationMessageFor(model => model.OpenStreetMap)
+     }, new { @id = "OpenStreetMap", @class = "form-control" })
 
-        @Html.Label("Google:", htmlAttributes: new { @class = "control-label col-md-5" })
-        @Html.DropDownListFor(model => model.Google, new List<SelectListItem>()
-   {
-      new SelectListItem() { Text = "NON ATTIVO", Value = "False"},
-      new SelectListItem() { Text = "ATTIVA", Value = "True" }
+            @Html.ValidationMessageFor(model => model.OpenStreetMap)
 
- }, new { @id = "Google", @class = "form-control" })
-       @Html.ValidationMessageFor(model => model.Google)
-      
+            @Html.Label("Google:", htmlAttributes: new { @class = "control-label col-md-5" })
+            @Html.DropDownListFor(model => model.Google, new List<SelectListItem>()
+       {
+          new SelectListItem() { Text = "NON ATTIVO", Value = "False"},
+          new SelectListItem() { Text = "ATTIVA", Value = "True" }
+
+     }, new { @id = "Google", @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Google)
+
+        </div>
+
     </div>
+    <br />
+    <div class="row">
+        <div class="col-sm-1">
+            <input type="submit" value="upload" class="btn btn-dark" id="Carica" name="upload" />
+        </div>
+        <div class="col-sm-1">
+            <input type="submit" value="Anteprima" class="btn btn-success" id="Carica" name="upload" />
+        </div>
+        <br />
+        <br />
+        <div class="input-container" style="display:none" id="divdelete">
+            <i class="fas fa-trash-alt"></i>
+            <input type="submit" value="SvuotaTabella" class="btn btn-outline-danger" id="delete" />
+        </div>
+
+        <div class="input-container" id="divExport">
+            <div class="form-group">
+                @Html.LabelFor(model => model.DescrizioneFile, "File da Esportare", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(m=>m.DescrizioneFile, ViewBag.DescrizioneFile2 as SelectList,"", htmlAttributes: new { @class = "form-control" , @required = "required" })
+                    @Html.ValidationMessageFor(m => m.DescrizioneFile, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <a href="@Url.Action("Estrai", "Home")" class="btn btn-success" id="esporta">
+                <i class="fas fa-download"></i> Estrai
+            </a>
+        </div>
+
     </div>
+    <div>
+        Seleziona colonne corrispondenti a questi campi:
+    </div>
+    <div class="row">
+        <ul>
+            <li>Provincia:</li>
+            @* @Html.DropDownList("Provincia", ViewBag.Provincia as SelectList, "", htmlAttributes: new { @class = "form-control", @id = "Provincia" })*@
+            <li>Comune:</li> @*  @Html.DropDownList("Comune", ViewBag.Comune as SelectList, "", htmlAttributes: new { @class = "form-control", @id = "Comune" })*@
+            <li>Indirizzo:</li>
+            @* @Html.DropDownList("Indirizzo", ViewBag.Indirizzo as SelectList, "", htmlAttributes: new { @class = "form-control", @id = "Indirizzo" })*@
+            <li>Cap:</li>
+            @* @Html.DropDownList("Cap", ViewBag.Cap as SelectList, "", htmlAttributes: new { @class = "form-control", @id = "Cap" })*@
+            <li>AltroIndirizzo:</li>
+            @* @Html.DropDownList("AltroIndirizzo", ViewBag.AltroIndirizzo as SelectList, "", htmlAttributes: new { @class = "form-control", @id = "AltroIndirizzo" })*@
+            <li>N_Civico:</li>
+            @* @Html.DropDownList("N_Civico", ViewBag.N_Civico as SelectList, "", htmlAttributes: new { @class = "form-control", @id = "N_Civico" })*@
+        </ul>
+    </div>
+
+
+
+
+
 
 
 
@@ -177,9 +237,9 @@
 
 
     int count = 0;
-
     if (Model != null)
     {
+
         <div id="table-wrapper">
             <div id="table-scroll">
                 <table id="DatiCsv" data-page-length='25'>
@@ -238,9 +298,91 @@
 
 @section scripts{
     <script>
+        $(document).ready(function () {
 
-       
-                const checkbox = document.getElementById('CheckGeo')           
+            $('#DescrizioneFile').prop("disabled", true);
+            $("#upload").change(function () {
+                for (var i = 0; i < localStorage.length; i++) {
+                    $("#Provincia").append(new Option(localStorage.key(i)));
+                }
+                $('#conferma').show();
+                $('#DescrizioneFile').prop("disabled", false);
+                var file = $("#upload").val();
+                var lunghezza = file.length;
+                console.log(lunghezza);
+                var filecorretto = file.substring(12, lunghezza);
+                console.log(file);
+                $('#DescrizioneFile').val(filecorretto);
+            });
+
+        //chiamata ajax per caricare colonne nelle dropdownlist
+            $("#Carica").click(function () {
+                    jQuery.ajax({
+                                                //definisco il tipo della chiamata
+                                                type: "POST",
+                                                // specifico la URL della risorsa da contattare
+                                                url: '@Url.Action("readcolumn", "Home")',
+                                                // passo dei dati alla risorsa remota
+                                                dataType: "json",
+                                                //    contentType: 'application/json; charset=utf-8',
+                                                // imposto un'azione per il caso di successo
+                                                success: function (data) {
+                                                // Salvo i dati geocodificata nel browser
+                                                    const myArray = [];
+                                                    var i = localStorage.length;
+                                                    console.log(nome)
+                                                    if (myArray[i] = 'undefined') {
+
+                                                        myArray[i] = data.ritorno;
+                                                        console.log(myArray[i]);
+
+
+                                                        localStorage.setItem(nome, myArray[i]);
+                                                        alert("Colonne Selezionabili");
+                                                    }
+
+
+                                                },
+
+                                                error: function () {
+                                                    alert("errore colonne");
+                                                }
+
+                    })
+
+                var table = $('#DatiCSV').dataTable();
+                console.log(table);
+                $('#divdelete').show();
+                $('#delete').click(function () {
+                    table.destroy();
+                    $("#DescrizioneFile").value = "";
+                });
+            });
+        });
+              $(document).on("click", "#esporta", function () {
+                var Nome_File = $('#DescrizioneFile').val();
+                  console.log($('#DescrizioneFile').val());
+
+                $.ajax({
+                    dataType: "json",
+                    type: "POST",
+                    url: "Conferma/Index",
+                    data: { 'Name_File': Nome_File },
+                    success: function (data) {
+                        if (data.code === 1) {
+
+                            alert("File Esportato con Successo")
+                        } else
+
+                            alert("File Non trovato")
+                        }
+                      
+                    })
+                });
+           
+
+
+                const checkbox = document.getElementById('CheckGeo')
                             checkbox.addEventListener('change', (event) => {
                                 if (event.currentTarget.checked) {
                                     $('#seleziona').show();
@@ -251,6 +393,7 @@
                                     $("#Google").val()=="False";
                                 }
                             });
+
         const dropdownlist = document.getElementById('OpenStreetMap')
 
         dropdownlist.addEventListener('change',(event) => {
@@ -274,7 +417,7 @@
         $("#Google").change(function () {
             var selectedVal = $(this).find(':selected').val();
             var selectedText = $(this).find(':selected').text();
-           
+
 
             if (selectedText == "ATTIVA") {
                 $('#OpenStreetMap').prop("disabled", true);
@@ -290,7 +433,7 @@
         $("#Here").change(function () {
             var selectedVal = $(this).find(':selected').val();
             var selectedText = $(this).find(':selected').text();
-            
+
             if (selectedText == "ATTIVA") {
                 $('#OpenStreetMap').prop("disabled", true);
                 $('#Google').prop("disabled", true);
@@ -302,100 +445,8 @@
             }
         });
 
-        @*        $(document).on("click", "#upload", function () {
-
-                    const checkbox = document.getElementById('CheckGeo')
-
-                    checkbox.addEventListener('change', (event) => {
-                        if (event.currentTarget.checked) {
-                            var sistema_geo = "0";
-                        } else {
-                            var sistema_geo = $('#SistemaDiGeoreferenzazione').val();
-                        }
-              console.log($('#SistemaDiGeoreferenzazione').val());
 
 
-
-                $.ajax({
-                    dataType: "json",
-                    type: "POST",
-                    url: '@Url.Action("Upload","Home")',
-                    data: { 'SistemaAttivo': sistema_geo },
-                    success: function (data) {
-                 @*       if (data.code === 1) {
-
-                            window.location.href = '@Url.Action("Index","OpenStreetMap")';
-                        } else if (data.code === 2) {
-
-                            window.location.href = '@Url.Action("Index","SistemaHere")';
-                        }
-                        else {
-
-                            window.location.href = '@Url.Action("Index","Google")';
-                        }
-                    }
-                });
-            });
-                });
-        *@
-
-        @*     $(document).on("click", "#upload", function () {
-            if (checkbox.checked || $('#OpenStreetMap').checked) {
-                window.location.href = '@Url.Action("Index","OpenStreetMap")';
-            }
-            else if (checkbox.checked || $('#Here').checked)
-            {
-                window.location.href = '@Url.Action("Index","Here")';
-            }
-              if (checkbox.checked || $('#OpenStreetMap').checked) {
-                        alert("Openstreetmap");
-
-                    } else if (checkbox.checked || $('#Here').checked) {
-                        alert("Here");
-
-        });*@
-
-                    var table = $('#DatiCSV').dataTable();
-                    $('#Delete').click(function () {
-                        table.destroy();
-                        $("#DescrizioneFile").value = "";
-                    });
-
-
-
-
-
-
-
-
-
-     @*   $("#DatiCsv").DataTable({
-            language: {
-                url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Italian.json'
-            },
-            paging: true,
-            scrollX: true,
-            scrollY: 400,
-            dom: 'Bfrtip',
-            buttons: [
-
-                'excel',
-                {
-                    text: 'JSON',
-                    action: function (e, dt, button, config) {
-                        var data = dt.buttons.exportData();
-
-                        $.fn.dataTable.fileSave(
-                            new Blob([JSON.stringify(data)]),
-                            'Export.json'
-                        );
-                    }
-                }
-            ]
-
-
-        });
-    *@
 
 
     </script>

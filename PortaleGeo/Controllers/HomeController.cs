@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NuovoPortaleGeo.Controllers;
 using System;
+using NuovoPortaleGeo.Helpers;
 
 namespace NuovoPortaleGeo
 {
@@ -99,39 +100,9 @@ namespace NuovoPortaleGeo
 
             ViewBag.IdUtente = new SelectList(db.CSVdati, "IdUtente");
             ViewBag.DescrizioneFile = new SelectList(db.CSVdati, "DescrizioneFile");
-            //   ViewBag.Here = new SelectList(db.CSVdati, "Here");
-            //   ViewBag.Google = new SelectList(db.CSVdati, "Google");
-            //   ViewBag.OpenStreetMap = new SelectList(db.CSVdati, "OpenStreetMap");
+            //sistemare ViewBag DescrizioneFile2 (Non Funziona)
+            ViewBag.DescrizioneFile2 = new SelectList(db.CSVdati, "DescrizioneFile");
 
-           
-/*
-            ViewBag.Here = new SelectList(new List<SelectListItem>
-            {
-
-                new SelectListItem { Selected= false,  Value = "0", Text = "non attivo"},
-                new SelectListItem { Selected= true, Value = "1", Text = "attivo"},
-                }, "Value", "Text", "Here");
-
-            ViewBag.OpenStreetMap = new SelectList(new List<SelectListItem>
-            {
-                new SelectListItem { Selected= false,  Value = "0", Text = "non attivo"},
-                new SelectListItem { Selected= true, Value = "1", Text = "attivo"},
-                }, "Value", "Text", "OpenStreetMap");
-
-            ViewBag.Google = new SelectList(new List<SelectListItem>
-            {
-
-                new SelectListItem { Selected= false,  Value = "0", Text = "non attivo"},
-                new SelectListItem { Selected= true, Value = "1", Text = "attivo"},
-                }, "Value", "Text", "Google");
-            */
-            /*     ViewBag.SistemaDiGeoreferenzazione = new SelectList(new List<SelectListItem>
-                     {
-                          new SelectListItem {Text = "", Value = "0" },
-                         new SelectListItem { Text = "SistemaOpenStreetMap", Value = "1"},
-                         new SelectListItem { Text = "SistemaHERE", Value = "2"},
-                        new SelectListItem { Text = "GoogleMaps", Value = "3"},
-                     }, "Value", "Text");*/
 
 
             return View();
@@ -150,10 +121,6 @@ namespace NuovoPortaleGeo
                 {
 
 
-                    // if (importFile == null) return Json(new { Status = 0, Message = "Nessun file selezionato" });
-
-                    //try
-                    //{
                     
                     if (upload.FileName.EndsWith(".csv"))
                     {
@@ -168,7 +135,7 @@ namespace NuovoPortaleGeo
                                    .Where(x => x.CodiceFiscale == cf).FirstOrDefault();
                         dati.IdUtente = Geo_Utente.Id;
                         string Cognome = Geo_Utente.Cognome;
-                      
+                        
                         string pathfolder = Path.Combine(Server.MapPath("~/Upload"),Cognome);
                         string path = Path.Combine(Server.MapPath("~/Upload/" + Cognome), _FileName);
                         if (!Directory.Exists(pathfolder))
@@ -176,6 +143,7 @@ namespace NuovoPortaleGeo
                             Directory.CreateDirectory(pathfolder);
 
                         }
+                     
                         upload.SaveAs(path);
                         CsvConfiguration conf = new CsvConfiguration(CultureInfo.InvariantCulture);
                         conf.BadDataFound = null;
@@ -192,6 +160,7 @@ namespace NuovoPortaleGeo
                         
                          var dt = new DataTable();
                         dt.Load(dr);
+                        readcolumn(dt);
                         if (dati.OpenStreetMap is true)
                         {
                             OpenStreetMapController.GeoCodeRow(path, _FileName, cf, dt, tablerisultati,_FileName,path);
@@ -302,9 +271,87 @@ namespace NuovoPortaleGeo
             }
 
         }
+        [HttpPost]
+        public ActionResult  readcolumn(DataTable dataTable)
+        {
+            List<string> lista = new List<string>();
 
-      
+                foreach (DataColumn col in dataTable.Columns)
+            {
+                var columnname= col.ColumnName;
+                lista.Add(columnname);                
+            }
+            var json_dati = Json(lista, JsonRequestBehavior.AllowGet);
+            return Json(new { code = 1, ritorno = json_dati });
+           
 
+        }
+
+        //Estrai
+        public ActionResult Estrai(string Name_File)
+        {
+            string errore = null;
+            var GeoDati = db.CSVdati;
+
+            var lista_geocode = GeoDati.ToList();
+
+            try
+            {
+                var contenuto =
+                    lista_geocode
+                    .Select(x => new
+                    {
+                        Id = x.Id,
+                        Indirizzo = x.Indirizzo,
+                     //   N_Civico = x.N_Civico,
+                        Comune = x.Comune,
+                        Provincia = x.Provincia,
+                     //   Regione = x.Regione,
+                     // Note1 = x.Note1,
+                     //   Note2 = x.Note2,
+                        Lat = x.Lat,
+                        Lon = x.Lon,
+                        Approx01 = x.Approx01,
+                        Approx02 = x.Approx02,
+                        Cap = x.Cap,
+                        AltroIndirizzo = x.AltroIndirizzo,
+                      //  APIGoogle = x.APIGoogle
+                    })
+                    .ToList();
+
+                var columns = new List<string>
+                        {
+                            "Id",
+                            "Indirizzo",
+                            "N_Civico",
+                            "Comune",
+                            "Provincia",
+                            "Lat",
+                            "Lon",
+                            "Approx01",
+                            "Approx02",
+                            "Cap",
+                            "AltroIndirizzo",
+                           
+                        };
+
+
+                byte[] filecontent = ExcelExportHelper.ExportExcel(contenuto, "Estrazione GeoCode CSV", false, columns.ToArray());
+                return File(
+                    filecontent,
+                    ExcelExportHelper.ExcelContentType,
+                    String.Format("{0} - report-geocode-csv.xlsx", DateTime.Now.ToString("yyyy-MM-dd"))
+                );
+            }
+            catch (Exception exc)
+            {
+                errore = exc.Message;
+                return null;
+            }
+
+
+
+        }
         public static void GetAttività(string Id, string email,string NameFile, string Path, bool OpenStreetMap, bool Here)
         {
             using(GeoCodeEntities1 db = new GeoCodeEntities1())

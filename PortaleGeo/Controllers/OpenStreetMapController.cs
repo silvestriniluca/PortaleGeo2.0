@@ -299,7 +299,7 @@ namespace NuovoPortaleGeo.Controllers
 
             {
 
-
+                dataTable.Columns.Add(new DataColumn("APIGoogle"));
                 ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
 
                 var Geo_Utente = db.Geo_Utente
@@ -315,7 +315,7 @@ namespace NuovoPortaleGeo.Controllers
                 tablerisultati.Columns.Add(new DataColumn("Lon"));
                 tablerisultati.Columns.Add(new DataColumn("Approx01"));
                 tablerisultati.Columns.Add(new DataColumn("Approx02"));
-
+                
                 foreach (DataRow row in dataTable.Rows)
                 {
 

@@ -98,11 +98,13 @@ namespace NuovoPortaleGeo
         public ActionResult Upload()
         {
 
-            ViewBag.IdUtente = new SelectList(db.CSVdati, "IdUtente");
-            ViewBag.DescrizioneFile = new SelectList(db.CSVdati, "DescrizioneFile");
-            //sistemare ViewBag DescrizioneFile2 (Non Funziona)
-            ViewBag.DescrizioneFile2 = new SelectList(db.CSVdati, "DescrizioneFile");
-
+           
+            var cf = Session["CF"].ToString();
+            var Geo_Utente = db.Geo_Utente
+                    .Where(x => x.CodiceFiscale == cf).FirstOrDefault();
+              ViewBag.FileEsportazione = new SelectList(db.CSVdati.Where(s => s.IdUtente == Geo_Utente.Id).GroupBy(p => new {p.DescrizioneFile })
+                                                       .Select(g => g.FirstOrDefault()), "Id", "DescrizioneFile") ;
+           
 
 
             return View();
@@ -111,7 +113,7 @@ namespace NuovoPortaleGeo
         [HttpPost]
         [Authorize(Roles = "Amministratore,Utente,Consultatore")]
 
-        public ActionResult Upload(HttpPostedFileBase upload, [Bind(Include = "DescrizioneFile,Here,OpenStreetMap,Google")] CSVdati dati, string SistemaAttivo)
+        public ActionResult Upload(HttpPostedFileBase upload, [Bind(Include = "DescrizioneFile,Here,OpenStreetMap,Google")] CSVdati dati)
         {
 
 
@@ -292,38 +294,40 @@ namespace NuovoPortaleGeo
         {
             string errore = null;
             var GeoDati = db.CSVdati;
+            //var GeoDati = db.CSVdati;
+            var lista_geocode = GeoDati.Where(s => s.DescrizioneFile == Name_File).ToList();
+            
 
-            var lista_geocode = GeoDati.ToList();
 
-            try
-            {
-                var contenuto =
-                    lista_geocode
-                    .Select(x => new
-                    {
-                        Id = x.Id,
-                        Indirizzo = x.Indirizzo,
-                     //   N_Civico = x.N_Civico,
+                try
+                {
+                    var contenuto =
+                        lista_geocode
+                        .Select(x => new
+                        {
+                            Id = x.Id,
+                            Indirizzo = x.Indirizzo,
+                        //   N_Civico = x.N_Civico,
                         Comune = x.Comune,
-                        Provincia = x.Provincia,
-                     //   Regione = x.Regione,
-                     // Note1 = x.Note1,
-                     //   Note2 = x.Note2,
+                            Provincia = x.Provincia,
+                        //   Regione = x.Regione,
+                        // Note1 = x.Note1,
+                        //   Note2 = x.Note2,
                         Lat = x.Lat,
-                        Lon = x.Lon,
-                        Approx01 = x.Approx01,
-                        Approx02 = x.Approx02,
-                        Cap = x.Cap,
-                        AltroIndirizzo = x.AltroIndirizzo,
-                      //  APIGoogle = x.APIGoogle
+                            Lon = x.Lon,
+                            Approx01 = x.Approx01,
+                            Approx02 = x.Approx02,
+                            Cap = x.Cap,
+                            AltroIndirizzo = x.AltroIndirizzo,
+                        //  APIGoogle = x.APIGoogle
                     })
-                    .ToList();
+                        .ToList();
 
-                var columns = new List<string>
+                    var columns = new List<string>
                         {
                             "Id",
                             "Indirizzo",
-                            "N_Civico",
+                            
                             "Comune",
                             "Provincia",
                             "Lat",
@@ -332,24 +336,26 @@ namespace NuovoPortaleGeo
                             "Approx02",
                             "Cap",
                             "AltroIndirizzo",
-                           
+
                         };
 
 
-                byte[] filecontent = ExcelExportHelper.ExportExcel(contenuto, "Estrazione GeoCode CSV", false, columns.ToArray());
-                return File(
-                    filecontent,
-                    ExcelExportHelper.ExcelContentType,
-                    String.Format("{0} - report-geocode-csv.xlsx", DateTime.Now.ToString("yyyy-MM-dd"))
-                );
-            }
-            catch (Exception exc)
-            {
-                errore = exc.Message;
-                return null;
-            }
+                    byte[] filecontent = ExcelExportHelper.ExportExcel(contenuto, "Estrazione GeoCode CSV", false, columns.ToArray());
+                    return File(
+                        filecontent,
+                        ExcelExportHelper.ExcelContentType,
+                        String.Format("{0} - report-geocode-csv.xlsx", DateTime.Now.ToString("yyyy-MM-dd"))
+                    );
 
+                }
 
+                catch (Exception exc)
+                {
+                    errore = exc.Message;
+                    return null;
+                }
+
+            
 
         }
         public static void GetAttività(string Id, string email,string NameFile, string Path, bool OpenStreetMap, bool Here)

@@ -11,7 +11,7 @@ namespace NuovoPortaleGeo.ViewModels
     public partial class VmGeoreferenzazione
     {
 
-        public VmGeoreferenzazione(CSVdati dati)
+        public VmGeoreferenzazione(Geo_Dati dati)
         {
 
         }
@@ -35,7 +35,7 @@ namespace NuovoPortaleGeo.ViewModels
 
 
 
-        public VmGeoreferenzazione(CSVdati model, DataTable dataTable)
+        public VmGeoreferenzazione(Geo_Dati model, DataTable dataTable)
         {
             Id = model.Id;
             IdUtente = model.IdUtente;

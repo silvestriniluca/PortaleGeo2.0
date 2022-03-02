@@ -162,21 +162,7 @@
             <i class="fas fa-trash-alt"></i>
             <input type="submit" value="SvuotaTabella" class="btn btn-outline-danger" id="delete" />
         </div>
-
-        <div class="input-container" id="divExport">
-            <div class="form-group">
-                @Html.LabelFor(model => model.DescrizioneFile, "File da Esportare", htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.DropDownList("DescrizioneFile" , ViewBag.FileEsportazione as SelectList, "", htmlAttributes: new { @class = "form-control", @id="EsportaFile"})
-                 
-                    @Html.ValidationMessageFor(m => m.DescrizioneFile, "", new { @class = "text-danger" })
-                </div>
-            </div>
-            <a href="@Url.Action("Estrai", "Home")" class="btn btn-success" id="esporta">
-                <i class="fas fa-download"></i> Estrai
-            </a>
-        </div>
-
+       
     </div>
     <div>
         Seleziona colonne corrispondenti a questi campi:
@@ -196,11 +182,6 @@
             @* @Html.DropDownList("N_Civico", ViewBag.N_Civico as SelectList, "", htmlAttributes: new { @class = "form-control", @id = "N_Civico" })*@
         </ul>
     </div>
-
-
-
-
-
 
 
 
@@ -281,22 +262,18 @@
                 </table>
             </div>
         </div>
+
     }
 
 
 }
 
+
 <!-- skipped -->
 
 
 <hr />
-@* $('document').hide().ready(function () {
-    $('#loading').hide().ajaxStart(function () {
-        $(this).show();
-    })
-        .ajaxStop(function () {
-            $(this).hide();
-        });*@
+
 
 @section scripts{
     <script>
@@ -361,29 +338,8 @@
                 });
             });
         });
-        $(document).on("click", "#esporta", function () {
-            var Nome_File = $('#EsportaFile :selected').text();
-           
-            console.log($('#EsportaFile :selected').text());
 
-                $.ajax({
-                    dataType: "json",
-                    type: "POST",
-                    url: "Estrai/Home",
-                    data: { 'Name_File': Nome_File },
-                    success: function (data) {
-                        if (data.code === 1) {
-
-                            alert("File Esportato con Successo")
-                        } else
-
-                            alert("File Non trovato")
-                        }
-                      
-                    })
-                });
-           
-
+      
 
                 const checkbox = document.getElementById('CheckGeo')
                             checkbox.addEventListener('change', (event) => {

@@ -22,8 +22,8 @@
         <EntityTypeShape EntityType="GeoCodeModel.Geo_UtenteRuolo" Width="1.5" PointX="0.5" PointY="1.25" />
         <AssociationConnector Association="GeoCodeModel.FK__Utente__RoleI__0D7A0286" />
         <AssociationConnector Association="GeoCodeModel.FK__Utente__UserI__0E6E26BF" />
-        <EntityTypeShape EntityType="GeoCodeModel.CSVdati" Width="1.5" PointX="2.75" PointY="14" />
-        <AssociationConnector Association="GeoCodeModel.FK_CSVdati_Geo_Utente" />
+        <EntityTypeShape EntityType="GeoCodeModel.Geo_Dati" Width="1.5" PointX="2.75" PointY="14" />
+        <AssociationConnector Association="GeoCodeModel.FK_GeoDati_Geo_Utente" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

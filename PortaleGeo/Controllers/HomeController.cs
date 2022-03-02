@@ -22,6 +22,7 @@ namespace NuovoPortaleGeo
     public class HomeController : Controller
     {
         GeoCodeEntities1 db = new GeoCodeEntities1();
+        public static string Name;
 
         public ActionResult Index()
         {
@@ -102,8 +103,8 @@ namespace NuovoPortaleGeo
             var cf = Session["CF"].ToString();
             var Geo_Utente = db.Geo_Utente
                     .Where(x => x.CodiceFiscale == cf).FirstOrDefault();
-              ViewBag.FileEsportazione = new SelectList(db.CSVdati.Where(s => s.IdUtente == Geo_Utente.Id).GroupBy(p => new {p.DescrizioneFile })
-                                                       .Select(g => g.FirstOrDefault()), "Id", "DescrizioneFile") ;
+              ViewBag.FileEsportazione = new SelectList(db.Geo_Dati.Where(s => s.IdUtente == Geo_Utente.Id).GroupBy(p => new {p.DescrizioneFile })
+                                                       .Select(g => g.FirstOrDefault()), "DescrizioneFile", "DescrizioneFile") ;
            
 
 
@@ -113,7 +114,7 @@ namespace NuovoPortaleGeo
         [HttpPost]
         [Authorize(Roles = "Amministratore,Utente,Consultatore")]
 
-        public ActionResult Upload(HttpPostedFileBase upload, [Bind(Include = "DescrizioneFile,Here,OpenStreetMap,Google")] CSVdati dati)
+        public ActionResult Upload(HttpPostedFileBase upload, [Bind(Include = "DescrizioneFile,Here,OpenStreetMap,Google")] Geo_Dati dati)
         {
 
 
@@ -217,13 +218,12 @@ namespace NuovoPortaleGeo
                             //string connectionString = @"Data Source=SQL2016CLUST01\MSSQLSERV_C;Initial Catalog=IntraGeoRef;User Id=ut_IntraGeoRef;Password=K1-u9_b745P;";
                             SqlConnection connectionstring = new SqlConnection(@"Data Source=sql2016listen_c, 1733;Initial Catalog=IntraGeoRef;Integrated Security=True");
                             datatablehelper(connectionstring, dtdatabase);
-                            //     db.CSVdati.Add(dati);
-                            //     db.SaveChanges();
+                      
                         }
                        
                         VmUpload vm = new VmUpload(dati, dt);
                         VmUpload vmGeo = new VmUpload(dati, tablerisultati);
-                        //    db.CSVdati.Add(dati.DescrizioneFile);
+                     
                         if (tablerisultati.Rows.Count>0 )
                         {
                             return View(vmGeo);
@@ -288,76 +288,7 @@ namespace NuovoPortaleGeo
            
 
         }
-
-        //Estrai
-        public ActionResult Estrai(string Name_File)
-        {
-            string errore = null;
-            var GeoDati = db.CSVdati;
-            //var GeoDati = db.CSVdati;
-            var lista_geocode = GeoDati.Where(s => s.DescrizioneFile == Name_File).ToList();
-            
-
-
-                try
-                {
-                    var contenuto =
-                        lista_geocode
-                        .Select(x => new
-                        {
-                            Id = x.Id,
-                            Indirizzo = x.Indirizzo,
-                        //   N_Civico = x.N_Civico,
-                        Comune = x.Comune,
-                            Provincia = x.Provincia,
-                        //   Regione = x.Regione,
-                        // Note1 = x.Note1,
-                        //   Note2 = x.Note2,
-                        Lat = x.Lat,
-                            Lon = x.Lon,
-                            Approx01 = x.Approx01,
-                            Approx02 = x.Approx02,
-                            Cap = x.Cap,
-                            AltroIndirizzo = x.AltroIndirizzo,
-                        //  APIGoogle = x.APIGoogle
-                    })
-                        .ToList();
-
-                    var columns = new List<string>
-                        {
-                            "Id",
-                            "Indirizzo",
-                            
-                            "Comune",
-                            "Provincia",
-                            "Lat",
-                            "Lon",
-                            "Approx01",
-                            "Approx02",
-                            "Cap",
-                            "AltroIndirizzo",
-
-                        };
-
-
-                    byte[] filecontent = ExcelExportHelper.ExportExcel(contenuto, "Estrazione GeoCode CSV", false, columns.ToArray());
-                    return File(
-                        filecontent,
-                        ExcelExportHelper.ExcelContentType,
-                        String.Format("{0} - report-geocode-csv.xlsx", DateTime.Now.ToString("yyyy-MM-dd"))
-                    );
-
-                }
-
-                catch (Exception exc)
-                {
-                    errore = exc.Message;
-                    return null;
-                }
-
-            
-
-        }
+        
         public static void GetAttività(string Id, string email,string NameFile, string Path, bool OpenStreetMap, bool Here)
         {
             using(GeoCodeEntities1 db = new GeoCodeEntities1())
@@ -384,49 +315,6 @@ namespace NuovoPortaleGeo
 
 
 
-//using (SqlConnection connection = new SqlConnection(connectionString))
-
-//  for (int i = 0; dt.Rows.Count > i; i++)
-
-//    into ProvaTabella values(dt.Rows[i].ItemArray.GetValue(0).ToString(), dt.Rows[i].ItemArray.GetValue(1).ToString(), dt.Rows[i].ItemArray.GetValue(2).ToString());
-
-
-
-/*     using (SqlBulkCopy bulkCopy = new SqlBulkCopy(connection))
-     {
-         foreach (DataColumn c in dt.Columns)
-             bulkCopy.ColumnMappings.Add(c.ColumnName, c.ColumnName);
-
-         bulkCopy.DestinationTableName = "ProvaTabella";
-         try
-         {
-             bulkCopy.WriteToServer(db.ProvaTabella);
-         }
-         catch (Exception ex)
-         {
-             Console.WriteLine(ex.Message);
-         }
-     }
- }
-/*
- using (SqlBulkCopy bulkCopy= new SqlBulkCopy())
- foreach (DataColumn column in dt.Columns)
- {
-
-     provaTabella.Provincia = column.ColumnName;
-     provaTabella.Comune = column.ColumnName;
-     db.ProvaTabella.Add(provaTabella);
-     db.SaveChanges();
-
- }
-     */
-
-//  using (var csv = new CsvReader(stream, CultureInfo.InvariantCulture))
-//  using (CsvReader csvReader =
-//    new CsvReader(new StreamReader(stream), true))
-
-
-//return Json(new { Message = csvTable });
 
 
 

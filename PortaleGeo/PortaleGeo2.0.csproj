@@ -407,10 +407,10 @@
     <Compile Include="Models\AspNetUsers.cs">
       <DependentUpon>Model_PortaleGeoWeb.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\CSVdati.cs">
+    <Compile Include="Models\Geo_Attività.cs">
       <DependentUpon>Model_PortaleGeoWeb.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Geo_Attività.cs">
+    <Compile Include="Models\Geo_Dati.cs">
       <DependentUpon>Model_PortaleGeoWeb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Geo_Ruolo.cs">

@@ -19,7 +19,7 @@ namespace NuovoPortaleGeo.Models
         {
             this.Geo_Attività = new HashSet<Geo_Attività>();
             this.Geo_UtenteRuolo = new HashSet<Geo_UtenteRuolo>();
-            this.CSVdati = new HashSet<CSVdati>();
+            this.Geo_Dati = new HashSet<Geo_Dati>();
         }
     
         public string Id { get; set; }
@@ -45,6 +45,6 @@ namespace NuovoPortaleGeo.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Geo_UtenteRuolo> Geo_UtenteRuolo { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<CSVdati> CSVdati { get; set; }
+        public virtual ICollection<Geo_Dati> Geo_Dati { get; set; }
     }
 }

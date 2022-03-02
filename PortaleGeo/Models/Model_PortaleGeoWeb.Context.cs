@@ -35,6 +35,6 @@ namespace NuovoPortaleGeo.Models
         public virtual DbSet<Geo_Attività> Geo_Attività { get; set; }
         public virtual DbSet<Geo_Ruolo> Geo_Ruolo { get; set; }
         public virtual DbSet<Geo_UtenteRuolo> Geo_UtenteRuolo { get; set; }
-        public virtual DbSet<CSVdati> CSVdati { get; set; }
+        public virtual DbSet<Geo_Dati> Geo_Dati { get; set; }
     }
 }

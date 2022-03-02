@@ -8,16 +8,19 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNetCore.Mvc;
+using NuovoPortaleGeo.Helpers;
 using NuovoPortaleGeo.Models;
 using PagedList;
 
 namespace NuovoPortaleGeo.Controllers
 {
+    [Authorize(Roles = "Amministratore,Utente,Consultatore")]
     public class GeoDatiController : Controller
     {
         private GeoCodeEntities1 db = new GeoCodeEntities1();
 
-        // GET: CSVdatis
+        public static string Name;
+        // GET: GeoDati
         public ActionResult Index(string sortOrder, string Provincia, string Comune, string Indirizzo, string Descrizione, string DescrizioneFile, int? page)
         {
             ViewData["DESCfileSortParm"] = String.IsNullOrEmpty(sortOrder) ? "DESCfile_desc" : "";
@@ -31,7 +34,18 @@ namespace NuovoPortaleGeo.Controllers
             ViewBag.CurrentComune = Comune;
             ViewBag.CurrentIndirizzo = Indirizzo;
             ViewBag.CurrentDescrizione = Descrizione;
-            ViewBag.CurrentDescrizioneFile = DescrizioneFile;
+            var cf = Session["CF"].ToString();
+            var Geo_Utente = db.Geo_Utente
+                    .Where(x => x.CodiceFiscale == cf).FirstOrDefault();
+            ViewBag.DescrizioneFile = new SelectList(db.Geo_Dati.Where(s => s.IdUtente == Geo_Utente.Id).GroupBy(p => new { p.DescrizioneFile })
+                                                     .Select(g => g.FirstOrDefault()), "DescrizioneFile", "DescrizioneFile");
+            if (DescrizioneFile != null)
+            {
+                ViewBag.CurrentDescrizioneFile = DescrizioneFile;
+            }
+           
+           
+
 
             if (Comune != null)
             {
@@ -41,24 +55,27 @@ namespace NuovoPortaleGeo.Controllers
             {
                 
             }
-          
-            var geodati = from s in db.CSVdati
-                          select s;
+
+            var geodati = db.Geo_Dati.Where(s => s.IdUtente == Geo_Utente.Id).Select(s => s);
+                         
 
             if (!String.IsNullOrEmpty(Comune))
             {
                 geodati = geodati.Where(s => s.Comune.Contains(Comune));
                                
             }
-            else if(!String.IsNullOrEmpty(Provincia))
-                {
+            if(!String.IsNullOrEmpty(Provincia))
+            {
                 geodati = geodati.Where(s => s.Provincia.Contains(Provincia));
             }
-            else if (!String.IsNullOrEmpty(Indirizzo))
+             if (!String.IsNullOrEmpty(Indirizzo))
             {
                 geodati = geodati.Where(s => s.Indirizzo.Contains(Indirizzo));
             }
-
+             if (!String.IsNullOrEmpty(DescrizioneFile))
+            {
+                geodati = geodati.Where(s => s.DescrizioneFile.Contains(DescrizioneFile));
+            }
             switch (sortOrder)
             {
                 case "DESCfile_desc":
@@ -82,105 +99,105 @@ namespace NuovoPortaleGeo.Controllers
             int pageSize = 20;
 
             int pageNumber = (page ?? 1);
-          //  var cSVdati = db.CSVdati.Include(c => c.Geo_Utente);
+          
             return View(geodati.ToPagedList(pageNumber,pageSize));
         }
 
-        // GET: CSVdatis/Details/5
+        // GET: geo_Dati/Details/5
         public ActionResult Details(long? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            CSVdati cSVdati = db.CSVdati.Find(id);
-            if (cSVdati == null)
+            Geo_Dati geo_Dati = db.Geo_Dati.Find(id);
+            if (geo_Dati == null)
             {
                 return HttpNotFound();
             }
-            return View(cSVdati);
+            return View(geo_Dati);
         }
 
-        // GET: CSVdatis/Create
+        // GET: geo_Dati/Create
         public ActionResult Create()
         {
             ViewBag.IdUtente = new SelectList(db.Geo_Utente, "Id", "Email");
             return View();
         }
 
-        // POST: CSVdatis/Create
+        // POST: geo_Dati/Create
         // Per la protezione da attacchi di overposting, abilitare le proprietà a cui eseguire il binding. 
         // Per altri dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,IdUtente,DescrizioneFile,Provincia,Comune,Indirizzo,Descrizione")] CSVdati cSVdati)
+        public ActionResult Create([Bind(Include = "Id,IdUtente,DescrizioneFile,Provincia,Comune,Indirizzo,Descrizione")] Geo_Dati geo_Dati)
         {
             if (ModelState.IsValid)
             {
-                db.CSVdati.Add(cSVdati);
+                db.Geo_Dati.Add(geo_Dati);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.IdUtente = new SelectList(db.Geo_Utente, "Id", "Email", cSVdati.IdUtente);
-            return View(cSVdati);
+            ViewBag.IdUtente = new SelectList(db.Geo_Utente, "Id", "Email", geo_Dati.IdUtente);
+            return View(geo_Dati);
         }
 
-        // GET: CSVdatis/Edit/5
+        // GET: geo_Dati/Edit/5
         public ActionResult Edit(long? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            CSVdati cSVdati = db.CSVdati.Find(id);
-            if (cSVdati == null)
+            Geo_Dati geo_Dati = db.Geo_Dati.Find(id);
+            if (geo_Dati == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.IdUtente = new SelectList(db.Geo_Utente, "Id", "Email", cSVdati.IdUtente);
-            return View(cSVdati);
+            ViewBag.IdUtente = new SelectList(db.Geo_Utente, "Id", "Email", geo_Dati.IdUtente);
+            return View(geo_Dati);
         }
 
-        // POST: CSVdatis/Edit/5
+        // POST: GeoDati/Edit/5
         // Per la protezione da attacchi di overposting, abilitare le proprietà a cui eseguire il binding. 
         // Per altri dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,IdUtente,DescrizioneFile,Provincia,Comune,Indirizzo,Descrizione")] CSVdati cSVdati)
+        public ActionResult Edit([Bind(Include = "Id,IdUtente,DescrizioneFile,Provincia,Comune,Indirizzo,Descrizione")] Geo_Dati geo_Dati)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(cSVdati).State = EntityState.Modified;
+                db.Entry(geo_Dati).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.IdUtente = new SelectList(db.Geo_Utente, "Id", "Email", cSVdati.IdUtente);
-            return View(cSVdati);
+            ViewBag.IdUtente = new SelectList(db.Geo_Utente, "Id", "Email", geo_Dati.IdUtente);
+            return View(geo_Dati);
         }
 
-        // GET: CSVdatis/Delete/5
+        // GET: GeoDati/Delete/5
         public ActionResult Delete(long? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            CSVdati cSVdati = db.CSVdati.Find(id);
-            if (cSVdati == null)
+            Geo_Dati geo_Dati = db.Geo_Dati.Find(id);
+            if (geo_Dati == null)
             {
                 return HttpNotFound();
             }
-            return View(cSVdati);
+            return View(geo_Dati);
         }
 
-        // POST: CSVdatis/Delete/5
+        // POST: GeoDati/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(long id)
         {
-            CSVdati cSVdati = db.CSVdati.Find(id);
-            db.CSVdati.Remove(cSVdati);
+            Geo_Dati geo_Dati = db.Geo_Dati.Find(id);
+            db.Geo_Dati.Remove(geo_Dati);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
@@ -193,16 +210,110 @@ namespace NuovoPortaleGeo.Controllers
             }
             base.Dispose(disposing);
         }
+
+
+        public ActionResult ValoreExport(string Name_File)
+        {
+            Name = Name_File;
+            if (Name_File != null)
+            {
+                return Json(new { code = 1, ritorno = Name_File });
+            }
+            else
+            {
+                return Json(new { code = 2, ritorno = Name_File });
+            }
+
+        }
+        //Estrai
+        public ActionResult Estrai()
+        {
+
+            string errore = null;
+            var GeoDati = db.Geo_Dati.Where(s => s.DescrizioneFile == Name).Select(s => s);
+           
+            var GeOProva = GeoDati;
+            var lista_geocode = GeOProva.ToList();
+
+
+
+            try
+            {
+                var contenuto =
+                    lista_geocode.Where(s => s.DescrizioneFile == Name)
+                    .Select(x => new
+                    {
+                        Id = x.Id,
+                        Indirizzo = x.Indirizzo,
+                            //   N_Civico = x.N_Civico,
+                            Comune = x.Comune,
+                        Provincia = x.Provincia,
+                            //   Regione = x.Regione,
+                            // Note1 = x.Note1,
+                            //   Note2 = x.Note2,
+                            Lat = x.Lat,
+                        Lon = x.Lon,
+                        Approx01 = x.Approx01,
+                        Approx02 = x.Approx02,
+                        Cap = x.Cap,
+                        AltroIndirizzo = x.AltroIndirizzo,
+                            //  APIGoogle = x.APIGoogle
+                    })
+                    .ToList();
+
+                var columns = new List<string>
+                        {
+                            "Id",
+                            "Indirizzo",
+                            "Comune",
+                            "Provincia",
+                            "Lat",
+                            "Lon",
+                            "Approx01",
+                            "Approx02",
+                            "Cap",
+                            "AltroIndirizzo",
+
+                        };
+
+
+                byte[] filecontent = ExcelExportHelper.ExportExcel(contenuto, "Estrazione GeoCode CSV", false, columns.ToArray());
+
+                return (File(
+                        filecontent,
+                        ExcelExportHelper.ExcelContentType,
+                        String.Format("{0} - report-geocode-csv.xlsx", DateTime.Now.ToString("yyyy-MM-dd"))
+
+                    ));
+
+
+
+
+            }
+
+            catch (Exception exc)
+            {
+                errore = exc.Message;
+                return null;
+            }
+
+
+
+        }
         public async Task<IActionResult> ordina(string sortOrder)
         {
+            
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "DESCfile_desc" : "";
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "Prov_desc" : "";
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "Comune_desc" : "";
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "Indirizzo_desc" : "";
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "DESCR_desc" : "";
             ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
-            var geodati = from s in db.CSVdati
-                           select s;
+            var cf = Session["CF"].ToString();
+            var Geo_Utente = db.Geo_Utente
+                    .Where(x => x.CodiceFiscale == cf).FirstOrDefault();
+            var geodati = db.Geo_Dati.Where(s => s.IdUtente == Geo_Utente.Id).Select(s => s);
+                          
             switch (sortOrder)
             {
                 case "DESCfile_desc":

@@ -12,7 +12,7 @@ namespace NuovoPortaleGeo.ViewModels
 {
     public partial class VmUpload
     {
-        public VmUpload(CSVdati dati)
+        public VmUpload(Geo_Dati dati)
         {
 
         }
@@ -36,7 +36,7 @@ namespace NuovoPortaleGeo.ViewModels
 
         
 
-        public VmUpload(CSVdati model, DataTable dataTable )
+        public VmUpload(Geo_Dati model, DataTable dataTable )
         {
             Id = model.Id;
             IdUtente = model.IdUtente;

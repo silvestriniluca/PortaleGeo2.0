@@ -56,7 +56,20 @@
           <Property Name="AccessFailedCount" Type="int" Nullable="false" />
           <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
         </EntityType>
-        <EntityType Name="CSVdati">
+        <EntityType Name="Geo_Attività">
+          <Key>
+            <PropertyRef Name="IdGeo" />
+          </Key>
+          <Property Name="IdGeo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Utente" Type="nvarchar" MaxLength="256" />
+          <Property Name="DescrizioneFile" Type="nvarchar" MaxLength="256" />
+          <Property Name="PathFile" Type="nvarchar(max)" />
+          <Property Name="Here" Type="bit" />
+          <Property Name="OpenStreetMap" Type="bit" />
+          <Property Name="Id_Utente" Type="nvarchar" MaxLength="128" />
+          <Property Name="DataAttività" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Geo_Dati">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
@@ -77,19 +90,6 @@
           <Property Name="Google" Type="bit" />
           <Property Name="APIGoogle" Type="nvarchar" MaxLength="50" />
           <Property Name="AltroIndirizzo" Type="nvarchar" MaxLength="128" />
-        </EntityType>
-        <EntityType Name="Geo_Attività">
-          <Key>
-            <PropertyRef Name="IdGeo" />
-          </Key>
-          <Property Name="IdGeo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Utente" Type="nvarchar" MaxLength="256" />
-          <Property Name="DescrizioneFile" Type="nvarchar" MaxLength="256" />
-          <Property Name="PathFile" Type="nvarchar(max)" />
-          <Property Name="Here" Type="bit" />
-          <Property Name="OpenStreetMap" Type="bit" />
-          <Property Name="Id_Utente" Type="nvarchar" MaxLength="128" />
-          <Property Name="DataAttività" Type="datetime" />
         </EntityType>
         <EntityType Name="Geo_Ruolo">
           <Key>
@@ -187,12 +187,12 @@
         </Association>
         <Association Name="FK_CSVdati_Geo_Utente">
           <End Role="Geo_Utente" Type="Self.Geo_Utente" Multiplicity="0..1" />
-          <End Role="CSVdati" Type="Self.CSVdati" Multiplicity="*" />
+          <End Role="Geo_Dati" Type="Self.Geo_Dati" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Geo_Utente">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="CSVdati">
+            <Dependent Role="Geo_Dati">
               <PropertyRef Name="IdUtente" />
             </Dependent>
           </ReferentialConstraint>
@@ -283,8 +283,8 @@
           <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="CSVdati" EntityType="Self.CSVdati" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Geo_Attività" EntityType="Self.Geo_Attività" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Geo_Dati" EntityType="Self.Geo_Dati" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Geo_Ruolo" EntityType="Self.Geo_Ruolo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Geo_Utente" EntityType="Self.Geo_Utente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Geo_UtenteRuolo" EntityType="Self.Geo_UtenteRuolo" Schema="dbo" store:Type="Tables" />
@@ -300,7 +300,7 @@
           </AssociationSet>
           <AssociationSet Name="FK_CSVdati_Geo_Utente" Association="Self.FK_CSVdati_Geo_Utente">
             <End Role="Geo_Utente" EntitySet="Geo_Utente" />
-            <End Role="CSVdati" EntitySet="CSVdati" />
+            <End Role="Geo_Dati" EntitySet="Geo_Dati" />
           </AssociationSet>
           <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
@@ -395,7 +395,7 @@
           <NavigationProperty Name="Geo_Attività" Relationship="GeoCodeModel.FK_Geo_Attività_Geo_Utente" FromRole="Geo_Utente" ToRole="Geo_Attività" />
           <NavigationProperty Name="Geo_Ruolo" Relationship="GeoCodeModel.FK_Geo_Utente_Geo_Ruolo" FromRole="Geo_Utente" ToRole="Geo_Ruolo" />
           <NavigationProperty Name="Geo_UtenteRuolo" Relationship="GeoCodeModel.FK__Utente__UserI__0E6E26BF" FromRole="Geo_Utente" ToRole="Geo_UtenteRuolo" />
-          <NavigationProperty Name="CSVdati" Relationship="GeoCodeModel.FK_CSVdati_Geo_Utente" FromRole="Geo_Utente" ToRole="CSVdati" />
+          <NavigationProperty Name="Geo_Dati" Relationship="GeoCodeModel.FK_CSVdati_Geo_Utente" FromRole="Geo_Utente" ToRole="Geo_Dati" />
         </EntityType>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
@@ -464,10 +464,10 @@
             <End Role="Geo_Utente" EntitySet="Geo_Utente" />
             <End Role="Geo_UtenteRuolo" EntitySet="Geo_UtenteRuolo" />
           </AssociationSet>
-          <EntitySet Name="CSVdati" EntityType="GeoCodeModel.CSVdati" />
+          <EntitySet Name="Geo_Dati" EntityType="GeoCodeModel.Geo_Dati" />
           <AssociationSet Name="FK_CSVdati_Geo_Utente" Association="GeoCodeModel.FK_CSVdati_Geo_Utente">
             <End Role="Geo_Utente" EntitySet="Geo_Utente" />
-            <End Role="CSVdati" EntitySet="CSVdati" />
+            <End Role="Geo_Dati" EntitySet="Geo_Dati" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="AspNetRoles">
@@ -597,7 +597,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="CSVdati">
+        <EntityType Name="Geo_Dati">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
@@ -618,16 +618,16 @@
           <Property Name="Google" Type="Boolean" />
           <Property Name="APIGoogle" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="AltroIndirizzo" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Geo_Utente" Relationship="GeoCodeModel.FK_CSVdati_Geo_Utente" FromRole="CSVdati" ToRole="Geo_Utente" />
+          <NavigationProperty Name="Geo_Utente" Relationship="GeoCodeModel.FK_CSVdati_Geo_Utente" FromRole="Geo_Dati" ToRole="Geo_Utente" />
         </EntityType>
         <Association Name="FK_CSVdati_Geo_Utente">
           <End Type="GeoCodeModel.Geo_Utente" Role="Geo_Utente" Multiplicity="0..1" />
-          <End Type="GeoCodeModel.CSVdati" Role="CSVdati" Multiplicity="*" />
+          <End Type="GeoCodeModel.Geo_Dati" Role="Geo_Dati" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Geo_Utente">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="CSVdati">
+            <Dependent Role="Geo_Dati">
               <PropertyRef Name="IdUtente" />
             </Dependent>
           </ReferentialConstraint>
@@ -780,9 +780,9 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="CSVdati">
-            <EntityTypeMapping TypeName="GeoCodeModel.CSVdati">
-              <MappingFragment StoreEntitySet="CSVdati">
+          <EntitySetMapping Name="Geo_Dati">
+            <EntityTypeMapping TypeName="GeoCodeModel.Geo_Dati">
+              <MappingFragment StoreEntitySet="Geo_Dati">
                 <ScalarProperty Name="AltroIndirizzo" ColumnName="AltroIndirizzo" />
                 <ScalarProperty Name="APIGoogle" ColumnName="APIGoogle" />
                 <ScalarProperty Name="Google" ColumnName="Google" />

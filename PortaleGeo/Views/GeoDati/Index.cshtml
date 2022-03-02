@@ -1,4 +1,4 @@
-﻿@model PagedList.IPagedList<NuovoPortaleGeo.Models.CSVdati>
+﻿@model PagedList.IPagedList<NuovoPortaleGeo.Models.Geo_Dati>
 @using PagedList.Mvc
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 @{
@@ -105,6 +105,16 @@
                 Indirizzo
                 @Html.TextBox("Indirizzo", ViewBag.Indirizzo as SelectList, "", new { @class = "form-control" })
             </div>
+            <div class="col-md-4">
+                Descrizione File
+                @Html.DropDownList("DescrizioneFile", ViewBag.DescrizioneFile as SelectList, "", htmlAttributes: new { @class = "form-control", @id = "DescrizioneFile" })
+            </div>
+            <div class="input-container" id="divExport">
+                <div class="col-sm-1">
+                    <button type="button" value="Estrai" class="btn btn-success" id="esporta"><i class="fas fa-download" style="color:mintcream"></i> Estrai</button>
+                    @*   <input type="submit" value="Estrai" class="btn btn-success" id="esporta" />*@
+                </div>
+            </div>
 
             <br />
             <br />
@@ -207,15 +217,43 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
 {
     <script>
 
+         $('#DescrizioneFile').blur(function () {
+            var Nome_File = $('#DescrizioneFile :selected').text();
+            console.log(Nome_File);
+            $('#esporta').click(function () {
+                $.ajax({
+                    dataType: "json",
+                    type: "POST",
+                    url: "ValoreExport/GeoDati",
+                    data: { 'Name_File': Nome_File },
+                    success: function (data) {
+                        if (data.code === 1) {
+                            indirizzo = '@Url.Action("Estrai", "GeoDati")';
+
+                            window.location.href = (indirizzo);
+
+                        } else {
+
+                        }
+
+                    }
+                });
+
+            });
+
+         });
+
         filter_elements();
 
         function filter_elements() {
             var x = document.getElementById("filter");
-            
+
         }
 
 
-     
+
+
+
 
     </script>
 }

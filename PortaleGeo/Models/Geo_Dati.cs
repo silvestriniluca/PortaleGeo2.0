@@ -12,7 +12,7 @@ namespace NuovoPortaleGeo.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class CSVdati
+    public partial class Geo_Dati
     {
         public long Id { get; set; }
         public string IdUtente { get; set; }

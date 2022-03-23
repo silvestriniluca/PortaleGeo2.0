@@ -19,6 +19,7 @@ using ExcelDataReader;
 using Newtonsoft.Json;
 using NuovoPortaleGeo.Models;
 using System.Web.Script.Serialization;
+using System.Diagnostics;
 
 namespace NuovoPortaleGeo.Controllers
 {
@@ -298,14 +299,41 @@ namespace NuovoPortaleGeo.Controllers
             using (GeoCodeEntities1 db = new GeoCodeEntities1())
 
             {
+                DataColumnCollection columns = dataTable.Columns;
 
-                dataTable.Columns.Add(new DataColumn("APIGoogle"));
+                if (columns.Contains("APIGoogle"))
+                    {
+
+                    
+                    }
+                    else
+                    {
+                    dataTable.Columns.Add(new DataColumn("APIGoogle"));
+                }
+                if (columns.Contains("DENOMINAZIONE"))
+                {
+                
+                }
+                else
+                {
+                    dataTable.Columns.Add(new DataColumn("DENOMINAZIONE"));
+                }
+                if (columns.Contains("AltroIndirizzo"))
+                {
+
+                }
+                else
+                {
+                    dataTable.Columns.Add(new DataColumn("AltroIndirizzo"));
+                }
+
+
                 ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
 
                 var Geo_Utente = db.Geo_Utente
                         .Where(x => x.CodiceFiscale == cf).FirstOrDefault();
 
-                HomeController.GetAttività(Geo_Utente.Id, Geo_Utente.UserName, FileName, Path, true, false);
+                
                 //        tablerisultati = dataTable.Copy();
                 tablerisultati.Columns.Add(new DataColumn("Provincia"));
                 tablerisultati.Columns.Add(new DataColumn("Comune"));
@@ -315,7 +343,10 @@ namespace NuovoPortaleGeo.Controllers
                 tablerisultati.Columns.Add(new DataColumn("Lon"));
                 tablerisultati.Columns.Add(new DataColumn("Approx01"));
                 tablerisultati.Columns.Add(new DataColumn("Approx02"));
-                
+                int GeoRighe = 0;
+                int GeoNoRighe = 0;
+                Stopwatch stopWatch = new Stopwatch();
+                stopWatch.Start();
                 foreach (DataRow row in dataTable.Rows)
                 {
 
@@ -397,8 +428,12 @@ namespace NuovoPortaleGeo.Controllers
 
                         //Se non viene trovato niente in nessun modo assegno i valori da Baricentro Comune
                         if ((geo.Lat == 0 || geo.Lon == 0)) geo = geox;
+                        if(geo.Lat == 0 && geo.Lon==0)
+                        {
 
-
+                            GeoNoRighe++;
+                        }
+                        GeoRighe++;
                         tablerisultati.Rows.Add(row["Provincia"], row["Comune"], row["Indirizzo"], row["DENOMINAZIONE"], geo.Lat, geo.Lon, geo.Approx01, geo.Approx02);
                     }
                     
@@ -406,6 +441,10 @@ namespace NuovoPortaleGeo.Controllers
 
 
                 }
+                int GeoRef = GeoRighe - GeoNoRighe;
+                stopWatch.Stop();
+                TimeSpan ts = stopWatch.Elapsed;
+                HomeController.GetAttività(Geo_Utente.Id, Geo_Utente.UserName, FileName, Path, true, false, dataTable.Rows.Count, GeoRef, ts);
                 return tablerisultati;
             }
 
@@ -654,11 +693,8 @@ namespace NuovoPortaleGeo.Controllers
                         Indirizzo = x.Indirizzo,
                         N_Civico = x.N_Civico,
                         Comune = x.Comune,
-
                         Provincia = x.Provincia,
-
                         Regione = x.Regione,
-
                         Note1 = x.Note1,
                         Note2 = x.Note2,
                         Lat = x.Lat,
@@ -677,11 +713,8 @@ namespace NuovoPortaleGeo.Controllers
                             "Indirizzo",
                             "N_Civico",
                             "Comune",
-
                             "Provincia",
-
                             "Regione",
-
                             "Note1",
                             "Note2",
                             "Lat",
@@ -715,7 +748,8 @@ namespace NuovoPortaleGeo.Controllers
               Response.Flush();
               Response.End();*/
 
-            return json_map;
+             return json_map;
+            //return Json(new { risposta = lista_geocode });
         }
     }
 }

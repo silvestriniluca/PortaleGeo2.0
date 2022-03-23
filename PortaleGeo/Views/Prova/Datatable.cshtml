@@ -1,0 +1,82 @@
+﻿
+@{
+    ViewBag.Title = "Datatable";
+}
+
+<!--Import jQuery before export.js-->
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+<!--Data Table-->
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.4/js/dataTables.buttons.min.js"></script>
+
+<!--Export table button CSS-->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
+
+<h2>Datatable</h2>
+
+<!--HTML table with student data-->
+<table id="tableID" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th>User name</th>
+            <th>Designation</th>
+            <th>Salary</th>
+            <th>Address</th>
+        </tr>
+    </thead>
+</table>
+
+<script type="text/javascript">
+    /*
+    var dataSet = [
+        {
+
+            nome:"Tina Mukherjee",
+            indirizzo:"BPO member",
+            città:"Pune",
+            prova: "Pune",
+        },
+        {
+            nome:"Gaurav",
+            indirizzo:"Teacher",
+            città: "Pune",
+            prova: "Pune",
+        }
+    ];*/
+
+    $(document).ready(function () {
+        fetch('../Prova/DatiJSON',
+            { // Your POST endpoint
+                method: 'POST',
+                headers: {
+                    // Content-Type may need to be completely **omitted**
+                    // or you may need something
+                    "Content-Type": "You will perhaps need to define a content-type here"
+                },
+                body: file // This is your file object
+            })
+            .then(response => response.json())
+            .then(dataSet => {
+                $('#tableID').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Italian.json'
+                    },
+                    paging: true,
+                    data: dataSet,
+                    columns: [
+                        { data: "nome" },
+                        { data: "indirizzo", title: "Address" },
+                        { data: "città", title: "City" },
+                        { data: "prova", title: "Prova" },
+                    ]
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+    });
+</script>

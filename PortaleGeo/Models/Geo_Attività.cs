@@ -22,6 +22,9 @@ namespace NuovoPortaleGeo.Models
         public Nullable<bool> OpenStreetMap { get; set; }
         public string Id_Utente { get; set; }
         public Nullable<System.DateTime> DataAttività { get; set; }
+        public Nullable<int> RigheTotali { get; set; }
+        public Nullable<int> RigheGeoreferenziate { get; set; }
+        public Nullable<System.TimeSpan> TempoImpiegato { get; set; }
     
         public virtual Geo_Utente Geo_Utente { get; set; }
     }

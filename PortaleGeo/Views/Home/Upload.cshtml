@@ -1,11 +1,7 @@
 ﻿@model NuovoPortaleGeo.ViewModels.VmUpload
-
-
-
 @using System.Data;
-@{
-    ViewBag.Title = "Upload";
-}
+@{ ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
 
 <h2>Caricamento File CSV</h2>
 
@@ -37,6 +33,34 @@
             background-color: #ff6600;
             color: white;
         }
+
+    nav ul {
+        list-style: none;
+    }
+
+        nav ul li ul {
+            display: none;
+        }
+
+    .visible {
+        display: block;
+    }
+
+    #menu-icon:before {
+        content: "Menu";
+        display: inline-block;
+        width: 50px;
+    }
+
+    #menu-icon:after {
+        content: "\2261";
+        display: inline-block;
+        width: 50px;
+    }
+
+    #Mregione {
+        transform: translate(10%)
+    }
 </style>
 
 @using (Html.BeginForm(Html.BeginForm("Upload", "Home", null, FormMethod.Post, new { enctype = "multipart/form-data" })))
@@ -44,184 +68,159 @@
     @Html.AntiForgeryToken()
     @Html.ValidationSummary()
 
-    <div class="row">
-        @* <div class="form-control">
-                @Html.LabelFor(model => model.IdUtente, htmlAttributes: new { @class = "control-label col-md-2" })
+
+    if (Model == null)
+    {
+
+
+        <div id="totale">
+            <div class="row">
+                <div class="col-sm-3">
+                    @Html.TextBox("upload", "", new { @class = "form-control", @type = "file", @id = "TextUpload", @name = "upload", @accept = ".csv", @required = "required" })
+                </div>
+
+                <div class="col-sm-1">
+                    <img src="~/Images/download.png" class="rounded-circle" id="conferma" height="25" style="display:none" />
+                </div>
+                <div class="col-sm-2">
+                    <img src="~/Images/RegMarche.svg.png" height="200" />
+                </div>
+                <div class="col-sm-3">
+                    <img src="~/Images/cratere-sisma.jpg" height="200" id="Mregione" />
+                </div>
+            </div>
+
+            <br />
+            <div class="form-group">
+                @Html.LabelFor(model => model.DescrizioneFile, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.IdUtente, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                    @Html.ValidationMessageFor(model => model.IdUtente, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.DescrizioneFile, new { htmlAttributes = new { @class = "form-control", @required = "required", @id = "DescrizioneFile" } })
+                    @Html.ValidationMessageFor(model => model.DescrizioneFile, "", new { @class = "text-danger" })
                 </div>
             </div>
-        *@
+            <br />
 
-    </div>
-
-    <div>
-        <div class="row">
-            <div class="col-sm-3">
-                @Html.TextBox("upload", "", new { @class = "form-control", @type = "file", @id = "upload", @name = "upload", @accept = ".csv" })
+            <div class="col-sm-5">
+                <label title="Attiva Geo">
+                    <strong>ATTIVA GEOREFERENZAZIONE</strong>
+                    <input type="checkbox" id="CheckGeo" />
+                </label>
             </div>
-            <div class="col-sm-1">
-                <img src="~/Images/download.png" class="rounded-circle" id="conferma" height="25" style="display:none" />
-            </div>
-        </div>
-        <br />
-        <div class="form-group">
-            @Html.LabelFor(model => model.DescrizioneFile, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.DescrizioneFile, new { htmlAttributes = new { @class = "form-control", @required = "required", @id = "DescrizioneFile" } })
-                @Html.ValidationMessageFor(model => model.DescrizioneFile, "", new { @class = "text-danger" })
-            </div>
-
-        </div>
-    </div>
-
-    <br />
-
-
-
-
-
-
-    <div class="col-sm-5">
-        <label title="Attiva Geo">
-            Attiva Georeferenzazione
-            <input type="checkbox" id="CheckGeo" />
-        </label>
-    </div>
-    <div class="row">
-
-
-        <br />
-        <br />
-        <br />
-
-        @*  <div id="selezione" style="display:none">
-                    <p>Seleziona Sistema di Georeferenzazione:</p>
-
-                    <div>
-                        <input type="radio" id="OpenStreetMap" name="drone" value="OpenStreetMap">
-                        <label for="OpenStreetMap">OpenStreetMap</label>
+            <div class="row">
+                @if (Model == null)
+                {
+                    <div class="col-md" id="seleziona" style="display:none">
+                        <h4>@Html.Label("Seleziona Sistema:", htmlAttributes: new { @class = "control-label col-md-5" })</h4>
+                        @Html.Label("", htmlAttributes: new { @class = "control-label col-md-5" })
+                        @Html.DropDownList("SistemaGeo", ViewBag.SistemaGeo as List<SelectListItem>, "", htmlAttributes: new { @class = "form-control" })
                     </div>
+                }
+                <br />
+                <br />
+                <br />
+            </div>
 
-                    <div>
-                        <input type="radio" id="dewey" name="drone" value="Here">
-                        <label for="Here">Here</label>
+            <br />
+
+            <div class="row">
+                <div id="parUpload" style="display:none">
+                    <div class="col-sm-1">
+                        <button type="submit" value="upload" class="btn btn-dark" id="Upload" name="upload"><i class="fa fa-globe"></i>Geocodifica</button>
+                    </div>
+                    <br />
+                    <br />
+                    <div id="OpenStreetMap" style="display:none">
+                        <img src="/Images/OpenStreetMap.jpeg" height="50" alt="" loading="lazy" class="rounded-circle" />
+                        <h2>Sistema di Georeferenzazione OpenStreetMap</h2>
+                    </div>
+                    <div id="Here" style="display:none">
+                        <img src="/Images/HERE_logo.svg.png" height="50" alt="" loading="lazy" id="here" class="rounded-start" />
+                        <h2>Sistema di Georeferenzazione HERE</h2>
+                    </div>
+                    <div class="col-lg-12" id="GeoDati">
+                        <p><strong>Una volta cliccato la geocodifica aspettare la fine del processo e successivamente i dati saranno georeferenziati e disponibili nella pagina <a href="~/GeoDati/Index" class="">GeoDati</a></strong></p>
                     </div>
                 </div>
-            </div>*@
+                <div class="col-sm-1">
+                    <button type="submit" value="Anteprima" class="btn btn-success" id="View" name="upload" style="display:none"><i class="fa fa-th-large" style="color:snow"></i>Visualizza</button>
+                </div>
+                <br />
+                <br />
 
-        <div class="col-md" id="seleziona" style="display:none">
+            </div>
 
-
-            <h4>@Html.Label("Seleziona Sistema:", htmlAttributes: new { @class = "control-label col-md-5" })</h4>
-            @Html.Label("Here:", htmlAttributes: new { @class = "control-label col-md-5" })
-            @Html.DropDownListFor(model => model.Here, new List<SelectListItem>()
-     {
-        new SelectListItem() { Text = "NON ATTIVO", Value = "False"},
-        new SelectListItem() { Text = "ATTIVA", Value = "True" }
-
-     }, new { @id = "Here", @class = "form-control" })
-
-            @Html.ValidationMessageFor(model => model.Here)
-
-            @Html.Label("OpenStreetMap:", htmlAttributes: new { @class = "control-label col-md-5" })
-            @Html.DropDownListFor(model => model.OpenStreetMap, new List<SelectListItem>()
-      {
-         new SelectListItem() { Text = "NON ATTIVO", Value = "False"},
-         new SelectListItem() { Text = "ATTIVA", Value = "True" }
-
-     }, new { @id = "OpenStreetMap", @class = "form-control" })
-
-            @Html.ValidationMessageFor(model => model.OpenStreetMap)
-
-            @Html.Label("Google:", htmlAttributes: new { @class = "control-label col-md-5" })
-            @Html.DropDownListFor(model => model.Google, new List<SelectListItem>()
-       {
-          new SelectListItem() { Text = "NON ATTIVO", Value = "False"},
-          new SelectListItem() { Text = "ATTIVA", Value = "True" }
-
-     }, new { @id = "Google", @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.Google)
 
         </div>
 
-    </div>
-    <br />
 
-    <div class="row">
-        <div class="col-sm-1">
-            <input type="submit" value="upload" class="btn btn-dark" id="Carica" name="upload" />
-        </div>
-        <div class="col-sm-1">
-            <input type="submit" value="Anteprima" class="btn btn-success" id="Carica" name="upload" />
-        </div>
-        <br />
-        <br />
-        <div class="input-container" style="display:none" id="divdelete">
-            <i class="fas fa-trash-alt"></i>
-            <input type="submit" value="SvuotaTabella" class="btn btn-outline-danger" id="delete" />
-        </div>
-       
-    </div>
-    <div>
-        Seleziona colonne corrispondenti a questi campi:
-    </div>
-    <div class="row">
-        <ul>
-            <li>Provincia:</li>
-            @* @Html.DropDownList("Provincia", ViewBag.Provincia as SelectList, "", htmlAttributes: new { @class = "form-control", @id = "Provincia" })*@
-            <li>Comune:</li> @*  @Html.DropDownList("Comune", ViewBag.Comune as SelectList, "", htmlAttributes: new { @class = "form-control", @id = "Comune" })*@
-            <li>Indirizzo:</li>
-            @* @Html.DropDownList("Indirizzo", ViewBag.Indirizzo as SelectList, "", htmlAttributes: new { @class = "form-control", @id = "Indirizzo" })*@
-            <li>Cap:</li>
-            @* @Html.DropDownList("Cap", ViewBag.Cap as SelectList, "", htmlAttributes: new { @class = "form-control", @id = "Cap" })*@
-            <li>AltroIndirizzo:</li>
-            @* @Html.DropDownList("AltroIndirizzo", ViewBag.AltroIndirizzo as SelectList, "", htmlAttributes: new { @class = "form-control", @id = "AltroIndirizzo" })*@
-            <li>N_Civico:</li>
-            @* @Html.DropDownList("N_Civico", ViewBag.N_Civico as SelectList, "", htmlAttributes: new { @class = "form-control", @id = "N_Civico" })*@
-        </ul>
-    </div>
-
-
-
-    <style>
-        #loading {
-            transform: translate(30%);
-            color: darkorange;
-        }
-
-        #table-wrapper {
-            position: relative;
-        }
-
-        #table-scroll {
-            height: 800px;
-            overflow: auto;
-            margin-top: 20px;
-        }
-
-        #table-wrapper table {
-            width: 100%;
-        }
-
-            #table-wrapper table thead th .text {
-                position: absolute;
-                top: -20px;
-                z-index: 2;
-                height: 20px;
-                width: 35%;
-                border: 1px solid red;
+        <style>
+            #loading {
+                transform: translate(30%);
+                color: darkorange;
             }
-    </style>
 
-    <br />
-    <br />
+            #table-wrapper {
+                position: relative;
+            }
 
+            #table-scroll {
+                height: 800px;
+                overflow: auto;
+                margin-top: 20px;
+            }
+
+            #table-wrapper table {
+                width: 100%;
+            }
+
+                #table-wrapper table thead th .text {
+                    position: absolute;
+                    top: -20px;
+                    z-index: 2;
+                    height: 20px;
+                    width: 35%;
+                    border: 1px solid red;
+                }
+        </style>
+
+        <br />
+        <br />
+    }
 
     int count = 0;
     if (Model != null)
     {
+        @*
+            <div class="row">
+                <div>
+                    <p><strong>Associa le colonne alle descrizioni per avere una corretta Geoferenzazione:</strong></p>
+                </div>
+                <ul>
+                    <li>Provincia:</li>
+                    @Html.DropDownList("Provincia", new SelectList(ViewBag.Provincia),"", htmlAttributes: new { @class = "form-control", @id = "Provincia" })
+                    <li>Comune:</li>
+                    @Html.DropDownList("Comune", new SelectList (ViewBag.Comune), "", htmlAttributes: new { @class = "form-control", @id = "Comune" })
+                    <li>Indirizzo:</li>
+                    @Html.DropDownList("Indirizzo", new SelectList(ViewBag.Indirizzo), "", htmlAttributes: new { @class = "form-control", @id = "Indirizzo" })
+                    <li>N_Civico:</li>
+                    @Html.DropDownList("N_Civico", new SelectList(ViewBag.N_Civico), "", htmlAttributes: new { @class = "form-control", @id = "N_Civico" })
+                    <li>Cap:</li>
+                    @Html.DropDownList("Cap", new SelectList(ViewBag.Cap), "", htmlAttributes: new { @class = "form-control", @id = "Cap" })
+                    <li>AltroIndirizzo:</li>
+                    @Html.DropDownList("AltroIndirizzo", new SelectList(ViewBag.AltroIndirizzo), "", htmlAttributes: new { @class = "form-control", @id = "AltroIndirizzo" })
+                    <li>Descrizione Luogo:</li>
+                    @Html.DropDownList("DescrizioneGeo", new SelectList(ViewBag.DescrizioneGeo), "", htmlAttributes: new { @class = "form-control", @id = "AltroIndirizzo" })
+                </ul>
+                <div>
+                    <button type="submit" id="save"><i class="fa-save"></i>Save</button>
+                </div>
+            </div>
+        *@
+        <div class="col-1">
+            <a href="~/Home/Upload" class=""><i class="fa fa-plus-circle"></i>Nuova Georeferenzazione</a>
+        </div>
+        <br />
+
 
         <div id="table-wrapper">
             <div id="table-scroll">
@@ -269,6 +268,7 @@
 }
 
 
+
 <!-- skipped -->
 
 
@@ -278,24 +278,33 @@
 @section scripts{
     <script>
         $(document).ready(function () {
-
             $('#DescrizioneFile').prop("disabled", true);
-            $("#upload").change(function () {
-                for (var i = 0; i < localStorage.length; i++) {
-                    $("#Provincia").append(new Option(localStorage.key(i)));
+            $("#TextUpload").change(function () {
+                if ($('#parUpload').is(':visible')){
+                    $('#View').hide();
                 }
-                $('#conferma').show();
-                $('#DescrizioneFile').prop("disabled", false);
-                var file = $("#upload").val();
-                var lunghezza = file.length;
-                console.log(lunghezza);
-                var filecorretto = file.substring(12, lunghezza);
-                console.log(file);
-                $('#DescrizioneFile').val(filecorretto);
+                else {
+                    $('#View').show();
+                }
+                    for (var i = 0; i < localStorage.length; i++) {
+                        $("#Provincia").append(new Option(localStorage.key(i)));
+                    }
+                    $('#conferma').show();
+                    $('#DescrizioneFile').prop("disabled", false);
+                    var file = $("#TextUpload").val();
+                    var lunghezza = file.length;
+                    console.log(lunghezza);
+                    var filecorretto = file.substring(12, lunghezza);
+                    console.log(file);
+                    $('#DescrizioneFile').val(filecorretto);
             });
 
+
+
+
+
         //chiamata ajax per caricare colonne nelle dropdownlist
-            $("#Carica").click(function () {
+            $("#Save").click(function () {
                     jQuery.ajax({
                                                 //definisco il tipo della chiamata
                                                 type: "POST",
@@ -309,13 +318,10 @@
                                                 // Salvo i dati geocodificata nel browser
                                                     const myArray = [];
                                                     var i = localStorage.length;
-                                                    console.log(nome)
+                                                    console.log(data)
                                                     if (myArray[i] = 'undefined') {
-
                                                         myArray[i] = data.ritorno;
                                                         console.log(myArray[i]);
-
-
                                                         localStorage.setItem(nome, myArray[i]);
                                                         alert("Colonne Selezionabili");
                                                     }
@@ -339,74 +345,52 @@
             });
         });
 
-      
+        // bottoni upload e visualiazzazione passaggio dati SistemaGeo
+        $('#Upload, #View').click(function () {
+            if (this.id == 'Upload') {
+                var val = $('#SistemaGeo').find(":selected").val();
+                if (val == '1') {
+                    $('#OpenStreetMap').show();
+                }
+                else if ((val == '2')) {
+                    $('#Here').show();
+                }
+            }
+            else if (this.id == 'View') {
+                var val = "";
 
-                const checkbox = document.getElementById('CheckGeo')
+            }
+            console.log(val);
+                $.ajax({
+                    dataType: "json",
+                    type: "POST",
+                    url: "ValSistemaGeo/GeoDati",
+                    data: { 'SistemaGeo': val },
+                    success: function (data) {
+                        if (data.code === 1) {
+                            return null;
+                        } else {
+                            alert("errore file caricato")
+                        }
+
+                    }
+                });
+        });
+
+        //controllo checkbox --> visualizzazioni bottoni
+                          const checkbox = document.getElementById('CheckGeo')
                             checkbox.addEventListener('change', (event) => {
                                 if (event.currentTarget.checked) {
                                     $('#seleziona').show();
+                                    $('#parUpload').show();
+                                    $('#View').hide();
                                 } else {
                                     $('#seleziona').hide();
-                                    $("#Here").val()== "False";
-                                    $("#OpenStreetMap").val()=="False";
-                                    $("#Google").val()=="False";
+                                    $('#parUpload').hide();
+                                    $('#View').show();
+
                                 }
                             });
-
-        const dropdownlist = document.getElementById('OpenStreetMap')
-
-        dropdownlist.addEventListener('change',(event) => {
-            var selectedVal = $(this).find(':selected').val();
-            var selectedText = $(this).find(':selected').text();
-            var Open = $("#OpenStreetMap").val();
-            console.log(Open);
-
-            if (Open =="True") {
-                $('#Here').prop("disabled", true);
-                $('#Google').prop("disabled", true)
-                console.log("disattivati");
-            }
-            else if (Open == "False") {
-                $('#Here').removeAttr("disabled");
-                $('#Google').removeAttr("disabled");
-                console.log("attivati");
-            }
-        });
-
-        $("#Google").change(function () {
-            var selectedVal = $(this).find(':selected').val();
-            var selectedText = $(this).find(':selected').text();
-
-
-            if (selectedText == "ATTIVA") {
-                $('#OpenStreetMap').prop("disabled", true);
-                $('#Here').prop("disabled", true);
-            }
-              else
-            {
-                $('#OpenStreetMap').prop("disabled", false);
-                $('#Here').prop("disabled", false);
-            }
-        });
-
-        $("#Here").change(function () {
-            var selectedVal = $(this).find(':selected').val();
-            var selectedText = $(this).find(':selected').text();
-
-            if (selectedText == "ATTIVA") {
-                $('#OpenStreetMap').prop("disabled", true);
-                $('#Google').prop("disabled", true);
-            }
-              else
-            {
-                $('#OpenStreetMap').prop("disabled", false);
-                $('#Google').prop("disabled", false);
-            }
-        });
-
-
-
-
 
     </script>
 }

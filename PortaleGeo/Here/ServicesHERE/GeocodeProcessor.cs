@@ -8,13 +8,16 @@ using CsvHelper.Configuration;
 using NuovoPortaleGeo.reader.csv;
 using NuovoPortaleGeo.service;
 using NuovoPortaleGeo.Models;
+using System.Data;
+using NuovoPortaleGeo.Controllers;
 
 namespace NuovoPortaleGeo
 {
+    
     public class GeocodeProcessor
     {
-
-        public static DataDescriptor EsecuteGecoding(DataDescriptor data, InputParam par, string inputFile, CsvConfiguration conf)
+       
+        public static DataDescriptor EsecuteGecoding(DataDescriptor data, InputParam par, string inputFile, CsvConfiguration conf, int Georighe,int GeoNorighe)
         {
 
             int counter = 0;
@@ -157,7 +160,7 @@ namespace NuovoPortaleGeo
                                 outRow[K_MATCH_RELEVANCE] =
                                     geocoderReply.ReplyObject.Response.View[0].Result[0].Relevance.ToString();
                                 outRow[K_MATCH_ERROR] = null;
-
+                                
                             }
                             else
                             {
@@ -168,6 +171,7 @@ namespace NuovoPortaleGeo
                         {
                             outRow[K_MATCH_ERROR] = "REPLY-OBJECT-NULL";
                         }
+                        GeoNorighe++;
                     }
                     else
                     {
@@ -178,9 +182,10 @@ namespace NuovoPortaleGeo
                     data_computed.Rows.Add(outRow);
                     //
                     counter++;
-
+                    Georighe++;
                     //
                     //if (counter > 5) break;
+
                 }
             }
 

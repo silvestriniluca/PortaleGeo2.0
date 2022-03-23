@@ -17,9 +17,9 @@ namespace NuovoPortaleGeo.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Geo_Utente()
         {
-            this.Geo_Attività = new HashSet<Geo_Attività>();
             this.Geo_UtenteRuolo = new HashSet<Geo_UtenteRuolo>();
             this.Geo_Dati = new HashSet<Geo_Dati>();
+            this.Geo_Attività = new HashSet<Geo_Attività>();
         }
     
         public string Id { get; set; }
@@ -39,12 +39,12 @@ namespace NuovoPortaleGeo.Models
         public string CodiceFiscale { get; set; }
         public string IdRuolo { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Geo_Attività> Geo_Attività { get; set; }
         public virtual Geo_Ruolo Geo_Ruolo { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Geo_UtenteRuolo> Geo_UtenteRuolo { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Geo_Dati> Geo_Dati { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Geo_Attività> Geo_Attività { get; set; }
     }
 }

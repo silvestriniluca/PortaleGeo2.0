@@ -4,6 +4,22 @@
 @{
     ViewBag.Title = "Index";
 }
+<head>
+  
+    <!-- stylesheet of Bootstrap-->
+    <!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">-->
+    <!--Leaflet's CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+          integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+          crossorigin="" />
+    <!-- Make sure you put this AFTER Leaflet's CSS,    JS Leaflet -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+            integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+            crossorigin=""></script>
+    <!--libreria ajax jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.umd.js"></script>
+</head>
 
 <h2>Dati Georeferenziati</h2>
 <style>
@@ -46,10 +62,14 @@
         height: 800px;
         overflow: auto;
         margin-top: 20px;
+        width:1500px;
     }
 
     #table-wrapper table {
         width: 100%;
+    }
+    #bloccacolonnautile{
+        display:block;
     }
 
         #table-wrapper table thead th .text {
@@ -76,59 +96,103 @@
          {
              color:red;
          }
-       
+        .overlay {
+         display: none;
 
+         }
+
+        #EliminaMarker {
+            transform: translate(30%)
+        }
+
+        #mapid {
+            width: 1300px;
+            height: 620px;
+        }
+
+        #ElimnaDatiStorage {
+            transform: translate(600%);
+        }
+        #Seleziona{
+            width:100%;
+        }
+        
 </style>
 
-<strong>@Html.ActionLink("Crea Nuovo", "Create", new { @class = "MenuButtons" })</strong>
+
+
 <br />
 <br />
 
-@using(Html.BeginForm())
-            {
+<div class="form-group">
+    <strong>Descrizione File:</strong>
+    <div class="col-md-12">
+        @Html.DropDownList("DescrizioneFile", ViewBag.FileGeo as SelectList, "Seleziona un file", htmlAttributes: new { @class = "dropdown", @id = "RicercaMappa" })
+    </div>
 
-         
-<div id="filter" visible="true" style="display:block" >
-    <div class="input-group mb-3">
-        <div class="row mb-4">
+</div>
+@using (Html.BeginForm())
+{
 
-            <div class="col-md-4">
-                Provincia
-                @Html.TextBox("Provincia", ViewBag.Provincia as SelectList, "", new { @class = "form-control" })
-            </div>
+<br />
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="btn btn-outline-secondary" id="Seleziona" disabled><i class="fas fa-flag"></i>  Visualizza Dati in Mappa</button>
+    </div>
+</div>
 
-            <div class="col-md-4">
-                Comune
-                @Html.TextBox("Comune", ViewBag.CurrentComune as SelectList, "", new { @class = "form-control" })
-            </div>
-            <div class="col-md-4">
-                Indirizzo
-                @Html.TextBox("Indirizzo", ViewBag.Indirizzo as SelectList, "", new { @class = "form-control" })
-            </div>
-            <div class="col-md-4">
-                Descrizione File
-                @Html.DropDownList("DescrizioneFile", ViewBag.DescrizioneFile as SelectList, "", htmlAttributes: new { @class = "form-control", @id = "DescrizioneFile" })
-            </div>
-            <div class="input-container" id="divExport">
-                <div class="col-sm-1">
-                    <button type="button" value="Estrai" class="btn btn-success" id="esporta"><i class="fas fa-download" style="color:mintcream"></i> Estrai</button>
-                    @*   <input type="submit" value="Estrai" class="btn btn-success" id="esporta" />*@
+
+    <div>
+        <br />
+        <div id="mapid"></div>
+    </div>
+    <br />
+    <strong>@Html.ActionLink("Aggiungi nuovo luogo", "Create", new { @class = "MenuButtons" })</strong>
+    <br />
+    <br />
+    <div id="filter" visible="true" style="display:block">
+        <h4>Ricerca nella tabella</h4>
+        <div class="input-group mb-4">
+            <div class="row mb-4">
+
+                <div class="col-md-4">
+                    Provincia:
+                    @Html.TextBox("Provincia", ViewBag.Provincia as SelectList, "", new { @class = "form-control" })
                 </div>
-            </div>
 
-            <br />
-            <br />
-            <br />
-            <div class="col-md-3 mt-3">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="submit">
-                        <i class="fas fa-search" aria-label="Cerca"></i>
-                    </button>
+                <div class="col-md-4">
+                    Comune:
+                    @Html.TextBox("Comune", ViewBag.CurrentComune as SelectList, "", new { @class = "form-control" })
+                </div>
+                <div class="col-md-4">
+                    Indirizzo:
+                    @Html.TextBox("Indirizzo", ViewBag.Indirizzo as SelectList, "", new { @class = "form-control" })
                 </div>
             </div>
         </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        Descrizione File:
+                        @Html.DropDownList("DescrizioneFile", ViewBag.DescrizioneFile as SelectList, "Seleziona un file", htmlAttributes: new { @class = "dropdown", @id = "DescrizioneFile" })
+                    </div>
+                </div>
+               
+
+                <div class="row">
+                    <div class="col-md-3 mt-3">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit" id="cerca">
+                                <i class="fas fa-search" aria-label="Cerca"></i>
+                            </button>
+                            <button type="button" value="Estrai" class="btn btn-success" id="esporta"><i class="fas fa-download" style="color:mintcream"></i> Estrai</button>
+
+                        </div>
+                    </div>
+                </div>
+           
+        
     </div>
-</div>
+
 }
 
 
@@ -138,7 +202,7 @@
             <thead>
                 <tr>
                     <th>
-                       DescrizioneFile
+                        File
                     </th>
                     <th>
                         Provincia
@@ -147,13 +211,38 @@
                         Comune
                     </th>
                     <th>
-                        Indirizzo 
+                        Indirizzo
                     </th>
                     <th>
                         Descrizione
                     </th>
-                    
-                    <th></th>
+                    <th>
+                        Lat
+                    </th>
+                    <th>
+                        Lon
+                    </th>
+                    <th>
+                        Approx1
+                    </th>
+                    <th>
+                        Approx02
+                    </th>
+                    <th>
+                        Here_MatchLevel
+                    </th>
+                    <th>
+                        Here_MatchType
+                    </th>
+                    <th>
+                        Here_Relevance
+                    </th>
+                    <th>
+                        Here_Error
+                    </th>
+
+
+                    <th id="bloccacolonnautile"></th>
                 </tr>
             </thead>
             <tbody>
@@ -176,7 +265,30 @@
                         <td>
                             @Html.DisplayFor(modelItem => item.Descrizione)
                         </td>
-                        
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Lat)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Lon)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Approx01)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Approx02)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Here_MatchLevel)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Here_MatchType)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Here_Relevance)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Here_Error)
+                        </td>
                         <td>
                             <a class="btn btn-sm btn-outline-secondary mb-1" aria-label="Dettagli"
                                href=" @Url.Action("Edit", new { id = item.Id }) ">
@@ -186,11 +298,11 @@
                                href="@Url.Action("Details", new { id = item.Id })">
                                 <i class="fas fa-search"></i>
                             </a>
-                            <a  class="btn btn-sm btn-outline-secondary mb-1" aria-label="Dettagli"
+                            <a class="btn btn-sm btn-outline-secondary mb-1" aria-label="Dettagli"
                                href="@Url.Action("Delete", new { id = item.Id })">
                                 <i class="fas fa-trash-alt"></i>
                             </a>
-                         
+
                         </td>
                     </tr>
                 }
@@ -201,26 +313,139 @@
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
 
-    @Html.PagedListPager(Model, page => Url.Action("Index",
-    new
-    {
-            page,
-            Provincia = ViewBag.CurrentProvincia,
-             Comune = ViewBag.CurrentComune,
-             Indirizzo = ViewBag.CurrentIndirizzo,
-            DescrizioneFile = ViewBag.CurrentDescrizioneFile,
-
-    }))
-
-
-@section Scripts
+@Html.PagedListPager(Model, page => Url.Action("Index",
+new
 {
-    <script>
+        page,
+        Provincia = ViewBag.CurrentProvincia,
+         Comune = ViewBag.CurrentComune,
+         Indirizzo = ViewBag.CurrentIndirizzo,
+        DescrizioneFile = ViewBag.CurrentDescrizioneFile,
 
-         $('#DescrizioneFile').blur(function () {
-            var Nome_File = $('#DescrizioneFile :selected').text();
-            console.log(Nome_File);
+}))
+
+
+
+
+<script>
+
+
+        var mymap = L.map('mapid').setView([43.35, 13.30], 9);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(mymap);
+
+    $(document).ready(function () {
+      
+        const val = $("#RicercaMappa").val();
+        console.log(val);
+
+            if (localStorage.DescrizioneFile != null) {
+                $("#RicercaMappa").val(localStorage.DescrizioneFile);
+                $("#DescrizioneFile").val(localStorage.DescrizioneFile);
+                $("#Seleziona").prop("disabled", false);
+                $("#Seleziona").click();
+                }
+
+
+            
+
+
+
+     /*   console.log($("#DescrizioneFile").val())
+        if ($("#DescrizioneFile").val() != "Selezione un File") {
+            $("#cerca").one('click', function (e) {
+                if ($("#cerca").click() == true) {
+                    $("#RicercaMappa").val($("#DescrizioneFile").val())
+                    $("#Seleziona").click()
+                }
+            });*/
+
+        //   if (localStorage.DescrizioneFile != null) {
+
+        // $("#Seleziona").click();
+
+        //$("#cerca").click()
+
+
+
+
+        $("#RicercaMappa").change(function () {
+            const val = $("#RicercaMappa").val();
+            console.log(val);
+        if (val != "") {
+            $("#Seleziona").prop("disabled", false);
+        }
+        else {
+            $("#Seleziona").prop("disabled", true);
+        }
+        })
+    });
+
+    
+   $('#cerca, #Seleziona').click(function () {
+        if (localStorage.DescrizioneFile != null) {
+
+            var Nome_File = localStorage.DescrizioneFile
+            console.log(Nome_File)
+
+        }
+       // else {
+            var Nome_File = $('#RicercaMappa').find(":selected").text();
+        //}
+
+        $.ajax({
+            dataType: "json",
+            type: "POST",
+            url: "ValoreExport/GeoDati",
+            data: { 'Name_File': Nome_File },
+            success: function (data) {
+                if (data.code === 1) {
+                    $.ajax({
+                        //definisco il tipo della chiamata
+                        type: "POST",
+                        // specifico la URL della risorsa da contattare
+                        url: '@Url.Action("JsonRisultati", "GeoDati")',
+                        // passo dei dati alla risorsa remota
+                        dataType: "json",
+                        //contentType: 'application/json; charset=utf-8',
+                        // Tipo di dato che si riceve di ritorno
+                        // imposto un'azione per il caso di successo
+                        success: function (data) {
+                            console.log(data);
+                            var layerControl_GeoDati = L.control.layers().addTo(mymap);
+                            var layerGroup_GeoDati = L.layerGroup().addTo(mymap);
+                            for (var i in data) {
+                                var marker = L.marker([data[i].Lat.replace(",", "."), data[i].Lon.replace(",", ".")])
+                                marker.bindPopup("<b>Indirizzo: </b>" + data[i].Indirizzo + (data[i].hasOwnProperty('DENOMINAZIONE') && data[i].DENOMINAZIONE ? "<br /><b>Denominazione: </b>" + data[i].DENOMINAZIONE : "") +
+                                    "<br /><b>Info: </b>" + data[i].Descrizione);
+                                layerGroup_GeoDati.addLayer(marker);
+                            }
+                            layerControl_GeoDati.addOverlay(layerGroup_GeoDati, Nome_File);
+                            localStorage.removeItem("DescrizioneFile");
+
+                        },
+
+                        error: function () {
+                            alert("Chiamata fallita!!!");
+                        }
+                    });
+                }
+            }
+        });
+        $('#EliminaMarker').click(function () {
+            mymap.eachLayer(function (layer) {
+                mymap.removeLayer(layerGroup);
+                mymap.removeControl(layerControl);
+            });
+        });
+    });
+
+   //     $('#DescrizioneFile').blur(function () {
             $('#esporta').click(function () {
+                var Nome_File = $('#DescrizioneFile').find(":selected").text();
+                //     var Nome_File = $('#DescrizioneFile :selected').text();
+                console.log(Nome_File);
                 $.ajax({
                     dataType: "json",
                     type: "POST",
@@ -229,19 +454,18 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
                     success: function (data) {
                         if (data.code === 1) {
                             indirizzo = '@Url.Action("Estrai", "GeoDati")';
-
                             window.location.href = (indirizzo);
-
-                        } else {
-
+                        } else if(data.code === 2) {
+                            alert("Seleziona un File")
+                          //  ricarico = '@Url.Action("Index", "GeoDati")';
+                          //  window.location.href = (ricarico);
                         }
-
                     }
                 });
 
             });
 
-         });
+       //  });
 
         filter_elements();
 
@@ -250,10 +474,5 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
 
         }
 
+</script>
 
-
-
-
-
-    </script>
-}

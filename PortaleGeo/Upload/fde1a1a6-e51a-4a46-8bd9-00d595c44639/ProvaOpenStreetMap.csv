@@ -1,0 +1,5 @@
+Id;Indirizzo;N_Civico;Comune;IstatComune;Provincia;IstatProvincia;Regione;IstatRegione;Note1;Note2;Note3;Lat;Lon;Approx01;Approx02;Cap;AltroIndirizzo;APIGoogle;Here_Latitude;Here_Longitude;Here_MatchLevel;Here_MatchType;Here_Relevance;Here_Error;Here_Latitude;Here_Longitude;Here_MatchLevel;Here_MatchType;Here_Relevance;Here_Error
+1;Largo Guglielmo Oberdan 17;1;Chiaravalle;;ANCONA;;;;ACANTO DI TOGNI ROBERTA;Legno;1EMME;;;;;60033;;;43,59721;13,32473;houseNumber;pointAddress;1;;43,59721;13,32473;houseNumber;pointAddress;1;
+2;Via Montefanese 80;2;Osimo;;ANCONA;;;;ALESSIA SGARIGLIA DECORAZIONI;Restauro;1EMME;;;;;60027;;;43,469078;13,4663962;houseNumber;interpolated;1;;43,469078;13,4663962;houseNumber;interpolated;1;
+3;Via Vittorio Veneto 3;3;Agugliano;;ANCONA;;;;ALTA GIOIELLERIA ITALIANA;Metalli pregiati, pietre dure e lavorazioni affini;1EMME;;;;;60020;;;43,54354;13,38636;houseNumber;pointAddress;1;;43,54354;13,38636;houseNumber;pointAddress;1;
+4;Via Letteria Belardinelli 2/A;4;Jesi;;ANCONA;;;;ALTILE;Cuoio e tappezzeria;1EMME;;;;;60035;;;43,52998;13,26545;houseNumber;pointAddress;0,96;;43,52998;13,26545;houseNumber;pointAddress;0,96;

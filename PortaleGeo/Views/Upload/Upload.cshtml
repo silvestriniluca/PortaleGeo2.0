@@ -1,0 +1,539 @@
+﻿@model NuovoPortaleGeo.ViewModels.VmUpload
+@using System.Data;
+@{ ViewBag.Title = "Upload";
+    Layout = "~/Views/Shared/_Layout.cshtml"; }
+<script src="~/Scripts/bootstrap.min.js"></script>
+<script src="~/Scripts/jquery-3.6.0.min.js"></script>
+<script src="~/Scripts/APICalls.js"></script>
+<link href="~/Content/ProgressBarWindow.css" rel="stylesheet">
+
+<h2>Caricamento File CSV</h2>
+
+
+<style>
+    table {
+        font-family: Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        table td, #customers th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        table tr:hover {
+            background-color: #ddd;
+        }
+
+        table th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #ff6600;
+            color: white;
+        }
+
+    nav ul {
+        list-style: none;
+    }
+
+        nav ul li ul {
+            display: none;
+        }
+
+    .visible {
+        display: block;
+    }
+
+    #menu-icon:before {
+        content: "Menu";
+        display: inline-block;
+        width: 50px;
+    }
+
+    #menu-icon:after {
+        content: "\2261";
+        display: inline-block;
+        width: 50px;
+    }
+
+    #Mregione {
+        transform: translate(10%)
+    }
+
+
+    #loading {
+        transform: translate(30%);
+        color: darkorange;
+    }
+
+    #table-wrapper {
+        position: relative;
+    }
+
+    #table-scroll {
+        height: 800px;
+        overflow: auto;
+        margin-top: 20px;
+    }
+
+    #table-wrapper table {
+        width: 100%;
+    }
+
+        #table-wrapper table thead th .text {
+            position: absolute;
+            top: -20px;
+            z-index: 2;
+            height: 20px;
+            width: 35%;
+            border: 1px solid red;
+        }
+
+    .jumbotron {
+        padding: 4rem 2rem;
+    }
+
+    .jumbotron {
+        padding: 2rem 1rem;
+        margin-bottom: 2rem;
+        background-color: burlywood;
+        border-radius: 0.8rem;
+    }
+
+    #visualizza {
+        width: 100%;
+    }
+
+    #visualizza {
+        transform: translate(1%);
+        margin-bottom: 2rem;
+        border-radius: 0.8rem;
+    }
+    #AttivaGeo
+    {
+        padding: 2rem 1rem;
+        margin-bottom: 2rem;
+        background-color:darkkhaki;
+        border-radius: 0.8rem;
+    }
+    #Geo {
+        padding: 2rem 1rem;
+        margin-bottom: 2rem;
+        background-color:antiquewhite;
+        border-radius: 0.8rem;
+    }
+    
+</style>
+@*
+    @using (Html.BeginForm("Upload", "Upload", FormMethod.Post,
+                                          new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary()
+*@
+
+@if (Model == null)
+{
+    <div class="jumbotron">
+
+
+        <div id="totale">
+            <div class="row">
+                <div class="col-md-11">
+                    <input type="file" class="fa fa-file" id="TextUpload" name="upload" accept="csv" required="required" data-show-preview="false" />
+                    @*@Html.TextBox("upload", "", new { @class = "form-control", @type = "file", @id = "TextUpload", @name = "upload", @accept = ".csv", @required = "required" })*@
+                </div>
+
+                <div class="col-md-1">
+                    <img src="~/Images/download.png" class="rounded-circle" id="conferma" height="25" style="display:none" />
+                </div>
+                <div>
+                    <button type="submit" class="fa fa-reply" id="Nuovo" disabled title="Cambia File"></button>
+                </div>
+            </div>
+
+            <br />
+            <div>
+                <strong>@Html.Label("Descrizione File:", htmlAttributes: new { @class = "control-label col-md-2" })</strong>
+                <div class="row col-12">
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.DescrizioneFile, new { htmlAttributes = new { @class = "form-control", @required = "required", @id = "DescrizioneFile" } })
+                        @Html.ValidationMessageFor(model => model.DescrizioneFile, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <div class="row" id="visualizza">
+        <button type="submit" value="Anteprima" class="btn btn-success" id="View" name="upload" style="display:none"><i class="fa fa-th-large" style="color:snow"></i>   Anteprima</button>
+    </div>
+
+
+
+    <table id="tableID" class="display" style="width:100%;display:none">
+        <thead>
+            <tr>
+                <th>Provincia</th>
+                <th>Comune</th>
+                <th>Indirizzo</th>
+
+            </tr>
+        </thead>
+    </table>
+
+    <br />
+    <br />
+    <div class="jumbotron" id="AttivaGeo" style="display:none">
+        <div class="col-sm-5"  >
+            <label title="Attiva Geo">
+                <strong>ATTIVA GEOREFERENZAZIONE</strong>
+                <input type="checkbox" id="CheckGeo" />
+            </label>
+        </div>
+    </div>
+    <div class="jumbotron" id="Geo" style="display:none">
+        <div class="row">
+            @if (Model == null)
+            {
+                <div class="col-md" id="seleziona">
+                    <h4>@Html.Label("Seleziona Sistema:", htmlAttributes: new { @class = "control-label col-md-5" })</h4>
+                    @Html.Label("", htmlAttributes: new { @class = "control-label col-md-5" })
+                    @Html.DropDownList("SistemaGeo", ViewBag.SistemaGeo as List<SelectListItem>, htmlAttributes: new { @class = "dropdown", @id="SistemaGeo" })
+                    
+                </div>
+            }
+            <br />
+            <br />
+            <br />
+        </div>
+
+        <br />
+        <div id="Fade_area" class="overLay">
+        </div>
+        <div id="myModal" class="popup">
+            @Html.Partial("~/Views/Shared/Popup.cshtml")
+
+        </div>
+        <div class="row">
+            <div id="parUpload" >
+                <div class="col-sm-1">
+                    <button type="submit"  value="upload" class="btn btn-dark" id="Upload" name="upload"><i class="fa fa-globe"></i>Geocodifica</button>
+                </div>
+                <br />
+                <br />
+                <div id="OpenStreetMap" style="display:none">
+                    <img src="/Images/OpenStreetMap.jpeg" height="50" alt="" loading="lazy" class="rounded-circle" />
+                    <h2>Sistema di Georeferenzazione OpenStreetMap</h2>
+                </div>
+                <div id="Here" style="display:none">
+                    <img src="/Images/HERE_logo.svg.png" height="50" alt="" loading="lazy" id="here" class="rounded-start" />
+                    <h2>Sistema di Georeferenzazione HERE</h2>
+                </div>
+                <div class="col-lg-12" id="GeoDati">
+                    <p><strong>Una volta cliccato la geocodifica aspettare la fine del processo e successivamente i dati saranno georeferenziati e disponibili nella pagina <a href="~/GeoDati/Index" class="">GeoDati</a></strong></p>
+                </div>
+            </div>
+
+            <br />
+            <br />
+        </div>
+    </div>
+
+
+
+}
+
+
+
+<br />
+<br />
+
+
+
+
+@if (Model != null)
+{
+    int count = 0;
+    @*
+        <div class="row">
+            <div>
+                <p><strong>Associa le colonne alle descrizioni per avere una corretta Geoferenzazione:</strong></p>
+            </div>
+            <ul>
+                <li>Provincia:</li>
+                @Html.DropDownList("Provincia", new SelectList(ViewBag.Provincia),"", htmlAttributes: new { @class = "form-control", @id = "Provincia" })
+                <li>Comune:</li>
+                @Html.DropDownList("Comune", new SelectList (ViewBag.Comune), "", htmlAttributes: new { @class = "form-control", @id = "Comune" })
+                <li>Indirizzo:</li>
+                @Html.DropDownList("Indirizzo", new SelectList(ViewBag.Indirizzo), "", htmlAttributes: new { @class = "form-control", @id = "Indirizzo" })
+                <li>N_Civico:</li>
+                @Html.DropDownList("N_Civico", new SelectList(ViewBag.N_Civico), "", htmlAttributes: new { @class = "form-control", @id = "N_Civico" })
+                <li>Cap:</li>
+                @Html.DropDownList("Cap", new SelectList(ViewBag.Cap), "", htmlAttributes: new { @class = "form-control", @id = "Cap" })
+                <li>AltroIndirizzo:</li>
+                @Html.DropDownList("AltroIndirizzo", new SelectList(ViewBag.AltroIndirizzo), "", htmlAttributes: new { @class = "form-control", @id = "AltroIndirizzo" })
+                <li>Descrizione Luogo:</li>
+                @Html.DropDownList("DescrizioneGeo", new SelectList(ViewBag.DescrizioneGeo), "", htmlAttributes: new { @class = "form-control", @id = "AltroIndirizzo" })
+            </ul>
+            <div>
+                <button type="submit" id="save"><i class="fa-save"></i>Save</button>
+            </div>
+        </div>
+    *@
+    <div class="col-1">
+        <a href="~/Upload/Upload" class=""><i class="fa fa-plus-circle"></i>Nuova Georeferenzazione</a>
+    </div>
+    <br />
+    <div class="row">
+        <h4>Anteprima MAX(100 righe):</h4>
+        <p>Totale righe: @Model.Rows.Count</p>
+    </div>
+
+    <div id="table-wrapper">
+        <div id="table-scroll">
+            <table id="DatiCsv" data-page-length='25'>
+                <thead>
+                    <tr>
+                        @foreach (DataColumn col in Model.Columns)
+                        {
+
+
+                            <th>@col.ColumnName</th>
+
+
+
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (DataRow row in Model.Rows)
+                    {
+                        if (count < 100)
+                        {
+
+
+                            <tr>
+                                @foreach (DataColumn col in Model.Columns)
+                                {
+
+                                    <td>@row[col.ColumnName]</td>
+
+
+                                }
+                            </tr>
+                            count++;
+                        }
+
+                    }
+                </tbody>
+            </table>
+            <strong>Numero Report:@Model.Rows.Count</strong>
+        </div>
+    </div>
+
+}
+
+
+
+
+
+
+<!-- skipped -->
+
+
+<hr />
+
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('#DescrizioneFile').prop("disabled", true);
+            $("#TextUpload").change(function () {
+                $('#Nuovo').prop("disabled", false);
+                if ($('#parUpload').is(':visible')) {
+                    $('#View').hide();
+                }
+                else {
+                    $('#View').show();
+                }
+                for (var i = 0; i < localStorage.length; i++) {
+                    $("#Provincia").append(new Option(localStorage.key(i)));
+                }
+                $('#conferma').show();
+                $('#DescrizioneFile').prop("disabled", false);
+                var file = $("#TextUpload").val();
+                var lunghezza = file.length;
+                console.log(lunghezza);
+                var filecorretto = file.substring(12, lunghezza - 4);
+                console.log(file);
+                $('#DescrizioneFile').val(filecorretto);
+                $('#tableID').show();
+                $('#TextUpload').prop("disabled", true);
+            });
+
+        });
+
+/*
+            $("#DatiCsv").DataTable({
+
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Italian.json'
+                },
+                paging: true
+
+*/
+
+            $('#Nuovo').click(function () {
+                $('#DescrizioneFile').val("");
+                $('#TextUpload').val("");
+                $('#TextUpload').prop("disabled", false);
+                $('#View').hide();
+                $('#tableID').hide();
+                $('#conferma').hide();
+            });
+                // Upload del file AJAX
+                 $("#View").click(function () {
+                $('#Nuovo').prop("disabled", true);
+                     const fileField = document.getElementById('TextUpload');
+                     var filecorretto = $('#DescrizioneFile').val();
+                     console.log(filecorretto);
+                const formData = new FormData();
+
+          
+                
+                formData.append('descrizione', filecorretto);
+                formData.append('filecsv', fileField.files[0]);
+
+
+                     fetch('../Upload/DatiJSON',
+
+                         
+                            { // Your POST endpoint
+                                method: 'POST',
+                                body: formData, // This is your file object
+                                data: { 'descrizione': filecorretto }
+                            })
+                            .then(response => response.json())
+                            .then(dataSet => {
+                                $('#tableID').DataTable({
+                                    language: {
+                                        url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Italian.json'
+                                    },
+                                    paging: true,
+                                    data: dataSet,
+                                    columns: [
+                                        { data: "Provincia", title: "Provincia" },
+                                        { data: "Comune", title: "Comune" },
+                                        { data: "Indirizzo", title: "Indirizzo" },
+
+                                    ]
+
+                                });
+                                $("#AttivaGeo").show();
+                                $("#View").hide();
+                                alert("Formato tabella corretto")
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                            });
+
+                          });
+
+
+
+
+        var table = $('#DatiCSV').dataTable();
+        console.log(table);
+        $('#divdelete').show();
+        $('#delete').click(function () {
+            table.destroy();
+            $("#DescrizioneFile").value = "";
+        });
+
+
+
+        // bottoni upload e visualiazzazione passaggio dati SistemaGeo
+        $('#Upload').click(function () {
+            if (this.id == 'Upload') {
+                var val = $('#SistemaGeo').find(":selected").val();
+                if (val == '1') {
+                    $('#OpenStreetMap').show();
+                }
+                else if ((val == '2')) {
+                    $('#Here').show();
+                }
+
+            }
+            else if (this.id == 'View') {
+                var val = "";
+
+            }
+
+            console.log(val);
+            $.ajax({
+                dataType: "json",
+                type: "POST",
+                url: "ValSistemaGeo/Upload",
+                data: { 'SistemaGeo': val },
+                success: function (data) {
+                    if (data.code === 1) {
+                        $.ajax({
+                            dataType: "json",
+                            type: "POST",
+                            url: "Geocodifica/Upload",
+                            data: { 'SistemaGeo': val },
+                            success: function (data) {
+                                if (data.code === 1) {
+
+                                    const File = $("#DescrizioneFile").val();
+                                    console.log(File);
+                                    if (localStorage) {
+                                        localStorage.setItem('DescrizioneFile', File)
+                                    }
+                                    url = '@Url.Action("Index", "GeoDati/Index")',
+                                       // alert(url)
+                                        window.location.href = (url); 
+                                   
+                                }
+                                else {
+                                    Error();
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        Error();
+                    }
+
+                }
+            });
+        });
+
+        //controllo checkbox --> visualizzazioni bottoni
+        const checkbox = document.getElementById('CheckGeo')
+        checkbox.addEventListener('change', (event) => {
+            if (event.currentTarget.checked) {
+                $('#Geo').show();
+               // $('#seleziona').show();
+               // $('#parUpload').show();
+               // $('#View').hide();
+            } else {
+                $('#Geo').hide();
+               // $('#seleziona').hide();
+               // $('#parUpload').hide();
+               // $('#View').hide();
+
+            }
+        });
+
+    </script>
+}

@@ -19,10 +19,12 @@ namespace NuovoPortaleGeo.Controllers
     {
         private GeoCodeEntities1 db = new GeoCodeEntities1();
 
+        public static string _File;
         public static string Name;
         // GET: GeoDati
         public ActionResult Index(string sortOrder, string Provincia, string Comune, string Indirizzo, string Descrizione, string DescrizioneFile, int? page)
         {
+            
             ViewData["DESCfileSortParm"] = String.IsNullOrEmpty(sortOrder) ? "DESCfile_desc" : "";
             ViewData["ProvSortParm"] = String.IsNullOrEmpty(sortOrder) ? "Prov_desc" : "";
             ViewData["ComuneSortParm"] = String.IsNullOrEmpty(sortOrder) ? "Comune_desc" : "";
@@ -37,16 +39,19 @@ namespace NuovoPortaleGeo.Controllers
             var cf = Session["CF"].ToString();
             var Geo_Utente = db.Geo_Utente
                     .Where(x => x.CodiceFiscale == cf).FirstOrDefault();
+                  
             ViewBag.DescrizioneFile = new SelectList(db.Geo_Dati.Where(s => s.IdUtente == Geo_Utente.Id).GroupBy(p => new { p.DescrizioneFile })
                                                      .Select(g => g.FirstOrDefault()), "DescrizioneFile", "DescrizioneFile");
-            if (DescrizioneFile != null)
+           
+            if(_File!=null)
+            {
+                DescrizioneFile = _File;
+            }
+            else if (DescrizioneFile != null)
             {
                 ViewBag.CurrentDescrizioneFile = DescrizioneFile;
             }
-           
-           
-
-
+       
             if (Comune != null)
             {
                 page = 1;
@@ -76,6 +81,7 @@ namespace NuovoPortaleGeo.Controllers
             {
                 geodati = geodati.Where(s => s.DescrizioneFile.Contains(DescrizioneFile));
             }
+       
             switch (sortOrder)
             {
                 case "DESCfile_desc":
@@ -96,9 +102,11 @@ namespace NuovoPortaleGeo.Controllers
                     break;
             }
 
-            int pageSize = 20;
+            int pageSize = 100;
 
             int pageNumber = (page ?? 1);
+            _File = null;
+            
           
             return View(geodati.ToPagedList(pageNumber,pageSize));
         }
@@ -211,17 +219,19 @@ namespace NuovoPortaleGeo.Controllers
             base.Dispose(disposing);
         }
 
-
+        [HttpPost]
         public ActionResult ValoreExport(string Name_File)
         {
-            Name = Name_File;
-            if (Name_File != null)
+            
+            
+            if (Name_File != "")
             {
-                return Json(new { code = 1, ritorno = Name_File });
+                Name = Name_File;
+                return Json(new { code = 1});
             }
             else
             {
-                return Json(new { code = 2, ritorno = Name_File });
+                return Json(new { code = 2 });
             }
 
         }
@@ -229,39 +239,40 @@ namespace NuovoPortaleGeo.Controllers
         public ActionResult Estrai()
         {
 
-            string errore = null;
-            var GeoDati = db.Geo_Dati.Where(s => s.DescrizioneFile == Name).Select(s => s);
-           
-            var GeOProva = GeoDati;
-            var lista_geocode = GeOProva.ToList();
+            string errore = null;           
+                var GeoDati = db.Geo_Dati.Where(s => s.DescrizioneFile == Name).Select(s => s);
+                var GeOProva = GeoDati;
+                var lista_geocode = GeOProva.ToList();
 
-
-
-            try
-            {
-                var contenuto =
-                    lista_geocode.Where(s => s.DescrizioneFile == Name)
-                    .Select(x => new
-                    {
-                        Id = x.Id,
-                        Indirizzo = x.Indirizzo,
-                            //   N_Civico = x.N_Civico,
-                            Comune = x.Comune,
-                        Provincia = x.Provincia,
-                            //   Regione = x.Regione,
-                            // Note1 = x.Note1,
-                            //   Note2 = x.Note2,
-                            Lat = x.Lat,
-                        Lon = x.Lon,
-                        Approx01 = x.Approx01,
-                        Approx02 = x.Approx02,
-                        Cap = x.Cap,
-                        AltroIndirizzo = x.AltroIndirizzo,
+                try
+                {
+                    var contenuto =
+                        lista_geocode.Where(s => s.DescrizioneFile == Name)
+                        .Select(x => new
+                        {
+                            Id = x.Id,
+                            Indirizzo = x.Indirizzo,
+                                //   N_Civico = x.N_Civico,
+                                Comune = x.Comune,
+                            Provincia = x.Provincia,
+                                //   Regione = x.Regione,
+                                // Note1 = x.Note1,
+                                //   Note2 = x.Note2,
+                                Lat = x.Lat,
+                            Lon = x.Lon,
+                            Approx01 = x.Approx01,
+                            Approx02 = x.Approx02,      
+                            Cap = x.Cap,
+                            AltroIndirizzo = x.AltroIndirizzo,
+                            Here_MatchLevel=x.Here_MatchLevel,
+                            Here_MatchType = x.Here_MatchType,
+                            Here_Relevance = x.Here_Relevance,
+                            Here_Error = x.Here_Error,                           
                             //  APIGoogle = x.APIGoogle
-                    })
-                    .ToList();
+                        })
+                        .ToList();
 
-                var columns = new List<string>
+                    var columns = new List<string>
                         {
                             "Id",
                             "Indirizzo",
@@ -271,35 +282,78 @@ namespace NuovoPortaleGeo.Controllers
                             "Lon",
                             "Approx01",
                             "Approx02",
-                            "Cap",
-                            "AltroIndirizzo",
-
+                            "Cap",                            
+                            "Here_MatchLevel",
+                            "Here_MatchType",
+                            "Here_Relevance",
+                            "Here_Error",
                         };
 
 
-                byte[] filecontent = ExcelExportHelper.ExportExcel(contenuto, "Estrazione GeoCode CSV", false, columns.ToArray());
+                    byte[] filecontent = ExcelExportHelper.ExportExcel(contenuto, "Estrazione GeoCode CSV", false, columns.ToArray());
 
-                return (File(
-                        filecontent,
-                        ExcelExportHelper.ExcelContentType,
-                        String.Format("{0} - report-geocode-csv.xlsx", DateTime.Now.ToString("yyyy-MM-dd"))
+                    return (File(
+                            filecontent,
+                            ExcelExportHelper.ExcelContentType,
+                            String.Format("{0} - report-geocode-csv.xlsx", DateTime.Now.ToString("yyyy-MM-dd"))
 
-                    ));
-
-
+                        ));
 
 
+
+
+                }
+
+                catch (Exception exc)
+                {
+                    errore = exc.Message;
+                    return null;
+                }
+
+            
+
+
+        }
+        [HttpPost]
+        public ActionResult JsonRisultati()
+        {
+
+            string errore = null;
+            var GeoDati = db.Geo_Dati.Where(s => s.DescrizioneFile == Name).Select(s => s);
+            var lista_geocode = GeoDati.ToList();
+
+            try
+            {
+                var contenuto =
+                    lista_geocode
+                    .Select(x => new
+                    {
+                        Id = x.Id,
+                        Indirizzo = x.Indirizzo,                      
+                        Comune = x.Comune,
+                        Provincia = x.Provincia,                                         
+                        Lat = x.Lat,
+                        Lon = x.Lon,
+                        Descrizione=x.Descrizione
+                    })
+                    .ToList();
+
+                var json_map = Json(contenuto, JsonRequestBehavior.AllowGet);
+                return json_map;
             }
-
             catch (Exception exc)
             {
                 errore = exc.Message;
                 return null;
             }
 
+           
 
 
+            
+            //return Json(new { risposta = lista_geocode });
         }
+
         public async Task<IActionResult> ordina(string sortOrder)
         {
             

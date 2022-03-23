@@ -11,8 +11,6 @@
         <EntityTypeShape EntityType="GeoCodeModel.Geo_Utente" Width="1.5" PointX="0.5" PointY="3.75" IsExpanded="true" />
         <AssociationConnector Association="GeoCodeModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
         <AssociationConnector Association="GeoCodeModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
-        <EntityTypeShape EntityType="GeoCodeModel.Geo_Attività" Width="1.5" PointX="2.375" PointY="3.875" />
-        <AssociationConnector Association="GeoCodeModel.FK_Geo_Attività_Geo_Utente" />
         <EntityTypeShape EntityType="GeoCodeModel.AspNetRoles" Width="1.5" PointX="5.75" PointY="1.5" />
         <EntityTypeShape EntityType="GeoCodeModel.OpenStreetMapCSV" Width="1.5" PointX="3.375" PointY="7.75" />
         <AssociationConnector Association="GeoCodeModel.AspNetUserRoles" />
@@ -22,8 +20,11 @@
         <EntityTypeShape EntityType="GeoCodeModel.Geo_UtenteRuolo" Width="1.5" PointX="0.5" PointY="1.25" />
         <AssociationConnector Association="GeoCodeModel.FK__Utente__RoleI__0D7A0286" />
         <AssociationConnector Association="GeoCodeModel.FK__Utente__UserI__0E6E26BF" />
-        <EntityTypeShape EntityType="GeoCodeModel.Geo_Dati" Width="1.5" PointX="2.75" PointY="14" />
         <AssociationConnector Association="GeoCodeModel.FK_GeoDati_Geo_Utente" />
+        <EntityTypeShape EntityType="GeoCodeModel.Geo_Dati" Width="1.5" PointX="2.75" PointY="13.625" />
+        <AssociationConnector Association="GeoCodeModel.FK_CSVdati_Geo_Utente" />
+        <EntityTypeShape EntityType="GeoCodeModel.Geo_Attività" Width="1.5" PointX="2.375" PointY="4.125" />
+        <AssociationConnector Association="GeoCodeModel.FK_Geo_Attività_Geo_Utente" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -6,6 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title -PortaleGeoWeb</title>
+   
 
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
@@ -15,7 +16,7 @@
 
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-secondary ">
-        <a class="navbar-brand" href="/"><strong>Home</strong></a>
+        <a class="navbar-brand" href="/"><i class="fa fa-home"></i><strong>Home</strong></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -25,24 +26,25 @@
 
 
 
-                     @if (this.User.IsInRole("Amministratore") || this.User.IsInRole("Utente") || this.User.IsInRole("Consultatore"))
-                
-                { 
-                <li class="nav-item">
-                    <a class="nav-link" href="/Home/Upload"><strong>Carica File</strong></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/Home/SelezionaSistema"><strong>Seleziona Sistema</strong></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/Home/Mappa"><strong>Visualizza Mappa</strong></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="~/GeoDati/Index"><strong>GeoDati</strong></a>
-                </li>
+                @if (this.User.IsInRole("Amministratore") || this.User.IsInRole("Utente") || this.User.IsInRole("Consultatore"))
+
+                {
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="~/Upload/Upload"><i class="fa fa-globe-europe"></i><strong>   Geocodifica</strong></a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="~/GeoDati/Index"><i class="fa fa-database"></i><strong>   GeoDati</strong></a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="~/Prova/Datatable"><i class="fa fa-database"></i><strong>   Prova</strong></a>
+                    </li>
+
 
                 }
-                
+
             </ul>
         </div>
         <div class="nav navbar-nav navbar-right">
@@ -99,7 +101,6 @@
 
 
     @Scripts.Render("~/bundles/jquery")
-
     <!--Import jQuery before export.js-->
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
@@ -128,9 +129,9 @@
     {
 
 
-<script type="text/javascript">
+        <script type="text/javascript">
 
-
+    let hdPlugins = null;
              if (hdPlugins) { {
 
 
@@ -173,32 +174,32 @@
 
 
     }
-</script>
+        </script>
     }
 
     @RenderSection("finalscripts", required: false)
+    @*
+        <!--Import jQuery before export.js-->
+        <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
 
-    <!--Import jQuery before export.js-->
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+        <!--Data Table-->
+        <script type="text/javascript" src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.4/js/dataTables.buttons.min.js"></script>
 
-    <!--Data Table-->
-    <script type="text/javascript" src=" https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src=" https://cdn.datatables.net/buttons/1.2.4/js/dataTables.buttons.min.js"></script>
+        <!--Export table buttons-->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+        <script type="text/javascript" src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.24/build/pdfmake.min.js"></script>
+        <script type="text/javascript" src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.24/build/vfs_fonts.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.html5.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.print.min.js"></script>
 
-    <!--Export table buttons-->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
-    <script type="text/javascript" src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.24/build/pdfmake.min.js"></script>
-    <script type="text/javascript" src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.24/build/vfs_fonts.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.html5.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.2.1/js/buttons.print.min.js"></script>
+        <!--Export table button CSS-->
 
-    <!--Export table button CSS-->
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
 
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css">
-
-
+    *@
 
 
 

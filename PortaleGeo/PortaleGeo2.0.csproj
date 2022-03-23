@@ -395,6 +395,8 @@
     <Compile Include="Controllers\RuoloController.cs" />
     <Compile Include="Controllers\OpenStreetMapController.cs" />
     <Compile Include="Controllers\SistemaHereController.cs" />
+    <Compile Include="Controllers\ProvaController.cs" />
+    <Compile Include="Controllers\UploadController.cs" />
     <Compile Include="Models\AspNetRoles.cs">
       <DependentUpon>Model_PortaleGeoWeb.tt</DependentUpon>
     </Compile>
@@ -500,9 +502,11 @@
     <Compile Include="ViewModels\VmRuolo.cs" />
     <Compile Include="ViewModels\VmUpload.cs" />
     <Compile Include="ViewModels\VmUtente.cs" />
+    <Content Include="Content\ProgressBarWindow.css" />
     <Content Include="Content\ui-bootstrap-csp.css" />
     <Content Include="HowToPublish.txt" />
     <Content Include="Images\609px-Map_of_region_of_Marche,_Italy,_with_provinces-it.svg.png" />
+    <Content Include="Images\cratere-sisma.jpg" />
     <Content Include="Images\download.png" />
     <Content Include="Images\geocoding_02.png" />
     <Content Include="Images\HERE_logo.svg.png" />
@@ -511,6 +515,7 @@
     <Content Include="Images\loading.jpg" />
     <Content Include="Images\logout.png" />
     <Content Include="Images\OpenStreetMap.jpeg" />
+    <Content Include="Images\RegMarche.svg.png" />
     <Content Include="Images\simboloGeoCode.jpg" />
     <Content Include="Images\Web-2.0-icon.png" />
     <Content Include="Models\Model_PortaleGeoWeb.Context.tt">
@@ -527,6 +532,7 @@
     <Content Include="Scripts\angular-ui\ui-bootstrap-tpls.min.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap.min.js" />
+    <Content Include="Scripts\APICalls.js" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -658,13 +664,11 @@
     <Content Include="Scripts\popper.js.map" />
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
-    <Content Include="Views\Home\SelezionaSistema.cshtml" />
     <Content Include="Views\OpenStreetMap\Index.cshtml" />
     <Content Include="Views\OpenStreetMap\Delete.cshtml" />
     <Content Include="Views\OpenStreetMap\Dettaglio.cshtml" />
     <Content Include="Views\SistemaHere\Index.cshtml" />
     <Content Include="Views\OpenStreetMap\Aggiungi.cshtml" />
-    <Content Include="Views\Home\Mappa.cshtml" />
     <Content Include="Here\CsvModello\VIA_GRAZIE.csv" />
     <Content Include="Here\CsvModello\VIA_GRAZIEGeocodingbyHere.csv" />
     <Content Include="Views\Google\Index.cshtml" />
@@ -674,6 +678,9 @@
     <Content Include="Views\GeoDati\Details.cshtml" />
     <Content Include="Views\GeoDati\Edit.cshtml" />
     <Content Include="Views\GeoDati\Index.cshtml" />
+    <Content Include="Views\Upload\Upload.cshtml" />
+    <Content Include="Views\Shared\Popup.cshtml" />
+    <Content Include="Views\Prova\Datatable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\fontawesome-all.css" />
@@ -692,7 +699,6 @@
     <None Include="Models\ExecuteTaskServiceCallScheduler.cs" />
     <Content Include="Content\IOService_Template.csv" />
     <Content Include="libman.json" />
-    <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">

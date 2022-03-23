@@ -20,6 +20,7 @@ namespace NuovoPortaleGeo.Models
         public string Provincia { get; set; }
         public string Comune { get; set; }
         public string Indirizzo { get; set; }
+        public string AltroIndirizzo { get; set; }
         public string Descrizione { get; set; }
         public string Cap { get; set; }
         public string Approx01 { get; set; }
@@ -29,8 +30,10 @@ namespace NuovoPortaleGeo.Models
         public Nullable<bool> OpenStreetMap { get; set; }
         public Nullable<bool> Here { get; set; }
         public Nullable<bool> Google { get; set; }
-        public string APIGoogle { get; set; }
-        public string AltroIndirizzo { get; set; }
+        public string Here_MatchLevel { get; set; }
+        public string Here_MatchType { get; set; }
+        public string Here_Relevance { get; set; }
+        public string Here_Error { get; set; }
     
         public virtual Geo_Utente Geo_Utente { get; set; }
     }

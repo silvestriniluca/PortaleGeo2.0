@@ -29,6 +29,7 @@ namespace NuovoPortaleGeo.Controllers
         public static Geo_Dati dati;
         public static CsvConfiguration conf ;
         public static string Git;
+        public string Gittest;
 
 
         // GET: Upload

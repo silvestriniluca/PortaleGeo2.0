@@ -17,7 +17,7 @@ using System.Windows;
 
 namespace NuovoPortaleGeo.Controllers
 {
-
+    
     public class UploadController : Controller
     {
         GeoCodeEntities1 db = new GeoCodeEntities1();
@@ -28,6 +28,7 @@ namespace NuovoPortaleGeo.Controllers
         public static string cf;
         public static Geo_Dati dati;
         public static CsvConfiguration conf ;
+        public static string Git;
 
 
         // GET: Upload

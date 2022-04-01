@@ -31,6 +31,7 @@ namespace NuovoPortaleGeo.Controllers
         public static string Git;
         public string Gittest;
 
+        
 
         // GET: Upload
 
@@ -39,7 +40,16 @@ namespace NuovoPortaleGeo.Controllers
             Geo_Dati geo = new Geo_Dati();
             SistemaAttivo = SistemaGeo;
             SelectSystemGeo(SistemaAttivo, geo);
-          //  if (SistemaGeo != null)
+            //  if (SistemaGeo != null)
+            Gittest = "";
+            if(Gittest!="")
+            {
+
+            }
+            else
+            {
+
+            }
           if(SistemaGeo!= null)
             {
                 return Json(new { code = 1 });

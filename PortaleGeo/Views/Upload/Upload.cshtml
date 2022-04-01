@@ -115,20 +115,20 @@
         margin-bottom: 2rem;
         border-radius: 0.8rem;
     }
-    #AttivaGeo
-    {
+
+    #AttivaGeo {
         padding: 2rem 1rem;
         margin-bottom: 2rem;
-        background-color:darkkhaki;
+        background-color: darkkhaki;
         border-radius: 0.8rem;
     }
+
     #Geo {
         padding: 2rem 1rem;
         margin-bottom: 2rem;
-        background-color:antiquewhite;
+        background-color: antiquewhite;
         border-radius: 0.8rem;
     }
-    
 </style>
 @*
     @using (Html.BeginForm("Upload", "Upload", FormMethod.Post,
@@ -175,7 +175,12 @@
     <div class="row" id="visualizza">
         <button type="submit" value="Anteprima" class="btn btn-success" id="View" name="upload" style="display:none"><i class="fa fa-th-large" style="color:snow"></i>   Anteprima</button>
     </div>
+    <div id="Fade_area" class="overLay">
+    </div>
+    <div id="myModal" class="popup">
+        @Html.Partial("~/Views/Shared/Popup.cshtml")
 
+    </div>
 
 
     <table id="tableID" class="display" style="width:100%;display:none">
@@ -192,7 +197,7 @@
     <br />
     <br />
     <div class="jumbotron" id="AttivaGeo" style="display:none">
-        <div class="col-sm-5"  >
+        <div class="col-sm-5">
             <label title="Attiva Geo">
                 <strong>ATTIVA GEOREFERENZAZIONE</strong>
                 <input type="checkbox" id="CheckGeo" />
@@ -206,8 +211,8 @@
                 <div class="col-md" id="seleziona">
                     <h4>@Html.Label("Seleziona Sistema:", htmlAttributes: new { @class = "control-label col-md-5" })</h4>
                     @Html.Label("", htmlAttributes: new { @class = "control-label col-md-5" })
-                    @Html.DropDownList("SistemaGeo", ViewBag.SistemaGeo as List<SelectListItem>, htmlAttributes: new { @class = "dropdown", @id="SistemaGeo" })
-                    
+                    @Html.DropDownList("SistemaGeo", ViewBag.SistemaGeo as List<SelectListItem>, htmlAttributes: new { @class = "dropdown", @id = "SistemaGeo" })
+
                 </div>
             }
             <br />
@@ -223,9 +228,9 @@
 
         </div>
         <div class="row">
-            <div id="parUpload" >
+            <div id="parUpload">
                 <div class="col-sm-1">
-                    <button type="submit"  value="upload" class="btn btn-dark" id="Upload" name="upload"><i class="fa fa-globe"></i>Geocodifica</button>
+                    <button type="submit" value="upload" class="btn btn-dark" id="Upload" name="upload"><i class="fa fa-globe"></i>Geocodifica</button>
                 </div>
                 <br />
                 <br />
@@ -408,15 +413,15 @@
                      console.log(filecorretto);
                 const formData = new FormData();
 
-          
-                
+
+
                 formData.append('descrizione', filecorretto);
                 formData.append('filecsv', fileField.files[0]);
 
 
                      fetch('../Upload/DatiJSON',
 
-                         
+
                             { // Your POST endpoint
                                 method: 'POST',
                                 body: formData, // This is your file object
@@ -501,8 +506,8 @@
                                     }
                                     url = '@Url.Action("Index", "GeoDati/Index")',
                                        // alert(url)
-                                        window.location.href = (url); 
-                                   
+                                        window.location.href = (url);
+
                                 }
                                 else {
                                     Error();

@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Windows;
 
 namespace NuovoPortaleGeo.Controllers
 {
@@ -47,17 +48,13 @@ namespace NuovoPortaleGeo.Controllers
         [Authorize(Roles = "Amministratore,Utente,Consultatore")]
         public ActionResult Upload()
         {
-
-
-          
-
             ViewBag.SistemaGeo = new List<SelectListItem>()
            
-      {
+         {
          new SelectListItem() { Text = "OpenStreetMap", Value = "1"},
          new SelectListItem() { Text = "Here", Value = "2" },
          new SelectListItem() {Text="Google", Value="3"}
-     };
+         };
             
 
 
@@ -69,57 +66,11 @@ namespace NuovoPortaleGeo.Controllers
         public ActionResult Geocodifica()
         {
 
-            /*
-            if (ModelState.IsValid)
-            {
-                if (upload != null && upload.ContentLength > 0)
-                {
-                    if (upload.FileName.EndsWith(".csv"))
-                    {
-                        //Stream stream = upload.InputStream; //Un InputStream è il metodo grezzo per ottenere informazioni da una risorsa.
-                        //Cattura i dati byte per byte senza eseguire alcun tipo di traduzione. Se stai leggendo dati di immagine o
-                        //qualsiasi file binario, questo è il flusso da usare.
-                        string _FileName = Path.GetFileName(upload.FileName);
-        
-                        // verifico l'utente loggato e gli associo il numero di file caricato
-                        var cf = Session["CF"].ToString();
-                        var Geo_Utente = db.Geo_Utente
-                                   .Where(x => x.CodiceFiscale == cf).FirstOrDefault();
-                        dati.IdUtente = Geo_Utente.Id;
-                        string IdUnivoco = Geo_Utente.Id;
-
-                        string pathfolder = Path.Combine(Server.MapPath("~/Upload"), IdUnivoco);
-                        string path = Path.Combine(Server.MapPath("~/Upload/" + IdUnivoco), _FileName);
-                        if (!Directory.Exists(pathfolder))
-                        {
-                            Directory.CreateDirectory(pathfolder);
-
-                        }
-            
-                        upload.SaveAs(path);
-                        CsvConfiguration conf = new CsvConfiguration(CultureInfo.InvariantCulture);
-                        conf.BadDataFound = null;
-                        conf.Delimiter = ";";
-                        conf.HasHeaderRecord = true;
-                        var reader = new StreamReader(path);
-                        var csv = new CsvHelper.CsvReader(reader, conf);
-
-            
-            //  using (var streamReader = File.
-            // using (var csvReader = new CsvReader(streamreade, CultureInfo.CurrentCulture)) ;
-            var dr = new CsvDataReader(csv);
-                        
-
-                        var dt = new DataTable();
-                        dt.Load(dr);
-                        //
-                */
-            //   var dtdatabase = new DataTable();
+           
             DataTable tablerisultati = new DataTable();
             var dtdatabase = CreateTable(dt);
-              
 
-                        List<string> listItems = new List<string>();
+                     // List<string> listItems = new List<string>();
             /*
                         foreach (DataColumn colonna in dt.Columns)
                         {
@@ -136,51 +87,59 @@ namespace NuovoPortaleGeo.Controllers
                         ViewBag.DescrizioneGeo = listItems;
 
             */
+            //OPENSTREETMAP
                         if (dati.OpenStreetMap is true)
                         {
                             OpenStreetMapController.GeoCodeRow(path, _FileName, cf, dt, tablerisultati, _FileName, path);
 
-                            foreach (DataRow row in tablerisultati.Rows)
-                            {
+                foreach (DataRow row in tablerisultati.Rows)
+                {
 
-                                dtdatabase.Rows.Add(dati.IdUtente, dati.DescrizioneFile, row["Provincia"], row["Comune"], row["Indirizzo"], row["DENOMINAZIONE"], dati.OpenStreetMap, dati.Here, dati.Google, row["Lat"],
-                                        row["Lon"], row["Approx01"], row["Approx02"], null, null, null, null);
+                    dtdatabase.Rows.Add(dati.IdUtente, dati.DescrizioneFile, row["Provincia"], row["Comune"], row["Indirizzo"], row["DENOMINAZIONE"], dati.OpenStreetMap, dati.Here, dati.Google, row["Lat"],
+                            row["Lon"], row["Approx01"], row["Approx02"], null, null, null, null);
 
-                            }
-                            SqlConnection connectionstring = new SqlConnection(@"Data Source=sql2016listen_c, 1733;Initial Catalog=IntraGeoRef;Integrated Security=True");
-                            datatablehelper(connectionstring, dtdatabase);
-                        }
+                }
+                datasavedb(dtdatabase);
+                 }
+            //HERE
                         if (dati.Here is true)
                         {
                             DataColumnCollection colonna = dt.Columns;
-                            if (colonna.Contains("Here_Latitude") || colonna.Contains("Here_Longitude"))
-                            {
-                               
-                            }
-                            else
-                            {
+                        try
+                        {
+                        if (colonna.Contains("Here_Latitude") || colonna.Contains("Here_Longitude"))
+                        {
 
-                                SistemaHereController.Upload(path, conf, _FileName, tablerisultati,cf);
-                                DataColumnCollection colonnarisultati = tablerisultati.Columns;
-                                if (colonnarisultati.Contains("DENOMINAZIONE"))
-                                { }
-                                else
-                                {
-                                    tablerisultati.Columns.Add("DENOMINAZIONE");
-                                }
-
-                                foreach (DataRow row in tablerisultati.Rows)
-                                {
-
-                                    dtdatabase.Rows.Add(dati.IdUtente, dati.DescrizioneFile, row["Provincia"], row["Comune"], row["Indirizzo"], row["DENOMINAZIONE"], dati.OpenStreetMap, dati.Here, dati.Google, row["Here_Latitude"],
-                                            row["Here_Longitude"], null, null, row["Here_MatchLevel"], row["Here_MatchType"], row["Here_Relevance"], row["Here_Error"]);
-                                }
-                                SqlConnection connectionstring = new SqlConnection(@"Data Source=sql2016listen_c, 1733;Initial Catalog=IntraGeoRef;Integrated Security=True");
-                                datatablehelper(connectionstring, dtdatabase);
-                            }
                         }
-                        VmUpload vm = new VmUpload(dati, dt);
-                        VmUpload vmGeo = new VmUpload(dati, tablerisultati);
+                        else
+                        {
+
+                            SistemaHereController.Upload(path, conf, _FileName, tablerisultati, cf);
+                            DataColumnCollection colonnarisultati = tablerisultati.Columns;
+                        if (colonnarisultati.Contains("DENOMINAZIONE"))
+                        { }
+                        else
+                        {
+                            tablerisultati.Columns.Add("DENOMINAZIONE");
+                        }
+                        foreach (DataRow row in tablerisultati.Rows)
+                        {
+
+                            dtdatabase.Rows.Add(dati.IdUtente, dati.DescrizioneFile, row["Provincia"], row["Comune"], row["Indirizzo"], row["DENOMINAZIONE"], dati.OpenStreetMap, dati.Here, dati.Google, row["Here_Latitude"],
+                                    row["Here_Longitude"], null, null, row["Here_MatchLevel"], row["Here_MatchType"], row["Here_Relevance"], row["Here_Error"]);
+                        }
+                        datasavedb(dtdatabase);
+
+                        }
+                        }
+                        catch(Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                          
+                        }
+                         //    VmUpload vm = new VmUpload(dati, dt);
+                         //    VmUpload vmGeo = new VmUpload(dati, tablerisultati);
                           
             
                         if (tablerisultati.Rows.Count > 0)
@@ -191,33 +150,16 @@ namespace NuovoPortaleGeo.Controllers
                         }
                         else
                         {
-                            return View(vm);
+                             //errore
+                             return Json(new { code = 2 });
                         }
             
 
 
                     }
 
-        /*
-
-                }
-
-                else
-                {
-                    ModelState.AddModelError("File", "This file format is not supported");
-
-                    return View();
-                }
-            }
-            else
-            {
-                ModelState.AddModelError("File", "Please Upload Your file");
-            }
-            return View();
-        }
-
-        */
-
+   
+      
 
 
         public static void datatablehelper(SqlConnection connection, DataTable dataTable)
@@ -233,6 +175,18 @@ namespace NuovoPortaleGeo.Controllers
             }
 
         }
+
+
+
+        public static void datasavedb(DataTable dtdatabase)
+        {
+      
+           SqlConnection connectionstring = new SqlConnection(@"Data Source=sql2016listen_c, 1733;Initial Catalog=IntraGeoRef;Integrated Security=True");
+            datatablehelper(connectionstring, dtdatabase);
+        }
+
+
+
         private DataTable CreateTable(DataTable dt)
         {
             DataTable dtdatabase = new DataTable();
@@ -284,9 +238,14 @@ namespace NuovoPortaleGeo.Controllers
 
 
                 }
+              
+                    
+                    
             }
             return dtdatabase;
         }
+
+
         public void SelectSystemGeo(string SistemaAttivo, Geo_Dati dat_i)
         {
             var cf = Session["CF"].ToString();
@@ -332,6 +291,7 @@ namespace NuovoPortaleGeo.Controllers
             GeoDatiController._File = _FileName;
         }
 
+
         // VISUALIZZAZIONE
         [Authorize(Roles = "Amministratore,Utente,Consultatore")]
         public  ActionResult DatiJSON(string descrizione)
@@ -363,26 +323,8 @@ namespace NuovoPortaleGeo.Controllers
                 var dr = new CsvDataReader(csv);           
                 table.Load(dr);
                 dt = table;
-                var dati = JsonConvert.SerializeObject(dt);
-             
-                /*
-                 * 
-                var dati =
-                "[" +
-                "   {" +
-                "       \"nome\": \"Tina Mukherjee\"," +
-                "       \"indirizzo\": \"BPO member\"," +
-                "       \"città\": \"Pune\"," +
-                "       \"prova\": \"Pune\"" +
-                "   }," +
-                "   {" +
-                "       \"nome\": \"Gaurav\"," +
-                "       \"indirizzo\": \"Teacher\"," +
-                "       \"città\": \"Pune\"," +
-                "       \"prova\": \"Pune\"" +
-                "   }" +
-                "]";
-                */
+                var dati = JsonConvert.SerializeObject(dt);             
+              
                 return Content(dati, "application/json");
             }
             else
@@ -403,12 +345,14 @@ namespace NuovoPortaleGeo.Controllers
             dati.IdUtente = Geo_Utente.Id;
             string IdUnivoco = Geo_Utente.Id;            
             string pathfolder = Path.Combine(Server.MapPath("~/Upload"), IdUnivoco);
-            path = Path.Combine(Server.MapPath("~/Upload/" + IdUnivoco), Name_File);            
+            path = Path.Combine(Server.MapPath("~/Upload/" + IdUnivoco), Name_File);
             if (!Directory.Exists(pathfolder))
             {
                 Directory.CreateDirectory(pathfolder);
 
             }
+            
+                
         }
         }
     }

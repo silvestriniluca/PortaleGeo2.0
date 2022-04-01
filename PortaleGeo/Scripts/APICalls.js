@@ -1,6 +1,6 @@
 ﻿$(document).ready(function () {
 
-    $("#prova").click(function () {
+    $("#Upload").click(function () {
         $(".overLay,.popup").fadeIn();
 
         StartProgressBar();
@@ -18,12 +18,13 @@
         }
 
         $(".progress-bar").css('width', second + '%');
-        const fileField = document.getElementById('tableID');
+        const fileField = document.getElementById('Geo');
+        
         if (fileField != null) {
-            setTimeout(function () { StartProgressBar() }, 10);
+            setTimeout(function () { StartProgressBar() }, 500);
         }
         else {
-            setTimeout(function () { StartProgressBar() }, 20);
+            setTimeout(function () { StartProgressBar() }, 20000);
         }
         
 
@@ -42,13 +43,13 @@
 
 
     function CallApi() {
-
+        
         $.ajax({
             url: "",
             type: 'post',
             contentType: "application/json",
             success: function () {
-                setTimeout(function () { CloseProgressBar() }, 10);
+                setTimeout(function () { CloseProgressBar() }, 10000);
             },
             error: function () { },
         })

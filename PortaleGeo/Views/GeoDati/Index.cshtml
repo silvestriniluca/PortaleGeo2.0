@@ -336,7 +336,7 @@ new
         }).addTo(mymap);
 
     $(document).ready(function () {
-      
+
         const val = $("#RicercaMappa").val();
         console.log(val);
 
@@ -348,7 +348,7 @@ new
                 }
 
 
-            
+
 
 
 
@@ -382,7 +382,7 @@ new
         })
     });
 
-    
+
    $('#cerca, #Seleziona').click(function () {
         if (localStorage.DescrizioneFile != null) {
 
@@ -400,7 +400,7 @@ new
             url: "ValoreExport/GeoDati",
             data: { 'Name_File': Nome_File },
             success: function (data) {
-                if (data.code === 1) {
+                
                     $.ajax({
                         //definisco il tipo della chiamata
                         type: "POST",
@@ -430,7 +430,7 @@ new
                             alert("Chiamata fallita!!!");
                         }
                     });
-                }
+                
             }
         });
         $('#EliminaMarker').click(function () {
@@ -442,26 +442,30 @@ new
     });
 
    //     $('#DescrizioneFile').blur(function () {
-            $('#esporta').click(function () {
-                var Nome_File = $('#DescrizioneFile').find(":selected").text();
-                //     var Nome_File = $('#DescrizioneFile :selected').text();
-                console.log(Nome_File);
-                $.ajax({
-                    dataType: "json",
-                    type: "POST",
-                    url: "ValoreExport/GeoDati",
-                    data: { 'Name_File': Nome_File },
-                    success: function (data) {
-                        if (data.code === 1) {
-                            indirizzo = '@Url.Action("Estrai", "GeoDati")';
-                            window.location.href = (indirizzo);
-                        } else if(data.code === 2) {
-                            alert("Seleziona un File")
-                          //  ricarico = '@Url.Action("Index", "GeoDati")';
-                          //  window.location.href = (ricarico);
-                        }
-                    }
-                });
+    $('#esporta').click(function () {
+        var Nome_File = $('#DescrizioneFile').find(":selected").text();
+        console.log(Nome_File);
+        if (Nome_File != "Seleziona un file") {
+           
+            //     var Nome_File = $('#DescrizioneFile :selected').text();
+            console.log(Nome_File);
+            $.ajax({
+                dataType: "json",
+                type: "POST",
+                url: "ValoreExport/GeoDati",
+                data: { 'Name_File': Nome_File },
+                success: function (data) {                         
+                        indirizzo = '@Url.Action("Estrai", "GeoDati")';
+                        window.location.href = (indirizzo);
+                       
+                },
+                    error: function () {
+                        alert("Chiamata fallita!!!");
+                }
+              
+          });
+        }
+        else alert("Seleziona un File")
 
             });
 

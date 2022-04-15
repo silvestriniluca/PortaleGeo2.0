@@ -32,7 +32,7 @@ namespace NuovoPortaleGeo.ViewModels
 
         public DataColumnCollection Columns { get; set; }
         public DataRowCollection Rows { get; set; }
-        
+        public Nullable<bool> attivacorrispondenza { get; set; }
 
         
 
@@ -50,6 +50,7 @@ namespace NuovoPortaleGeo.ViewModels
             Google = model.Google;
             Columns = dataTable.Columns;
             Rows = dataTable.Rows;
+            attivacorrispondenza = attivacorrispondenza;
         }
 
         

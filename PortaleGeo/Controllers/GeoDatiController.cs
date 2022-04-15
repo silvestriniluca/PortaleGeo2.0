@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using NuovoPortaleGeo.Helpers;
 using NuovoPortaleGeo.Models;
 using PagedList;
@@ -19,8 +20,11 @@ namespace NuovoPortaleGeo.Controllers
     {
         private GeoCodeEntities1 db = new GeoCodeEntities1();
 
+        //da verificare alternativa con Mirco
+
         public static string _File;
-        public static string Name;
+        public static string Name_File_Export;
+
         // GET: GeoDati
         public ActionResult Index(string sortOrder, string Provincia, string Comune, string Indirizzo, string Descrizione, string DescrizioneFile, int? page)
         {
@@ -222,12 +226,11 @@ namespace NuovoPortaleGeo.Controllers
         [HttpPost]
         public ActionResult ValoreExport(string Name_File)
         {
-            
-            
-            if (Name_File != "")
+
+            if (Name_File != "Seleziona un file")
             {
-                Name = Name_File;
-                return Json(new { code = 1});
+                Name_File_Export = Name_File;
+                return Json(Name_File);
             }
             else
             {
@@ -236,29 +239,31 @@ namespace NuovoPortaleGeo.Controllers
 
         }
         //Estrai
+        
         public ActionResult Estrai()
         {
 
             string errore = null;           
-                var GeoDati = db.Geo_Dati.Where(s => s.DescrizioneFile == Name).Select(s => s);
+                var GeoDati = db.Geo_Dati.Where(s => s.DescrizioneFile == Name_File_Export).Select(s => s);
                 var GeOProva = GeoDati;
                 var lista_geocode = GeOProva.ToList();
 
                 try
                 {
                     var contenuto =
-                        lista_geocode.Where(s => s.DescrizioneFile == Name)
+                        lista_geocode.Where(s => s.DescrizioneFile == Name_File_Export)
                         .Select(x => new
                         {
                             Id = x.Id,
                             Indirizzo = x.Indirizzo,
                                 //   N_Civico = x.N_Civico,
-                                Comune = x.Comune,
+                            Comune = x.Comune,
                             Provincia = x.Provincia,
-                                //   Regione = x.Regione,
-                                // Note1 = x.Note1,
-                                //   Note2 = x.Note2,
-                                Lat = x.Lat,
+                              //   Regione = x.Regione,
+                              // Note1 = x.Note1,
+                              //  Note2 = x.Note2,
+                            Descrizione=x.Descrizione,
+                            Lat = x.Lat,
                             Lon = x.Lon,
                             Approx01 = x.Approx01,
                             Approx02 = x.Approx02,      
@@ -278,6 +283,7 @@ namespace NuovoPortaleGeo.Controllers
                             "Indirizzo",
                             "Comune",
                             "Provincia",
+                            "Descrizione",
                             "Lat",
                             "Lon",
                             "Approx01",
@@ -292,15 +298,16 @@ namespace NuovoPortaleGeo.Controllers
 
                     byte[] filecontent = ExcelExportHelper.ExportExcel(contenuto, "Estrazione GeoCode CSV", false, columns.ToArray());
 
-                    return (File(
+               
+
+                return (File(
                             filecontent,
                             ExcelExportHelper.ExcelContentType,
-                            String.Format("{0} - report-geocode-csv.xlsx", DateTime.Now.ToString("yyyy-MM-dd"))
+                            String.Format("{0} - "+  Name_File_Export+ " report-geocode-csv.xlsx", DateTime.Now.ToString("yyyy-MM-dd"))
 
                         ));
-
-
-
+               
+                    
 
                 }
 
@@ -310,16 +317,13 @@ namespace NuovoPortaleGeo.Controllers
                     return null;
                 }
 
-            
-
-
         }
         [HttpPost]
         public ActionResult JsonRisultati()
         {
 
             string errore = null;
-            var GeoDati = db.Geo_Dati.Where(s => s.DescrizioneFile == Name).Select(s => s);
+            var GeoDati = db.Geo_Dati.Where(s => s.DescrizioneFile == Name_File_Export).Select(s => s);
             var lista_geocode = GeoDati.ToList();
 
             try

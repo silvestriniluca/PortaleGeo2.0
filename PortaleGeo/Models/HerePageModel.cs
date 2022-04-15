@@ -12,7 +12,19 @@ namespace NuovoPortaleGeo.Models
         public string[] Header { get; set; }
         public List<string[]> Rows { get; set; }
 
+        public string Comune { get; set; }
+        public string Provincia { get; set; }
+        public string Indirizzo { get; set; }
+        public string Lat { get; set; }
+        public string Lon { get; set; }
+
+   
+        public string Here_MatchLevel { get; set; }
+
+        public string Here_MatchType { get; set; }
+        public string Here_Error { get; set; }
     }
+   
 
     public class HerePageModel
     {

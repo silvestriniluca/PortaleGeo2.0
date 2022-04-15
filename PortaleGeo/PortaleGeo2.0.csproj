@@ -396,7 +396,6 @@
     <Compile Include="Controllers\RuoloController.cs" />
     <Compile Include="Controllers\OpenStreetMapController.cs" />
     <Compile Include="Controllers\SistemaHereController.cs" />
-    <Compile Include="Controllers\ProvaController.cs" />
     <Compile Include="Controllers\UploadController.cs" />
     <Compile Include="Models\AspNetRoles.cs">
       <DependentUpon>Model_PortaleGeoWeb.tt</DependentUpon>
@@ -410,6 +409,7 @@
     <Compile Include="Models\AspNetUsers.cs">
       <DependentUpon>Model_PortaleGeoWeb.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GeoCodeClass.cs" />
     <Compile Include="Models\Geo_Attività.cs">
       <DependentUpon>Model_PortaleGeoWeb.tt</DependentUpon>
     </Compile>
@@ -519,6 +519,7 @@
     <Content Include="Images\RegMarche.svg.png" />
     <Content Include="Images\simboloGeoCode.jpg" />
     <Content Include="Images\Web-2.0-icon.png" />
+    <Content Include="Images\white-down-arrow-png-2.png" />
     <Content Include="Models\Model_PortaleGeoWeb.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Model_PortaleGeoWeb.Context.cs</LastGenOutput>
@@ -533,7 +534,6 @@
     <Content Include="Scripts\angular-ui\ui-bootstrap-tpls.min.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap.js" />
     <Content Include="Scripts\angular-ui\ui-bootstrap.min.js" />
-    <Content Include="Scripts\APICalls.js" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -681,7 +681,6 @@
     <Content Include="Views\GeoDati\Index.cshtml" />
     <Content Include="Views\Upload\Upload.cshtml" />
     <Content Include="Views\Shared\Popup.cshtml" />
-    <Content Include="Views\Prova\Datatable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\fontawesome-all.css" />

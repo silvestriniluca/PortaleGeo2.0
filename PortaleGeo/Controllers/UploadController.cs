@@ -4,10 +4,13 @@ using Newtonsoft.Json;
 using NuovoPortaleGeo.Controllers;
 using NuovoPortaleGeo.Models;
 using NuovoPortaleGeo.ViewModels;
+using PortaleGeoWeb.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -21,157 +24,113 @@ namespace NuovoPortaleGeo.Controllers
     public class UploadController : Controller
     {
         GeoCodeEntities1 db = new GeoCodeEntities1();
-        public static string SistemaAttivo;
-        public static DataTable dt;
-        public static string path;
-        public static string _FileName;
+        public static string filepath;
         public static string cf;
-        public static Geo_Dati dati;
-        public static CsvConfiguration conf ;
-        public static string Git;
-        public string Gittest;
+        public static int righeGeo;       
+        public static string user;
+        public static int GeoNoRighe;
+        public static TimeSpan time;
+        public static string JSONcorrispondeze;
 
-        
 
-        // GET: Upload
-
-        public ActionResult ValSistemaGeo(string SistemaGeo)
-        {
-            Geo_Dati geo = new Geo_Dati();
-            SistemaAttivo = SistemaGeo;
-            SelectSystemGeo(SistemaAttivo, geo);
-            //  if (SistemaGeo != null)
-            Gittest = "";
-            if(Gittest!="")
-            {
-
-            }
-            else
-            {
-
-            }
-          if(SistemaGeo!= null)
-            {
-                return Json(new { code = 1 });
-            }
-            return null;
-        }
-
+  
         [Authorize(Roles = "Amministratore,Utente,Consultatore")]
         public ActionResult Upload()
         {
-            ViewBag.SistemaGeo = new List<SelectListItem>()
-           
-         {
-         new SelectListItem() { Text = "OpenStreetMap", Value = "1"},
-         new SelectListItem() { Text = "Here", Value = "2" },
-         new SelectListItem() {Text="Google", Value="3"}
-         };
-            
-
 
             return View();
         }
 
-       
+
         [Authorize(Roles = "Amministratore,Utente,Consultatore")]
-        public ActionResult Geocodifica()
+        public ActionResult Geocodifica(string FileName ,string SistemaGeo, string DatiJSON, string CorrispondenzeJSON, int TotRighe)
         {
+            Geo_Attività _Attività = new Geo_Attività();
+            Geo_Dati dati = new Geo_Dati();
+            dati = SelectSystemGeo(SistemaGeo, FileName);
+            if (CorrispondenzeJSON == null) { }
+            else 
+            {
+                GeoNoRighe = 0;
+                JSONcorrispondeze = CorrispondenzeJSON;
+                HomeController.GetAttività(user,dati.IdUtente, FileName, filepath, (bool)dati.OpenStreetMap, (bool)dati.Here, TotRighe,0);
+            }
+            
+            righeGeo--;
+            var stopWatch = new Stopwatch();          
+            int GeoRef;     
+            
+            if (stopWatch.IsRunning) { }
+            else stopWatch.Start();
 
+            DataTable dtdatabase = new DataTable();
+            Dictionary<string, object> dati_da_georef = null;
+            try
+            {
+                dati_da_georef = JsonConvert.DeserializeObject<Dictionary<string, object>>(DatiJSON);
+            }
+            catch { }
+            Dictionary<string, object> corrispondenze = new Dictionary<string, object>();
            
-            DataTable tablerisultati = new DataTable();
-            var dtdatabase = CreateTable(dt);
+            try
+            {
+                corrispondenze = JsonConvert.DeserializeObject<Dictionary<string, object>>(JSONcorrispondeze);
+            }
+            catch { }
 
-                     // List<string> listItems = new List<string>();
-            /*
-                        foreach (DataColumn colonna in dt.Columns)
-                        {
-                            var colonna_nome = colonna.ColumnName;
-
-                            listItems.Add(colonna_nome);
-                        }
-                        ViewBag.Provincia = listItems;
-                        ViewBag.Comune = listItems;
-                        ViewBag.Indirizzo = listItems;
-                        ViewBag.AltroIndirizzo = listItems;
-                        ViewBag.N_Civico = listItems;
-                        ViewBag.Cap = listItems;
-                        ViewBag.DescrizioneGeo = listItems;
-
-            */
-            //OPENSTREETMAP
-                        if (dati.OpenStreetMap is true)
-                        {
-                            OpenStreetMapController.GeoCodeRow(path, _FileName, cf, dt, tablerisultati, _FileName, path);
-
-                foreach (DataRow row in tablerisultati.Rows)
+            if (dati_da_georef != null && dati_da_georef.Count > 0)
+            {
+                
+                CreateTable(dtdatabase);
+                // Tramite un altro parametro ottenere la corrispondenza tra dati_da_georefJSON e oggetto GeoCode
+                GeoCode geo = GeoCode.CreateFrom(dati_da_georef, corrispondenze);
+                if (SistemaGeo == "1")
                 {
+                   
+                    geo = OpenStreetMapController.GeoCodeObject(geo);
 
-                    dtdatabase.Rows.Add(dati.IdUtente, dati.DescrizioneFile, row["Provincia"], row["Comune"], row["Indirizzo"], row["DENOMINAZIONE"], dati.OpenStreetMap, dati.Here, dati.Google, row["Lat"],
-                            row["Lon"], row["Approx01"], row["Approx02"], null, null, null, null);
+
+                    //salvataggio database
+                   
+                    //udt_Geo tabella definita dall'utente SQL  - CAMPI idutente, DescrizioneFile, Provincia, Comune, Indirizzo, Descrizione, OpenStreetMap, Here, Google, LAT , LON , APPOROX01, APPROX02, 
+                    // Here_ Mathclevel,Here_matchtype, Here_Relevance, Here_Error
+                    dtdatabase.Rows.Add(dati.IdUtente, FileName, geo.Provincia, geo.Comune, geo.Indirizzo, geo.Denominazione, dati.OpenStreetMap, dati.Here, dati.Google,geo.Lat,
+                                geo.Lon, geo.Approx01, geo.Approx02, null, null, null, null);
+                    if (geo.Lat == 0 || geo.Lon==0)
+                    {
+                        GeoNoRighe++;
+                    }
+                }
+                if (SistemaGeo == "2")
+                {
+                    //aggiungere ALTROINDIRIZZO e CAP
+                   //udt_Geo tabella definita dall'utente SQL  - CAMPI idutente, DescrizioneFile, Provincia, Comune, Indirizzo, Descrizione, OpenStreetMap, Here, Google, LAT , LON , APPOROX01, APPROX02, 
+                   // Here_ Mathclevel,Here_matchtype, Here_Relevance, Here_Error
+                    geo = GeocodeProcessor.EsecuteGecoding(geo, GeoNoRighe);
+                    dtdatabase.Rows.Add(dati.IdUtente, FileName, geo.Provincia, geo.Comune, geo.Indirizzo, geo.Denominazione, dati.OpenStreetMap, dati.Here, dati.Google, geo.Lat,
+                                          geo.Lon, null, null, geo.Here_MatchLevel, geo.Here_MatchType, geo.Here_Relevance, geo.Here_Error);
 
                 }
+                
                 datasavedb(dtdatabase);
-                 }
-            //HERE
-                        if (dati.Here is true)
-                        {
-                            DataColumnCollection colonna = dt.Columns;
-                        try
-                        {
-                        if (colonna.Contains("Here_Latitude") || colonna.Contains("Here_Longitude"))
-                        {
+               
+                
+                 time = stopWatch.Elapsed + time;
 
-                        }
-                        else
-                        {
+                if (righeGeo==0)
+                {
+                    GeoRef = TotRighe - GeoNoRighe;
+                    stopWatch.Stop();                  
+                    uploadDBAttività(time, _Attività.Id_Utente, GeoRef, _Attività.DescrizioneFile);
+                    time =TimeSpan.Zero ;
+                }
 
-                            SistemaHereController.Upload(path, conf, _FileName, tablerisultati, cf);
-                            DataColumnCollection colonnarisultati = tablerisultati.Columns;
-                        if (colonnarisultati.Contains("DENOMINAZIONE"))
-                        { }
-                        else
-                        {
-                            tablerisultati.Columns.Add("DENOMINAZIONE");
-                        }
-                        foreach (DataRow row in tablerisultati.Rows)
-                        {
-
-                            dtdatabase.Rows.Add(dati.IdUtente, dati.DescrizioneFile, row["Provincia"], row["Comune"], row["Indirizzo"], row["DENOMINAZIONE"], dati.OpenStreetMap, dati.Here, dati.Google, row["Here_Latitude"],
-                                    row["Here_Longitude"], null, null, row["Here_MatchLevel"], row["Here_MatchType"], row["Here_Relevance"], row["Here_Error"]);
-                        }
-                        datasavedb(dtdatabase);
-
-                        }
-                        }
-                        catch(Exception ex)
-                        {
-                            MessageBox.Show(ex.Message);
-                        }
-                          
-                        }
-                         //    VmUpload vm = new VmUpload(dati, dt);
-                         //    VmUpload vmGeo = new VmUpload(dati, tablerisultati);
-                          
-            
-                        if (tablerisultati.Rows.Count > 0)
-                        {
-
-                             return Json(new { code = 1 }); 
-
-                        }
-                        else
-                        {
-                             //errore
-                             return Json(new { code = 2 });
-                        }
+                return Content(JsonConvert.SerializeObject(geo), "application/json");
+            }
+            return null;
+        }
             
 
-
-                    }
-
-   
-      
 
 
         public static void datatablehelper(SqlConnection connection, DataTable dataTable)
@@ -193,15 +152,40 @@ namespace NuovoPortaleGeo.Controllers
         public static void datasavedb(DataTable dtdatabase)
         {
       
-           SqlConnection connectionstring = new SqlConnection(@"Data Source=sql2016listen_c, 1733;Initial Catalog=IntraGeoRef;Integrated Security=True");
+           SqlConnection connectionstring = new SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
             datatablehelper(connectionstring, dtdatabase);
         }
 
-
-
-        private DataTable CreateTable(DataTable dt)
+        public static void uploadDBAttività(TimeSpan time,  string idutente, int righe, string descrizionefile)
         {
-            DataTable dtdatabase = new DataTable();
+            SqlConnection connectionstring = new SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+            try
+            {
+                 var sql = @"UPDATE [IntraGeoRef].[dbo].Geo_Attività SET RigheGeoreferenziate=@RigheGeoreferenziate, TempoImpiegato=@TempoImpiegato WHERE DescrizioneFile=@DescrizioneFile AND Id_Utente=@Id_Utente";
+                connectionstring.Open();
+                SqlCommand sqlCommand = new SqlCommand(sql, connectionstring);
+
+                sqlCommand.Parameters.Add("@RigheGeoreferenziate", SqlDbType.Int).Value = righe;
+                sqlCommand.Parameters.Add("@TempoImpiegato", SqlDbType.Time).Value = time;
+                sqlCommand.Parameters.Add("@DescrizioneFile", SqlDbType.NVarChar).Value = descrizionefile;
+                sqlCommand.Parameters.Add("@Id_Utente", SqlDbType.NVarChar).Value = idutente;
+                sqlCommand.ExecuteNonQuery();
+                connectionstring.Close();
+                
+
+            }
+
+            catch (Exception e)
+            {
+                MessageBox.Show($"Failed to update. Error message: {e.Message}");
+            }
+
+        }
+
+
+        private DataTable CreateTable(DataTable dtdatabase)
+        {
+           
             dtdatabase.Columns.Add("IdUtente");
             dtdatabase.Columns.Add("DescrizioneFile");
             dtdatabase.Columns.Add("Here");
@@ -215,56 +199,23 @@ namespace NuovoPortaleGeo.Controllers
             dtdatabase.Columns.Add("Here_MatchType");
             dtdatabase.Columns.Add("Here_Relevance");
             dtdatabase.Columns.Add("Here_Error");
-            DataColumnCollection columns = dt.Columns;
-
-            if (columns.Contains("DENOMINAZIONE"))
-            {
-
-            }
-            else
-            {
-                dtdatabase.Columns.Add(new DataColumn("DENOMINAZIONE"));
-            }
-            foreach (DataColumn col in dt.Columns)
-            {
-
-                if (col.ColumnName == "Provincia")
-                {
-                    dtdatabase.Columns.Add("Provincia");
-
-                }
-                if (col.ColumnName == "Comune")
-                {
-                    dtdatabase.Columns.Add("Comune");
-
-                }
-                if (col.ColumnName == "Indirizzo")
-                {
-                    dtdatabase.Columns.Add("Indirizzo");
-
-                }
-                if (col.ColumnName == "DENOMINAZIONE")
-                {
-
-                    dtdatabase.Columns.Add("DENOMINAZIONE");
-
-
-                }
-              
-                    
-                    
-            }
+            dtdatabase.Columns.Add(("DENOMINAZIONE"));
+            dtdatabase.Columns.Add("Provincia");
+            dtdatabase.Columns.Add("Comune");
+            dtdatabase.Columns.Add("Indirizzo");
+    
             return dtdatabase;
         }
 
 
-        public void SelectSystemGeo(string SistemaAttivo, Geo_Dati dat_i)
+        public Geo_Dati SelectSystemGeo(string SistemaAttivo, string FileName)
         {
-            var cf = Session["CF"].ToString();
+            Geo_Dati dat_i = new Geo_Dati();
             var Geo_Utente = db.Geo_Utente
-                    .Where(x => x.CodiceFiscale == cf).FirstOrDefault();
+                   .Where(x => x.CodiceFiscale == cf).FirstOrDefault();
             ViewBag.FileEsportazione = new SelectList(db.Geo_Dati.Where(s => s.IdUtente == Geo_Utente.Id).GroupBy(p => new { p.DescrizioneFile })
                                                      .Select(g => g.FirstOrDefault()), "DescrizioneFile", "DescrizioneFile");
+            user = Geo_Utente.UserName;
             //seleziona sistema geofereferenzazione  
             if (SistemaAttivo != null && SistemaAttivo!="")
 
@@ -297,10 +248,13 @@ namespace NuovoPortaleGeo.Controllers
                 dat_i.Here = false;
                 dat_i.Google = false;
             }
-            dati = dat_i;
-            dati.DescrizioneFile = _FileName;
-            dati.IdUtente = Geo_Utente.Id;
-            GeoDatiController._File = _FileName;
+   
+            GeoDatiController._File = FileName;          
+    
+
+            return dat_i;
+                
+
         }
 
 
@@ -309,62 +263,92 @@ namespace NuovoPortaleGeo.Controllers
         public  ActionResult DatiJSON(string descrizione)
         {
             // dati.DescrizioneFile  finire come fare?
-            
 
-             if (Request.Files.Count > 0)
+
+            if (Request.Files.Count > 0)
             {
                 //string delimiter = detectDelimiter(Request.Files[0].InputStream);
+
+
+                // Salvataggio del file nella cartella utente
+                // TODO: Parametro per indicare se salvare o meno il file
+                string NameFile = Request.Files[0].FileName;                
+                SaveFile(NameFile, Request.Files[0].InputStream);
+
+                // Impostazione configurazione csv
+                // TODO: Pensare alla gestione anche di file non CSV
+                CsvConfiguration conf = new CsvConfiguration(CultureInfo.InvariantCulture);
                 
-                CsvConfiguration con = new CsvConfiguration(CultureInfo.InvariantCulture);
-                conf = con;
+                // TODO: Parametro per indicare la codifica se diversa da UTF7 (ANSI)
+                conf.Encoding = System.Text.Encoding.UTF7;
                 conf.BadDataFound = null;
                 //conf.Delimiter = ";";
                 conf.DetectDelimiter = true;
                 conf.HasHeaderRecord = true;
-                var reader = new StreamReader(Request.Files[0].InputStream);
-                var csv = new CsvHelper.CsvReader(reader, conf);
-                string NameFile = Request.Files[0].FileName;
-                _FileName = descrizione;
-                
-               SaveFile(NameFile);
-              
+
+                // Lettura file csv e caricamento in tabella
                 DataTable table = new DataTable();
-                
-                //  using (var streamReader = File.
-                // using (var csvReader = new CsvReader(streamreade, CultureInfo.CurrentCulture)) ;
-                var dr = new CsvDataReader(csv);           
-                table.Load(dr);
-                dt = table;
-                var dati = JsonConvert.SerializeObject(dt);             
-              
-                return Content(dati, "application/json");
+                Request.Files[0].InputStream.Seek(0, SeekOrigin.Begin);
+                using (var reader = new StreamReader(Request.Files[0].InputStream, System.Text.Encoding.UTF7))
+                { 
+                    using (var csv = new CsvHelper.CsvReader(reader, conf))
+                    {
+                        var dr = new CsvDataReader(csv);
+                        table.Load(dr);
+                    }
+                }
+
+                // Aggiunto una colonna con il numero di riga
+                DataColumn Col = table.Columns.Add("#", typeof(Int32)); 
+                Col.SetOrdinal(0);
+
+                righeGeo = 0;
+                foreach (DataRow row in table.Rows)
+                {
+                    righeGeo += 1;
+                    row["#"] = righeGeo;
+                }
+
+                var dati = JsonConvert.SerializeObject(table);             
+
+                return Content(dati, "application/json", System.Text.Encoding.UTF8);
             }
             else
-            
                 return HttpNotFound();
-            
-            
-           
 
         }
-        public void SaveFile(string Name_File)
+
+        public bool SaveFile(string File_Name, System.IO.Stream Input_Stream)
         {
-            Geo_Dati dati = new Geo_Dati();
-            // verifico l'utente loggato e gli associo il numero di file caricato
-            cf = Session["CF"].ToString();
-            var Geo_Utente = db.Geo_Utente
-                       .Where(x => x.CodiceFiscale == cf).FirstOrDefault();
-            dati.IdUtente = Geo_Utente.Id;
-            string IdUnivoco = Geo_Utente.Id;            
-            string pathfolder = Path.Combine(Server.MapPath("~/Upload"), IdUnivoco);
-            path = Path.Combine(Server.MapPath("~/Upload/" + IdUnivoco), Name_File);
-            if (!Directory.Exists(pathfolder))
+            try
             {
-                Directory.CreateDirectory(pathfolder);
+                Geo_Dati dati = new Geo_Dati();        
+                // verifico l'utente loggato e gli associo il numero di file caricato
+                cf = Session["CF"].ToString();
+                var Geo_Utente = db.Geo_Utente
+                    .Where(x => x.CodiceFiscale == cf).FirstOrDefault();
+                dati.IdUtente = Geo_Utente.Id;
+                string IdUnivoco = Geo_Utente.Id;
+                string dirname = System.IO.Path.Combine(Server.MapPath("~/Upload"), IdUnivoco);
+                filepath = System.IO.Path.Combine(Server.MapPath("~/Upload/" + IdUnivoco), Path.GetFileNameWithoutExtension(File_Name) + "_" + DateTime.Now.ToString("yyyyMMdd'-'HHmmss") + Path.GetExtension(File_Name));
+                if (!System.IO.Directory.Exists(dirname))
+                    System.IO.Directory.CreateDirectory(dirname);
 
+                if (System.IO.Directory.Exists(dirname))
+                {
+                    using (var fileStream = System.IO.File.Create(filepath))
+                    {
+                        Input_Stream.Seek(0, SeekOrigin.Begin);
+                        Input_Stream.CopyTo(fileStream);
+                    }
+                }
+                return true;
+            } 
+            catch (Exception ex)
+            {
+                // TODO: Aggiungere una gestione degli errori con log su file
+                return false;
             }
-            
-                
-        }
         }
     }
+}

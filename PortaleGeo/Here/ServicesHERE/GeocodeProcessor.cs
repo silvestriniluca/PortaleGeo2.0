@@ -10,14 +10,15 @@ using NuovoPortaleGeo.service;
 using NuovoPortaleGeo.Models;
 using System.Data;
 using NuovoPortaleGeo.Controllers;
+using PortaleGeoWeb.Models;
 
 namespace NuovoPortaleGeo
 {
-    
+
     public class GeocodeProcessor
     {
-       
-        public static DataDescriptor EsecuteGecoding(DataDescriptor data, InputParam par, string inputFile, CsvConfiguration conf, int Georighe,int GeoNorighe)
+
+        public static GeoCode EsecuteGecoding(GeoCode data, int GeoNorighe)
         {
 
             int counter = 0;
@@ -32,8 +33,9 @@ namespace NuovoPortaleGeo
             DataDescriptor data_computed = new DataDescriptor();
 
             //per me questa riga è inutile, perchè Data Descriptor lo fa già di definizione
-            data_computed.Rows = new List<string[]>();
+        //    data_computed.Rows = new List<string[]>();
             //numera le nuove intestazioni
+            /*
             int K_LATITUDE = data.Header.Length;
             int K_LONGITUDE = data.Header.Length + 1;
             int K_MATCH_LEVEL = data.Header.Length + 2;
@@ -54,154 +56,68 @@ namespace NuovoPortaleGeo
             data_computed.Header[K_MATCH_RELEVANCE] = "Here_Relevance";
             data_computed.Header[K_MATCH_ERROR] = "Here_Error";
 
-
-
-            //TEST per i primi 5 elementi
-
-            if (data.i == true)
-            {
-
-
-                foreach (var row in data.Rows)
-                {
-
-
-
-                    service._city = row[par.posComune];
-                    service._country = "ITALIA";
-                    service._state = "MARCHE";
-                    GeocoderReply geocoderReply = service.executeRequest(row[par.posIndirizzo]);
-                    outList.Add(geocoderReply);
-                    //row + 6??header semmai
-                    string[] outRow = new string[row.Length + 6];
-                    Array.Copy(row, outRow, row.Length);
-                    //
-                    if (geocoderReply.ReplyException == null)
-                    {
-                        //se l'indirizzo non è stato trovato  --> oggetto NULLO
-                        if (geocoderReply.ReplyObject.Response.View.Length > 0)
-                        {
-                            //se COMUNE passato non corrisponde con quello del risultato geocode dà errore --> oggetto NULLO
-                            if (geocoderReply.ReplyObject != null
-                                    && geocoderReply.ReplyObject.Response.View[0].Result[0].Location.Address.City.ToString().ToLower().Trim() == service._city.ToLower().Trim())
-                            {
-
-                                outRow[K_LATITUDE] = geocoderReply.ReplyObject.Response.View[0].Result[0].Location
-                                    .DisplayPosition.Latitude.ToString();
-                                outRow[K_LONGITUDE] = geocoderReply.ReplyObject.Response.View[0].Result[0].Location
-                                    .DisplayPosition.Longitude.ToString();
-                                outRow[K_MATCH_LEVEL] = geocoderReply.ReplyObject.Response.View[0].Result[0].MatchLevel;
-                                outRow[K_MATCH_TYPE] = geocoderReply.ReplyObject.Response.View[0].Result[0].MatchType;
-                                outRow[K_MATCH_RELEVANCE] =
-                                    geocoderReply.ReplyObject.Response.View[0].Result[0].Relevance.ToString();
-                                outRow[K_MATCH_ERROR] = null;
-
-                            }
-                            else
-                            {
-                                outRow[K_MATCH_ERROR] = "REPLY-CITY-NOT-CORRESPOND";
-                            }
-                        }
-                        else
-                        {
-                            outRow[K_MATCH_ERROR] = "REPLY-OBJECT-NULL";
-                        }
-                    }
-                    else
-                    {
-                        outRow[K_MATCH_ERROR] = geocoderReply.ReplyException.ToString();
-                    }
-
-                    //
-                    data_computed.Rows.Add(outRow);
-                    //
-                    counter++;
-
-                    //
-                    if (counter > 5) goto Test;
-
-                }
-            }
+            */
 
 
 
             //AVVIA GEOCODE
 
-            else
-            {
-                foreach (var row in data.Rows)
-                {
-                    service._county= row[par.posProvincia];
-                    service._city = row[par.posComune];
-                    service._country = "ITALIA";
-                    service._state = "MARCHE";
-                    GeocoderReply geocoderReply = service.executeRequest(row[par.posIndirizzo]);
-                    outList.Add(geocoderReply);
-                    //
-                    string[] outRow = new string[row.Length + 6];
-                    Array.Copy(row, outRow, row.Length);
-                    //
-                    if (geocoderReply.ReplyException == null)
-                    {
-                        //se l'indirizzo non è stato trovato  --> oggetto NULLO
-                        if (geocoderReply.ReplyObject.Response.View.Length > 0)
-                        {
-                            //se COMUNE passato non corrisponde con quello del risultato geocode dà errore --> oggetto NULLO
-                            if (geocoderReply.ReplyObject != null
-                                    && geocoderReply.ReplyObject.Response.View[0].Result[0].Location.Address.City.ToString().ToLower().Trim() == service._city.ToLower().Trim())
-                            {
 
-                                outRow[K_LATITUDE] = geocoderReply.ReplyObject.Response.View[0].Result[0].Location
-                                    .DisplayPosition.Latitude.ToString();
-                                outRow[K_LONGITUDE] = geocoderReply.ReplyObject.Response.View[0].Result[0].Location
-                                    .DisplayPosition.Longitude.ToString();
-                                outRow[K_MATCH_LEVEL] = geocoderReply.ReplyObject.Response.View[0].Result[0].MatchLevel;
-                                outRow[K_MATCH_TYPE] = geocoderReply.ReplyObject.Response.View[0].Result[0].MatchType;
-                                outRow[K_MATCH_RELEVANCE] =
-                                    geocoderReply.ReplyObject.Response.View[0].Result[0].Relevance.ToString();
-                                outRow[K_MATCH_ERROR] = null;
-                                
-                            }
-                            else
-                            {
-                                outRow[K_MATCH_ERROR] = "REPLY-CITY-NOT-CORRESPOND";
-                            }
+           
+            
+                service._county = data.Provincia;
+                service._city = data.Comune;
+                service._country = "ITALIA";
+                service._state = "MARCHE";
+                GeocoderReply geocoderReply = service.executeRequest(data.Indirizzo);
+                outList.Add(geocoderReply);
+                //
+             
+                //
+                if (geocoderReply.ReplyException == null)
+                {
+                    //se l'indirizzo non è stato trovato  --> oggetto NULLO
+                    if (geocoderReply.ReplyObject.Response.View.Length > 0)
+                    {
+                        //se COMUNE passato non corrisponde con quello del risultato geocode dà errore --> oggetto NULLO
+                        if (geocoderReply.ReplyObject != null
+                                && geocoderReply.ReplyObject.Response.View[0].Result[0].Location.Address.City.ToString().ToLower().Trim() == service._city.ToLower().Trim())
+                        {
+
+                            data.Lat = geocoderReply.ReplyObject.Response.View[0].Result[0].Location
+                                .DisplayPosition.Latitude;
+                            data.Lon = geocoderReply.ReplyObject.Response.View[0].Result[0].Location
+                                .DisplayPosition.Longitude;
+                            data.Here_MatchLevel = geocoderReply.ReplyObject.Response.View[0].Result[0].MatchLevel;
+                            data.Here_MatchType = geocoderReply.ReplyObject.Response.View[0].Result[0].MatchType;
+                            data.Here_Relevance=
+                                geocoderReply.ReplyObject.Response.View[0].Result[0].Relevance.ToString();
+                            data.Here_Error = null;
+
                         }
                         else
                         {
-                            outRow[K_MATCH_ERROR] = "REPLY-OBJECT-NULL";
+                            data.Here_Error = "REPLY-CITY-NOT-CORRESPOND";
+                            GeoNorighe++;
                         }
-                        GeoNorighe++;
                     }
                     else
                     {
-                        outRow[K_MATCH_ERROR] = geocoderReply.ReplyException.ToString();
+                       data.Here_Error = "REPLY-OBJECT-NULL";
+                        GeoNorighe++;
                     }
-
-                    //
-                    data_computed.Rows.Add(outRow);
-                    //
-                    counter++;
-                    Georighe++;
-                    //
-                    //if (counter > 5) break;
-
+                    
                 }
-            }
+                else
+                {
+                    data.Here_Error = geocoderReply.ReplyException.ToString();
+                    GeoNorighe++;
+                }
 
-     Test:
-
-
-
-            //
-            // change file name
-            //
-            string path = Path.GetDirectoryName(inputFile);
-            string name = Path.GetFileNameWithoutExtension(inputFile);
-            string outFileName = Path.Combine(path, name + "_elaborated.csv");
+ 
             
 
-            return data_computed;
+            return data;
         }
 
 

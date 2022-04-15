@@ -130,7 +130,7 @@ namespace NuovoPortaleGeo
 
             return View();
         }
-
+/*
         [HttpPost]
         [Authorize(Roles = "Amministratore,Utente,Consultatore")]
         public ActionResult Upload(HttpPostedFileBase upload ,[Bind(Include = "DescrizioneFile,Here,OpenStreetMap,Google")] Geo_Dati dati)
@@ -332,7 +332,7 @@ namespace NuovoPortaleGeo
         }
     
 
-
+*/
      
 
         public static void datatablehelper(SqlConnection connection, DataTable dataTable)
@@ -364,23 +364,23 @@ namespace NuovoPortaleGeo
 
         }
         
-        public static void GetAttività(string Id, string email,string NameFile, string Path, bool OpenStreetMap, bool Here,int TotRighe,int GeoRighe, TimeSpan timeSpan)
+        public static void GetAttività(string User,string id,string filename, string path, bool OpenStreetMap, bool Here, int totrighe, int righegeo)
         {
             using(GeoCodeEntities1 db = new GeoCodeEntities1())
             {
                
                 Geo_Attività geo_Attività = new Geo_Attività();
 
-                geo_Attività.Utente = email;
-                geo_Attività.Id_Utente = Id;
+                geo_Attività.Utente = User;
+                geo_Attività.Id_Utente = id;
                 geo_Attività.Here = Here;
                 geo_Attività.OpenStreetMap = OpenStreetMap;
-                geo_Attività.PathFile = Path;
-                geo_Attività.DescrizioneFile = NameFile;
+                geo_Attività.PathFile = path;
+                geo_Attività.DescrizioneFile = filename;
                 geo_Attività.DataAttività = DateTime.Now;
-                geo_Attività.RigheTotali = TotRighe;
-                geo_Attività.RigheGeoreferenziate = GeoRighe;
-                geo_Attività.TempoImpiegato = timeSpan;
+                geo_Attività.RigheTotali = totrighe;
+                geo_Attività.RigheGeoreferenziate = righegeo;
+                geo_Attività.TempoImpiegato = TimeSpan.Zero;
                 db.Geo_Attività.Add(geo_Attività);  
                 db.SaveChanges();
             }

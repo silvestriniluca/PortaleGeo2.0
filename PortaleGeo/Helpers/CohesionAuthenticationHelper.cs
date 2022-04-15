@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
-using NuovoPortaleGeo;
+
+using NuovoPortaleGeo.Controllers;
 
 namespace NuovoPortaleGeo.Helpers
 {
+    
     public static class CohesionAuthenticationHelper
     {
         public static async Task<bool> AuthenticateCohesionUser(System.Web.SessionState.HttpSessionState session, ApplicationSignInManager signInManager)
@@ -17,7 +19,8 @@ namespace NuovoPortaleGeo.Helpers
                 && session["CF"] != null)
             {
 
-                var cf = session["CF"].ToString();
+                UploadController.cf = session["CF"].ToString();
+                var cf = UploadController.cf;
                 //var redirectUrl = session["REDIRECT"]? returnUrl
             
             
@@ -37,10 +40,7 @@ namespace NuovoPortaleGeo.Helpers
                                 Id = id
 
                             };
-                     //   if (id != null)
-                       // {
-                         //   HomeController.GetAttività(id, email, "");
-                       // }
+                   
                         await signInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                         return true;
                     }

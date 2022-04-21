@@ -104,7 +104,8 @@ namespace NuovoPortaleGeo.Controllers
                      
                     dati.DescrizioneFile = FileName;
                     dati.Provincia = geo.Provincia;
-                    dati.Comune = geo.Indirizzo;
+                    dati.Comune = geo.Comune;
+                    dati.Indirizzo = geo.Indirizzo;
                     dati.AltroIndirizzo = geo.AltroIndirizzo;
                     dati.Cap = geo.Cap;
                     dati.Descrizione = geo.Denominazione;              
@@ -131,7 +132,8 @@ namespace NuovoPortaleGeo.Controllers
                     geo = GeocodeProcessor.EsecuteGecoding(geo, GeoNoRighe);
                     dati.DescrizioneFile = FileName;
                     dati.Provincia = geo.Provincia;
-                    dati.Comune = geo.Indirizzo;
+                    dati.Comune = geo.Comune;
+                    dati.Indirizzo = geo.Indirizzo;
                     dati.AltroIndirizzo = geo.AltroIndirizzo;
                     dati.Cap = geo.Cap;
                     dati.Descrizione = geo.Denominazione;

@@ -40,6 +40,8 @@
             color: white;
         }
 
+
+
     nav ul {
         list-style: none;
     }
@@ -183,22 +185,22 @@
                 <div id="info" style="display:none">
                     <p>Prima di georeferenziare un nuovo file assicurati di aver prima estratto il file della georeferenzazione precedente</p>
                 </div>
-        </div>
+            </div>
 
 
-        <br />
-        <div>
-            <strong>@Html.Label("Descrizione File:", htmlAttributes: new { @class = "control-label col-md-2" })</strong>
-            <div class="row col-12">
-                <div class="col-md-12">
-                    @Html.EditorFor(model => model.DescrizioneFile, new { htmlAttributes = new { @class = "form-control", @required = "required", @id = "DescrizioneFile" } })
-                    @Html.ValidationMessageFor(model => model.DescrizioneFile, "", new { @class = "text-danger" })
+            <br />
+            <div>
+                <strong>@Html.Label("Descrizione File:", htmlAttributes: new { @class = "control-label col-md-2" })</strong>
+                <div class="row col-12">
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.DescrizioneFile, new { htmlAttributes = new { @class = "form-control", @required = "required", @id = "DescrizioneFile" } })
+                        @Html.ValidationMessageFor(model => model.DescrizioneFile, "", new { @class = "text-danger" })
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-    </div>
 <div class="row" id="visualizza">
     <button type="submit" value="Anteprima" class="btn btn-success" id="View" name="upload" style="display:none"><i class="fa fa-th-large" style="color:snow"></i>   Anteprima</button>
 </div>
@@ -361,6 +363,7 @@
     </div>
     <br />
     <br />
+   <h4 style="color:black">Risultati Georeferenzazione</h4>
     <table id="tabellarisultati" class="display" style="width:100%;">
     </table>
 </div>
@@ -508,7 +511,7 @@
                     $("#Estrai").prop("disabled", false);
                     var dt = new Date();
                     var time = dt.getDate()  + (dt.getUTCMonth()+1) + dt.getFullYear() + "_" + dt.getHours() + ":" + dt.getMinutes()
-                    
+
                     $('#tabellarisultati').DataTable({
                         language: {
                             url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Italian.json'
@@ -527,7 +530,7 @@
                                     extend: "excel", className: "btn-primary", title: File +"_"+ time
                                 }],
                         }]
-                            
+
                     });
 
                     //  url = '@Url.Action("Index", "GeoDati/Index")',
@@ -539,7 +542,7 @@
 
 
             $(document).ready(function () {
-               
+
             $("#mappadati").click(function () {
                    url = '@Url.Action("Index", "GeoDati/Index")',
                     window.location.href = (url);

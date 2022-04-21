@@ -14,8 +14,10 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using System.Windows;
 
 namespace NuovoPortaleGeo.Controllers
@@ -31,6 +33,7 @@ namespace NuovoPortaleGeo.Controllers
         public static int GeoNoRighe;
         public static TimeSpan time;
         public static string JSONcorrispondeze;
+        public static DataTable tabellarisultati;
 
 
   
@@ -43,16 +46,18 @@ namespace NuovoPortaleGeo.Controllers
 
 
         [Authorize(Roles = "Amministratore,Utente,Consultatore")]
-        public ActionResult Geocodifica(string FileName ,string SistemaGeo, string DatiJSON, string CorrispondenzeJSON, int TotRighe)
+        public ActionResult Geocodifica(string FileName ,string SistemaGeo, string DatiJSON, string CorrispondenzeJSON, int TotRighe, string risultati)
         {
-            Geo_Attività _Attività = new Geo_Attività();
+           // Geo_Attività _Attività = new Geo_Attività();
             Geo_Dati dati = new Geo_Dati();
             dati = SelectSystemGeo(SistemaGeo, FileName);
             if (CorrispondenzeJSON == null) { }
             else 
             {
+               
                 GeoNoRighe = 0;
                 JSONcorrispondeze = CorrispondenzeJSON;
+                //salvataggio dati Geo_Attività
                 HomeController.GetAttività(user,dati.IdUtente, FileName, filepath, (bool)dati.OpenStreetMap, (bool)dati.Here, TotRighe,0);
             }
             
@@ -65,9 +70,11 @@ namespace NuovoPortaleGeo.Controllers
 
             DataTable dtdatabase = new DataTable();
             Dictionary<string, object> dati_da_georef = null;
+            
             try
             {
                 dati_da_georef = JsonConvert.DeserializeObject<Dictionary<string, object>>(DatiJSON);
+                
             }
             catch { }
             Dictionary<string, object> corrispondenze = new Dictionary<string, object>();
@@ -75,6 +82,7 @@ namespace NuovoPortaleGeo.Controllers
             try
             {
                 corrispondenze = JsonConvert.DeserializeObject<Dictionary<string, object>>(JSONcorrispondeze);
+
             }
             catch { }
 
@@ -84,6 +92,7 @@ namespace NuovoPortaleGeo.Controllers
                 CreateTable(dtdatabase);
                 // Tramite un altro parametro ottenere la corrispondenza tra dati_da_georefJSON e oggetto GeoCode
                 GeoCode geo = GeoCode.CreateFrom(dati_da_georef, corrispondenze);
+                
                 if (SistemaGeo == "1")
                 {
                    
@@ -91,11 +100,26 @@ namespace NuovoPortaleGeo.Controllers
 
 
                     //salvataggio database
-                   
-                    //udt_Geo tabella definita dall'utente SQL  - CAMPI idutente, DescrizioneFile, Provincia, Comune, Indirizzo, Descrizione, OpenStreetMap, Here, Google, LAT , LON , APPOROX01, APPROX02, 
-                    // Here_ Mathclevel,Here_matchtype, Here_Relevance, Here_Error
-                    dtdatabase.Rows.Add(dati.IdUtente, FileName, geo.Provincia, geo.Comune, geo.Indirizzo, geo.Denominazione, dati.OpenStreetMap, dati.Here, dati.Google,geo.Lat,
-                                geo.Lon, geo.Approx01, geo.Approx02, null, null, null, null);
+
+                     
+                    dati.DescrizioneFile = FileName;
+                    dati.Provincia = geo.Provincia;
+                    dati.Comune = geo.Indirizzo;
+                    dati.AltroIndirizzo = geo.AltroIndirizzo;
+                    dati.Cap = geo.Cap;
+                    dati.Descrizione = geo.Denominazione;              
+                    dati.Lat = geo.Lat.ToString();
+                    dati.Lon = geo.Lon.ToString();
+                    dati.Approx01 = geo.Approx01.ToString();
+                    dati.Approx02 = geo.Approx02.ToString();
+                    dati.Here_MatchLevel = null;
+                    dati.Here_MatchType = null;
+                    dati.Here_Relevance = null;
+                    dati.Here_Error = null;
+                    db.Geo_Dati.Add(dati);
+                    db.SaveChanges();
+
+        
                     if (geo.Lat == 0 || geo.Lon==0)
                     {
                         GeoNoRighe++;
@@ -103,16 +127,28 @@ namespace NuovoPortaleGeo.Controllers
                 }
                 if (SistemaGeo == "2")
                 {
-                    //aggiungere ALTROINDIRIZZO e CAP
-                   //udt_Geo tabella definita dall'utente SQL  - CAMPI idutente, DescrizioneFile, Provincia, Comune, Indirizzo, Descrizione, OpenStreetMap, Here, Google, LAT , LON , APPOROX01, APPROX02, 
-                   // Here_ Mathclevel,Here_matchtype, Here_Relevance, Here_Error
+                  
                     geo = GeocodeProcessor.EsecuteGecoding(geo, GeoNoRighe);
-                    dtdatabase.Rows.Add(dati.IdUtente, FileName, geo.Provincia, geo.Comune, geo.Indirizzo, geo.Denominazione, dati.OpenStreetMap, dati.Here, dati.Google, geo.Lat,
-                                          geo.Lon, null, null, geo.Here_MatchLevel, geo.Here_MatchType, geo.Here_Relevance, geo.Here_Error);
-
+                    dati.DescrizioneFile = FileName;
+                    dati.Provincia = geo.Provincia;
+                    dati.Comune = geo.Indirizzo;
+                    dati.AltroIndirizzo = geo.AltroIndirizzo;
+                    dati.Cap = geo.Cap;
+                    dati.Descrizione = geo.Denominazione;
+                    dati.Lat = geo.Lat.ToString();
+                    dati.Lon = geo.Lon.ToString();
+                    dati.Approx01 = "";
+                    dati.Approx02 = "";
+                    dati.Here_MatchLevel = geo.Here_MatchLevel;
+                    dati.Here_MatchType = geo.Here_MatchType;
+                    dati.Here_Relevance = geo.Here_Relevance;
+                    dati.Here_Error = geo.Here_Error;
+                    db.Geo_Dati.Add(dati);
+                    db.SaveChanges();
+                 
                 }
                 
-                datasavedb(dtdatabase);
+          //      datasavedb(dtdatabase);
                
                 
                  time = stopWatch.Elapsed + time;
@@ -121,9 +157,11 @@ namespace NuovoPortaleGeo.Controllers
                 {
                     GeoRef = TotRighe - GeoNoRighe;
                     stopWatch.Stop();                  
-                    uploadDBAttività(time, _Attività.Id_Utente, GeoRef, _Attività.DescrizioneFile);
+                    uploadDBAttività(time, dati.IdUtente, GeoRef, FileName);
                     time =TimeSpan.Zero ;
                 }
+                
+               
 
                 return Content(JsonConvert.SerializeObject(geo), "application/json");
             }
@@ -131,7 +169,7 @@ namespace NuovoPortaleGeo.Controllers
         }
             
 
-
+/*
 
         public static void datatablehelper(SqlConnection connection, DataTable dataTable)
         {
@@ -147,15 +185,22 @@ namespace NuovoPortaleGeo.Controllers
 
         }
 
-
+        
 
         public static void datasavedb(DataTable dtdatabase)
         {
       
-           SqlConnection connectionstring = new SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+           SqlConnection connectionstring = new SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);       
             datatablehelper(connectionstring, dtdatabase);
         }
-
+*/
+        //visualizza tabella risultati
+        public DataTable getrisultati()
+        {
+            DataTable table = new DataTable();
+            return table;
+               
+        }
         public static void uploadDBAttività(TimeSpan time,  string idutente, int righe, string descrizionefile)
         {
             SqlConnection connectionstring = new SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
@@ -216,6 +261,7 @@ namespace NuovoPortaleGeo.Controllers
             ViewBag.FileEsportazione = new SelectList(db.Geo_Dati.Where(s => s.IdUtente == Geo_Utente.Id).GroupBy(p => new { p.DescrizioneFile })
                                                      .Select(g => g.FirstOrDefault()), "DescrizioneFile", "DescrizioneFile");
             user = Geo_Utente.UserName;
+            dat_i.IdUtente = Geo_Utente.Id;
             //seleziona sistema geofereferenzazione  
             if (SistemaAttivo != null && SistemaAttivo!="")
 
@@ -248,7 +294,7 @@ namespace NuovoPortaleGeo.Controllers
                 dat_i.Here = false;
                 dat_i.Google = false;
             }
-   
+            
             GeoDatiController._File = FileName;          
     
 

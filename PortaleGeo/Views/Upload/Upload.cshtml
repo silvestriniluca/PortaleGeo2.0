@@ -132,6 +132,13 @@
         border-radius: 0.8rem;
     }
 
+    #Risultati {
+        padding: 2rem 1rem;
+        margin-bottom: 2rem;
+        background-color: darkgray;
+        border-radius: 0.8rem;
+    }
+
     .styled select {
         border: 0 none;
         background: transparent;
@@ -150,212 +157,218 @@
         -webkit-border-radius: 9px 9px 9px 9px;
         border-radius: 9px 9px 9px 9px;
         box-shadow: 1px 1px 11px #330033;
-        background: url(~/Images/white-down-arrow-png-2.png) no-repeat scroll 319px 5px #f6c654;
+        background: no-repeat scroll 319px 5px #f6c654;
     }
-
-   
 </style>
 
 
-@if (Model == null)
-{
-    <div class="jumbotron">
+
+<div class="jumbotron">
 
 
-        <div id="totale">
-            <div class="row">
-                <div class="col-md-11">
-                    <input type="file" class="fa fa-file" id="TextUpload" name="upload" accept="csv" required="required" data-show-preview="false" />
-                    @*@Html.TextBox("upload", "", new { @class = "form-control", @type = "file", @id = "TextUpload", @name = "upload", @accept = ".csv", @required = "required" })*@
-                </div>
-
-                <div class="col-md-1">
-                    <img src="~/Images/download.png" class="rounded-circle" id="conferma" height="25" style="display:none" />
-                </div>
-                <br />
-                <br />
-                <div class="col-md-3">
-                    <button type="submit" class="btn btn-danger" id="Nuovo" disabled title="Cambia File"><i class="fa fa-reply"></i>Nuovo File</button>
-                </div>
+    <div id="totale">
+        <div class="row">
+            <div class="col-md-11">
+                <input type="file" class="fa fa-file" id="TextUpload" name="upload" accept="csv" required="required" data-show-preview="false" />
+                @*@Html.TextBox("upload", "", new { @class = "form-control", @type = "file", @id = "TextUpload", @name = "upload", @accept = ".csv", @required = "required" })*@
             </div>
 
+            <div class="col-md-1">
+                <img src="~/Images/download.png" class="rounded-circle" id="conferma" height="25" style="display:none" />
+            </div>
             <br />
-            <div>
-                <strong>@Html.Label("Descrizione File:", htmlAttributes: new { @class = "control-label col-md-2" })</strong>
-                <div class="row col-12">
-                    <div class="col-md-12">
-                        @Html.EditorFor(model => model.DescrizioneFile, new { htmlAttributes = new { @class = "form-control", @required = "required", @id = "DescrizioneFile" } })
-                        @Html.ValidationMessageFor(model => model.DescrizioneFile, "", new { @class = "text-danger" })
-                    </div>
+            <br />
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-danger" id="Nuovo" disabled title="Cambia File"><i class="fa fa-reply"></i>Nuovo File</button>
+                <div id="info" style="display:none">
+                    <p>Prima di georeferenziare un nuovo file assicurati di aver prima estratto il file della georeferenzazione precedente</p>
                 </div>
-            </div>
         </div>
 
 
+        <br />
+        <div>
+            <strong>@Html.Label("Descrizione File:", htmlAttributes: new { @class = "control-label col-md-2" })</strong>
+            <div class="row col-12">
+                <div class="col-md-12">
+                    @Html.EditorFor(model => model.DescrizioneFile, new { htmlAttributes = new { @class = "form-control", @required = "required", @id = "DescrizioneFile" } })
+                    @Html.ValidationMessageFor(model => model.DescrizioneFile, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="row" id="visualizza">
-        <button type="submit" value="Anteprima" class="btn btn-success" id="View" name="upload" style="display:none"><i class="fa fa-th-large" style="color:snow"></i>   Anteprima</button>
+</div>
     </div>
-    <div id="Fade_area" class="overLay">
+<div class="row" id="visualizza">
+    <button type="submit" value="Anteprima" class="btn btn-success" id="View" name="upload" style="display:none"><i class="fa fa-th-large" style="color:snow"></i>   Anteprima</button>
+</div>
+<div id="Fade_area" class="overLay">
+</div>
+<div id="myModal" class="popup">
+    @Html.Partial("~/Views/Shared/Popup.cshtml")
+
+</div>
+
+
+<table id="tableID" class="display" style="width:100%;display:none">
+</table>
+
+<br />
+<br />
+<div class="jumbotron" id="AttivaGeo" style="display:none">
+    <div class="col-sm-5">
+        <label title="Attiva Geo">
+            <strong>ATTIVA GEOREFERENZAZIONE</strong>
+            <input type="checkbox" id="CheckGeo" />
+        </label>
+    </div>
+</div>
+<div class="jumbotron" id="Geo" style="display:none">
+    <div class="row">
+
+        <div class="col-md-6" id="seleziona">
+            <h4>@Html.Label("Seleziona Sistema:", htmlAttributes: new { @class = "control-label col-md-5" })</h4>
+            @Html.Label("", htmlAttributes: new { @class = "control-label col-md-5" })
+            @* @Html.DropDownList("SistemaGeo", ViewBag.SistemaGeo as List<SelectListItem>, htmlAttributes: new { @class = "dropdown", @id = "SistemaGeo" })*@
+            <div class="styled-geo">
+                <select class="col-md-12" id="SistemaGeo">
+                    <option value="1">OpenStreetMap</option>
+                    <option value="2">HERE</option>
+                    <option value="3">OpenStreetMap</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="col-md-6" id="corrispondenze">
+            <div>
+                <p><strong>Seleziona la colonna corrispondente alla descrizione:</strong></p>
+                <br />
+                <p>Almeno uno tra Provincia, Comune e Indirizzo deve avere una corrispondenza</p>
+            </div>
+
+            <form>
+                <mat-form-field appearance="fill">
+                    <mat-label>Provincia:</mat-label>
+                    <div class="styled">
+                        <select class="col-md-12" id="Provincia" required>
+                            <option value="">Nessuna Corrispondenza</option>
+                        </select>
+                    </div>
+                    <br />
+
+                    <mat-label>Comune:</mat-label>
+                    <div class="styled">
+                        <select class="col-md-12" id="Comune">
+                            <option value="">Nessuna Corrispondenza</option>
+                        </select>
+                    </div>
+                    <br />
+                    <mat-label>Indirizzo:</mat-label>
+                    <div class="styled">
+                        <select class="col-md-12" id="Indirizzo">
+                            <option value="">Nessuna Corrispondenza</option>
+                        </select>
+                    </div>
+                    <br />
+                    <mat-label>N.Civico:</mat-label>
+                    <div class="styled">
+                        <select class="col-md-12" id="NumCivico">
+                            <option value="">Nessuna Corrispondenza</option>
+                        </select>
+                    </div>
+                    <br />
+                    <mat-label>Cap:</mat-label>
+                    <div class="styled">
+                        <select class="col-md-12 " id="Cap">
+                            <option value="">Nessuna Corrispondenza</option>
+                        </select>
+                    </div>
+                    <br />
+                    <mat-label>AltroIndirizzo:</mat-label>
+                    <div class="styled">
+                        <select class="col-md-12" id="AltroIndirizzo">
+                            <option value="">Nessuna Corrispondenza</option>
+                        </select>
+                    </div>
+                    <br />
+                    <mat-label class="">Descrizione Luogo:</mat-label>
+                    <div class="styled">
+                        <select class="col-md-12" id="DescrizioneGeo">
+                            <option value="">Nessuna Corrispondenza</option>
+                        </select>
+                    </div>
+                </mat-form-field>
+
+                <br />
+                <br />
+                <br />
+            </form>
+
+            <div>
+                <button type="submit" class="btn btn-success" style="width:500px" id="save"><i class="fa fa-save"></i>  Salva</button>
+            </div>
+
+        </div>
+
+        <br />
+        <br />
+        <br />
+    </div>
+
+    <br />
+    <div id="Fade_area" class="overLay" hidden>
     </div>
     <div id="myModal" class="popup">
         @Html.Partial("~/Views/Shared/Popup.cshtml")
 
     </div>
+    <div class="row">
+        <div id="parUpload">
+            <div class="col-sm-1">
+                <button type="submit" value="upload" class="btn btn-dark" id="Upload" name="upload" disabled><i class="fa fa-calculator"></i>Geocodifica</button>
+            </div>
+            <br />
 
+            <br />
+            <br />
+            <div id="OpenStreetMap" style="display:none">
+                <img src="/Images/OpenStreetMap.jpeg" height="50" alt="" loading="lazy" class="rounded-circle" />
+                <h2>Sistema di Georeferenzazione OpenStreetMap</h2>
+            </div>
 
-    <table id="tableID" class="display" style="width:100%;display:none">
-    </table>
+            <div id="Here" style="display:none">
+                <img src="/Images/HERE_logo.svg.png" height="50" alt="" loading="lazy" id="here" class="rounded-start" />
+                <h2>Sistema di Georeferenzazione HERE</h2>
+            </div>
+            <div class="col-lg-12" id="GeoDati">
+                <p><strong>Una volta cliccato la geocodifica aspettare la fine del processo e successivamente i dati saranno georeferenziati e disponibili nella pagina <a href="~/GeoDati/Index" class="">GeoDati</a></strong></p>
+            </div>
+        </div>
 
-    <br />
-    <br />
-    <div class="jumbotron" id="AttivaGeo" style="display:none">
-        <div class="col-sm-5">
-            <label title="Attiva Geo">
-                <strong>ATTIVA GEOREFERENZAZIONE</strong>
-                <input type="checkbox" id="CheckGeo" />
-            </label>
+        <br />
+        <br />
+    </div>
+</div>
+<div class="jumbotron" id="Risultati" style="display:none">
+    <div class="row">
+        <div class="col-sm-3">
+            <button type="submit" value="mappadati" class="btn btn-danger" id="mappadati" name="mappadati" hidden><i class="fa fa-globe"></i>Visuallizza dati in mappa</button>
+        </div>
+        <div class="col-sm-3">
+            <button type="submit" value="Estai" class="btn btn-outline-info" style="background-color:cornflowerblue" id="Estrai" name="Estrai" hidden><i class="fa fa-download"></i>Estrai dati</button>
         </div>
     </div>
-    <div class="jumbotron" id="Geo" style="display:none">
-        <div class="row">
-
-            <div class="col-md-6" id="seleziona">
-                <h4>@Html.Label("Seleziona Sistema:", htmlAttributes: new { @class = "control-label col-md-5" })</h4>
-                @Html.Label("", htmlAttributes: new { @class = "control-label col-md-5" })
-                @* @Html.DropDownList("SistemaGeo", ViewBag.SistemaGeo as List<SelectListItem>, htmlAttributes: new { @class = "dropdown", @id = "SistemaGeo" })*@
-                <div class="styled-geo">
-                    <select class="col-md-12" id="SistemaGeo">
-                        <option value="1">OpenStreetMap</option>
-                        <option value="2">HERE</option>
-                        <option value="3">OpenStreetMap</option>
-                    </select>
-                </div>
-
-            </div>
-         
-            <div class="col-md-6" id="corrispondenze">
-                <div>
-                    <p><strong>Seleziona la colonna corrispondente alla descrizione:</strong></p>
-                    <br />
-                    <p>Almeno uno tra Provincia, Comune e Indirizzo deve avere una corrispondenza</p>
-                </div>
-
-                <form>
-                    <mat-form-field appearance="fill">
-                        <mat-label>Provincia:</mat-label>
-                        <div class="styled">
-                            <select class="col-md-12" id="Provincia" required>
-                                <option value="">Nessuna Corrispondenza</option>
-                            </select>
-                        </div>
-                        <br />
-
-                        <mat-label>Comune:</mat-label>
-                        <div class="styled">
-                            <select class="col-md-12" id="Comune">
-                                <option value="">Nessuna Corrispondenza</option>
-                            </select>
-                        </div>
-                        <br />
-                        <mat-label>Indirizzo:</mat-label>
-                        <div class="styled">
-                            <select class="col-md-12" id="Indirizzo">
-                                <option value="">Nessuna Corrispondenza</option>
-                            </select>
-                        </div>
-                        <br />
-                        <mat-label>N.Civico:</mat-label>
-                        <div class="styled">
-                            <select class="col-md-12" id="NumCivico">
-                                <option value="">Nessuna Corrispondenza</option>
-                            </select>
-                        </div>
-                        <br />
-                        <mat-label>Cap:</mat-label>
-                        <div class="styled">
-                            <select class="col-md-12 " id="Cap">
-                                <option value="">Nessuna Corrispondenza</option>
-                            </select>
-                        </div>
-                        <br />
-                        <mat-label>AltroIndirizzo:</mat-label>
-                        <div class="styled">
-                            <select class="col-md-12" id="AltroIndirizzo">
-                                <option value="">Nessuna Corrispondenza</option>
-                            </select>
-                        </div>
-                        <br />
-                        <mat-label class="">Descrizione Luogo:</mat-label>
-                        <div class="styled">
-                            <select class="col-md-12" id="DescrizioneGeo">
-                                <option value="">Nessuna Corrispondenza</option>
-                            </select>
-                        </div>
-                    </mat-form-field>
-
-                    <br />
-                    <br />
-                    <br />
-                </form>
-
-                <div>
-                    <button type="submit" class="btn btn-success" style="width:500px" id="save"><i class="fa fa-save"></i>  Salva</button>
-                </div>
-
-            </div>
-
-            <br />
-            <br />
-            <br />
-        </div>
-
-                <br />
-                <div id="Fade_area" class="overLay">
-                </div>
-                <div id="myModal" class="popup">
-                    @Html.Partial("~/Views/Shared/Popup.cshtml")
-
-                </div>
-                <div class="row">
-                    <div id="parUpload">
-                        <div class="col-sm-1">
-                            <button type="submit" value="upload" class="btn btn-dark" id="Upload" name="upload" disabled><i class="fa fa-calculator"></i>Geocodifica</button>
-                        </div>
-                        <br />
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <button type="submit" value="mappadati" class="btn btn-danger" id="mappadati" name="mappadati" disabled><i class="fa fa-globe"></i>Visuallizza dati in mappa</button>
-                            </div>
-                            <div class="col-sm-3">
-                                <button type="submit" value="Estai" class="btn btn-success" style="background-color:cornflowerblue" id="Estai" name="Estai" disabled><i class="fa fa-download"></i>Estrai dati</button>
-                            </div>
-                        </div>
-                        <br />
-                        <br />
-                        <div id="OpenStreetMap" style="display:none">
-                            <img src="/Images/OpenStreetMap.jpeg" height="50" alt="" loading="lazy" class="rounded-circle" />
-                            <h2>Sistema di Georeferenzazione OpenStreetMap</h2>
-                        </div>
-
-                        <div id="Here" style="display:none">
-                            <img src="/Images/HERE_logo.svg.png" height="50" alt="" loading="lazy" id="here" class="rounded-start" />
-                            <h2>Sistema di Georeferenzazione HERE</h2>
-                        </div>
-                        <div class="col-lg-12" id="GeoDati">
-                            <p><strong>Una volta cliccato la geocodifica aspettare la fine del processo e successivamente i dati saranno georeferenziati e disponibili nella pagina <a href="~/GeoDati/Index" class="">GeoDati</a></strong></p>
-                        </div>
-
-                    </div>
-
-                    <br />
-                    <br />
-                </div>
-            </div>
+    <br />
+    <br />
+    <table id="tabellarisultati" class="display" style="width:100%;">
+    </table>
+</div>
 
 
 
-}
+
+
 
 
 
@@ -365,7 +378,7 @@
 
 
 
-     
+
 
 
 <hr />
@@ -396,15 +409,15 @@
                 Cap: Cap,
                 AltroIndirizzo: AltroIndirizzo
             }
-            
-           
-          
+
+
+
             if ((Provincia == "") && (Comune == "") && (Indirizzo == "")) {
                 $('#Upload').prop("disabled", true);
                 $('#Provincia','#Comune','#Indirizzo').prop('required', true);
            //     $('#Comune').prop("required", true);
            //     $('#Indirizzo').prop("required", true);
-      
+
             }
             else {
                 var json = JSON.stringify(oggetto);
@@ -412,82 +425,132 @@
 
                 $('#Upload').prop("disabled", false)
             };
-          
+
 
         });
 
-        function geocodificaRighe(sistema_geocodifica) {
+            function geocodificaRighe(sistema_geocodifica) {
 
-            $(".overLay,.popup").fadeIn();
+                $(".overLay,.popup").fadeIn();
 
-            // Bottone per fermare il processo
-            $('#alert').click(function (e) {
-                if (confirm("Sei sicuro di voler fermare il processo?"))
-                    numeroRiga = -1;
+                // Bottone per fermare il processo
+                $('#alert').click(function (e) {
+                    if (confirm("Sei sicuro di voler fermare il processo?"))
+                        numeroRiga = -1;
+                });
+
+                // Se è stato premuto il bottone per fermare ricarico la pagina
+                if (numeroRiga === -1) {
+                    window.location.reload(true);
+                    return false;
+                }
+
+                StartProgressBar(numeroRiga);
+
+                // Aggiornamento ProgressBar valore = numeroRiga, totale = righeDaGeoreferenziare.length
+                const File = $("#DescrizioneFile").val();
+                console.log(JSON.stringify(righeDaGeoreferenziare[numeroRiga]));
+
+                if (localStorage)
+                    localStorage.setItem('DescrizioneFile', File);
+
+                if (numeroRiga < righeDaGeoreferenziare.length) {
+                    $.ajax({
+                        dataType: "json",
+                        type: "POST",
+                        url: "../Upload/Geocodifica",
+                        data: {
+                            'SistemaGeo': sistema_geocodifica,
+                            'DatiJSON': JSON.stringify(righeDaGeoreferenziare[numeroRiga]),
+                            'FileName': File,
+                            'CorrispondenzeJSON': localStorage.JSON,
+                            'TotRighe': righeDaGeoreferenziare.length
+                        },
+                        success: function (data) {
+                            if (data && typeof data === 'object') {
+                                ['Lon', 'Lat', 'Approx01', 'Approx02', 'Here_MatchLevel', 'Here_Relevance', 'Here_MatchType','Here_Error'].forEach(nomeCampo => {
+                                    if (data.hasOwnProperty(nomeCampo))
+                                        righeDaGeoreferenziare[numeroRiga][nomeCampo] = data[nomeCampo];
+                                });
+                            }
+                            localStorage.removeItem('JSON');
+                            localStorage.setItem('NumeroRighe', numeroRiga);
+                            numeroRiga += 1;
+                            console.log('Elaborato ' + numeroRiga + '/' + righeDaGeoreferenziare.length);
+                            geocodificaRighe(sistema_geocodifica);
+
+                 /*           var object = $.extend({}, righeDaGeoreferenziare, data);
+                            console.log(object);
+                            var check = JSON.parse(object);
+                            console.log(check);
+                            $.each(object[0], function (key, value) {
+                                colonneTabella.push({ data: key, title: key });
+                            });
+                            console.log(colonneTabella);
+                            */
+                        }
+                    });
+                } else {
+                    let colonneTabella = [];
+                    $.each(righeDaGeoreferenziare[0], function (key, value) {
+                        colonneTabella.push({ data: key, title: key });
+                    });
+                    setTimeout(function () { StartProgressBar() }, 10000);
+                    //   $("#Fade_area").removeClass("overLay");
+                    $("#Fade_area").removeAttr("style");
+                    $("#myModal").removeAttr("style");
+                    //    alert('Completato! Visualizza i dati in mappa o estrai il file georeferenziato');
+                    $("#Risultati").show();
+                    $("#Geo").hide();
+                    $("#AttivaGeo").hide();
+                    $("#info").show();
+                    $("#mappadati").prop("disabled", false);
+                    $("#Estrai").prop("disabled", false);
+                    var dt = new Date();
+                    var time = dt.getDate()  + (dt.getUTCMonth()+1) + dt.getFullYear() + "_" + dt.getHours() + ":" + dt.getMinutes()
+                    
+                    $('#tabellarisultati').DataTable({
+                        language: {
+                            url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Italian.json'
+                        },
+                        paging: true,
+                        scrollX: true,
+                        data: righeDaGeoreferenziare,
+                        columns: colonneTabella,
+                        dom: 'Bfrtip',
+                        buttons: [{
+                            extend: 'collection',
+                            className: "btn-primary",
+                            text: 'ESPORTA DATI',
+                            buttons:
+                                [{
+                                    extend: "excel", className: "btn-primary", title: File +"_"+ time
+                                }],
+                        }]
+                            
+                    });
+
+                    //  url = '@Url.Action("Index", "GeoDati/Index")',
+                    // alert(url)
+                    //      window.location.href = (url);
+
+                };
+            };
+
+
+            $(document).ready(function () {
+               
+            $("#mappadati").click(function () {
+                   url = '@Url.Action("Index", "GeoDati/Index")',
+                    window.location.href = (url);
             });
 
-            // Se è stato premuto il bottone per fermare ricarico la pagina
-            if (numeroRiga === -1) {
-                window.location.reload(true);
-                return false;
-            }
-
-            StartProgressBar(numeroRiga);
-
-            // Aggiornamento ProgressBar valore = numeroRiga, totale = righeDaGeoreferenziare.length
-            const File = $("#DescrizioneFile").val();
-            console.log(JSON.stringify(righeDaGeoreferenziare[numeroRiga]));
-
-            if (localStorage)
-                localStorage.setItem('DescrizioneFile', File);
-
-            if(numeroRiga <righeDaGeoreferenziare.length) {
-                $.ajax({
-                    dataType: "json",
-                    type: "POST",
-                    url: "../Upload/Geocodifica",
-                    data: {
-                        'SistemaGeo': sistema_geocodifica,
-                        'DatiJSON': JSON.stringify(righeDaGeoreferenziare[numeroRiga]),
-                        'FileName': File,
-                        'CorrispondenzeJSON': localStorage.JSON,
-                        'TotRighe': righeDaGeoreferenziare.length
-                    },
-                    success: function (data) {
-                        if (data && typeof data === 'object') {
-                            ['lon', 'lat'].forEach(nomeCampo => {
-                                if (data.hasOwnProperty(nomeCampo))
-                                    righeDaGeoreferenziare[numeroRiga][nomeCampo] = data[nomeCampo];
-                            });
-                        }
-                        localStorage.removeItem('JSON');
-                        localStorage.setItem('NumeroRighe', numeroRiga);
-                        numeroRiga += 1;
-                        console.log('Elaborato ' + numeroRiga + '/' + righeDaGeoreferenziare.length);
-                        geocodificaRighe(sistema_geocodifica);
-                    }
-                });
-            } else {
-                CallApi;
-                alert('Finito!');
-                url = '@Url.Action("Index", "GeoDati/Index")',
-                    // alert(url)
-                    window.location.href = (url);
-            }
-        };
+            // visualizzazione ed estrazione della tabella risultati dopo la geocodifica
 
 
-        $(document).ready(function () {
 
-         /*   const table = document.getElementById('TableID');
-            if (table != null) {
-                $('#Provincia').prop("disabled", true)
-                $('#Comune').prop("disabled", true)
-                $('#Indirizzo').prop("disabled", true)
-                $('#N_Civico').prop("disabled", true)
-                $('#Cap').prop("disabled", true)
-                $('#AltroIndirizzo').prop("disabled", true)
-                $('#DENOMINAZIONE').prop("disabled", true)     */
+
+
 
 
             $('#DescrizioneFile').prop("disabled", true);
@@ -525,8 +588,13 @@
             $('#conferma').hide();
             $('#AttivaGeo').hide();
             $('#Geo').hide();
+            $('#tabellarisultati').DataTable().destroy();
+            $('#tabellarisultati').empty();
+            $('#Risultati').hide();
+
+            $('#info').hide();
             $('#DescrizioneFile').prop("disabled", true);
-            
+
         });
 
         // Upload del file AJAX
@@ -552,6 +620,7 @@
                 .then(dataSet => {
                     if (dataSet && Array.isArray(dataSet) && dataSet.length > 0) {
                         righeDaGeoreferenziare = dataSet;
+                        righerisultati = dataSet;
                         let colonneTabella = [];
                         $.each(righeDaGeoreferenziare[0], function (key, value) {
                             colonneTabella.push({ data: key, title: key });
@@ -570,9 +639,12 @@
                                 url: '//cdn.datatables.net/plug-ins/1.10.15/i18n/Italian.json'
                             },
                             paging: true,
+                            scrollX:true,
                             data: righeDaGeoreferenziare,
                             columns: colonneTabella,
                         });
+                        gettabella(righeDaGeoreferenziare, colonneTabella);
+
 
                         $("#AttivaGeo").show();
                         $("#View").hide();
@@ -600,7 +672,9 @@
         });
 
 
+            function gettabella(righerisultati,colonneTabella) {
 
+            }
 
         // bottoni upload e visualiazzazione passaggio dati SistemaGeo
         $('#Upload').click(function () {
@@ -623,64 +697,26 @@
             geocodificaRighe(val);
             return;
         });
-/*
-            console.log(val);
-            $.ajax({
-                dataType: "json",
-                type: "POST",
-                url: "ValSistemaGeo/Upload",
-                data: { 'SistemaGeo': val },
-                success: function (data) {
-                    if (data.code === 1) {
-                        $.ajax({
-                            dataType: "json",
-                            type: "POST",
-                            url: "Geocodifica/Upload",
-                            data: { 'SistemaGeo': val },
-                            success: function (data) {
-                                if (data.code === 1) {
 
-                                    const File = $("#DescrizioneFile").val();
-                                    console.log(File);
-                                    if (localStorage) {
-                                        localStorage.setItem('DescrizioneFile', File)
-                                    }
-                                    url = urlaction
-                                       // alert(url)
-                                  //      window.location.href = (url);
-      /*
-                                }
-                                else {
-                                    Error();
-                                }
-                            }
-                        });
-                    }
-                    else {
-                        Error();
-                    }
-
-                }
-            });
-        });
-       */
-        //controllo checkbox --> visualizzazioni bottoni
 
         const checkbox = document.getElementById('CheckGeo')
         checkbox.addEventListener('change', (event) => {
             if (event.currentTarget.checked) {
                 $('#Geo').show();
-               // $('#seleziona').show();
-               // $('#parUpload').show();
-               // $('#View').hide();
+
             } else {
                 $('#Geo').hide();
-               // $('#seleziona').hide();
-               // $('#parUpload').hide();
-               // $('#View').hide();
+
 
             }
         });
+
+
+
+
+
+
+
 
 
         //progress bar function
@@ -717,8 +753,7 @@
         //Close Progress Bar
 
         function CloseProgressBar() {
-            $("#Fade_area").removeAttr("style");
-            $("#myModal").removeAttr("style");
+
 
 
         }
@@ -734,8 +769,9 @@
                 contentType: "application/json",
                 success: function () {
 
-                    setTimeout(function () { CloseProgressBar() }, righeDaGeoreferenziare.length);
-
+                  //  setTimeout(function () { CloseProgressBar() }, righeDaGeoreferenziare.length);
+                    $("#Fade_area").removeAttr("style");
+                    $("#myModal").removeAttr("style");
 
                 },
                 error: function () { },

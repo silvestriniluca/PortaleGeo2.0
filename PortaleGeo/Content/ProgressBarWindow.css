@@ -1,5 +1,5 @@
 ﻿.overLay{
-    position:absolute;
+    position:fixed;
     display:none;
     background-color:rgba(128,128,128,0.5);
     top:0;

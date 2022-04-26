@@ -87,9 +87,7 @@ namespace NuovoPortaleGeo.Controllers
             catch { }
 
             if (dati_da_georef != null && dati_da_georef.Count > 0)
-            {
-                
-                CreateTable(dtdatabase);
+            {                
                 // Tramite un altro parametro ottenere la corrispondenza tra dati_da_georefJSON e oggetto GeoCode
                 GeoCode geo = GeoCode.CreateFrom(dati_da_georef, corrispondenze);
                 
@@ -97,59 +95,17 @@ namespace NuovoPortaleGeo.Controllers
                 {
                    
                     geo = OpenStreetMapController.GeoCodeObject(geo);
-
-
-                    //salvataggio database
-
-                     
-                    dati.DescrizioneFile = FileName;
-                    dati.Provincia = geo.Provincia;
-                    dati.Comune = geo.Comune;
-                    dati.Indirizzo = geo.Indirizzo;
-                    dati.AltroIndirizzo = geo.AltroIndirizzo;
-                    dati.Cap = geo.Cap;
-                    dati.Descrizione = geo.Denominazione;              
-                    dati.Lat = geo.Lat.ToString();
-                    dati.Lon = geo.Lon.ToString();
-                    dati.Approx01 = geo.Approx01.ToString();
-                    dati.Approx02 = geo.Approx02.ToString();
-                    dati.Here_MatchLevel = null;
-                    dati.Here_MatchType = null;
-                    dati.Here_Relevance = null;
-                    dati.Here_Error = null;
-                    db.Geo_Dati.Add(dati);
-                    db.SaveChanges();
-
-        
                     if (geo.Lat == 0 || geo.Lon==0)
                     {
                         GeoNoRighe++;
                     }
                 }
                 if (SistemaGeo == "2")
-                {
-                  
+                {                 
                     geo = GeocodeProcessor.EsecuteGecoding(geo, GeoNoRighe);
-                    dati.DescrizioneFile = FileName;
-                    dati.Provincia = geo.Provincia;
-                    dati.Comune = geo.Comune;
-                    dati.Indirizzo = geo.Indirizzo;
-                    dati.AltroIndirizzo = geo.AltroIndirizzo;
-                    dati.Cap = geo.Cap;
-                    dati.Descrizione = geo.Denominazione;
-                    dati.Lat = geo.Lat.ToString();
-                    dati.Lon = geo.Lon.ToString();
-                    dati.Approx01 = "";
-                    dati.Approx02 = "";
-                    dati.Here_MatchLevel = geo.Here_MatchLevel;
-                    dati.Here_MatchType = geo.Here_MatchType;
-                    dati.Here_Relevance = geo.Here_Relevance;
-                    dati.Here_Error = geo.Here_Error;
-                    db.Geo_Dati.Add(dati);
-                    db.SaveChanges();
-                 
                 }
-                
+                //salvataggio nel db
+                uploadDB(geo, FileName, SistemaGeo);
           //      datasavedb(dtdatabase);
                
                 
@@ -169,40 +125,47 @@ namespace NuovoPortaleGeo.Controllers
             }
             return null;
         }
+
+
             
-
-/*
-
-        public static void datatablehelper(SqlConnection connection, DataTable dataTable)
+        public void uploadDB(GeoCode geo,string FileName,string SistemaGeo)
         {
-            if (connection.State == ConnectionState.Closed)
+            Geo_Dati dati = new Geo_Dati();
+            dati.DescrizioneFile = FileName;
+            dati.Provincia = geo.Provincia;
+            dati.Comune = geo.Comune;
+            dati.Indirizzo = geo.Indirizzo;
+            dati.AltroIndirizzo = geo.AltroIndirizzo;
+            dati.Cap = geo.Cap;
+            dati.Descrizione = geo.Denominazione;
+            dati.Lat = geo.Lat.ToString();
+            dati.Lon = geo.Lon.ToString();
+            if (SistemaGeo == "1")
             {
-                connection.Open();
-                SqlCommand sqlCommand = new SqlCommand("Get_GeoDati", connection);
-                sqlCommand.CommandType = CommandType.StoredProcedure;
-                sqlCommand.Parameters.AddWithValue("@GeoDato", dataTable);
-                sqlCommand.ExecuteNonQuery();
-                connection.Close();
+                dati.Approx01 = geo.Approx01.ToString();
+                dati.Approx02 = geo.Approx02.ToString();
+                dati.Here_MatchLevel = null;
+                dati.Here_MatchType = null;
+                dati.Here_Relevance = null;
+                dati.Here_Error = null;
             }
-
+            else
+            {
+                dati.Approx01 = "";
+                dati.Approx02 = "";
+                dati.Here_MatchLevel = geo.Here_MatchLevel;
+                dati.Here_MatchType = geo.Here_MatchType;
+                dati.Here_Relevance = geo.Here_Relevance;
+                dati.Here_Error = geo.Here_Error;
+            }
+            db.Geo_Dati.Add(dati);
+            db.SaveChanges();
         }
 
-        
 
-        public static void datasavedb(DataTable dtdatabase)
-        {
-      
-           SqlConnection connectionstring = new SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);       
-            datatablehelper(connectionstring, dtdatabase);
-        }
-*/
-        //visualizza tabella risultati
-        public DataTable getrisultati()
-        {
-            DataTable table = new DataTable();
-            return table;
-               
-        }
+
+
+       //aggiornamento dbattività fine processo
         public static void uploadDBAttività(TimeSpan time,  string idutente, int righe, string descrizionefile)
         {
             SqlConnection connectionstring = new SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
@@ -229,30 +192,6 @@ namespace NuovoPortaleGeo.Controllers
 
         }
 
-
-        private DataTable CreateTable(DataTable dtdatabase)
-        {
-           
-            dtdatabase.Columns.Add("IdUtente");
-            dtdatabase.Columns.Add("DescrizioneFile");
-            dtdatabase.Columns.Add("Here");
-            dtdatabase.Columns.Add("OpenStreetMap");
-            dtdatabase.Columns.Add("Google");
-            dtdatabase.Columns.Add("Lat");
-            dtdatabase.Columns.Add("Lon");
-            dtdatabase.Columns.Add("Approx01");
-            dtdatabase.Columns.Add("Approx02");
-            dtdatabase.Columns.Add("Here_MatchLevel");
-            dtdatabase.Columns.Add("Here_MatchType");
-            dtdatabase.Columns.Add("Here_Relevance");
-            dtdatabase.Columns.Add("Here_Error");
-            dtdatabase.Columns.Add(("DENOMINAZIONE"));
-            dtdatabase.Columns.Add("Provincia");
-            dtdatabase.Columns.Add("Comune");
-            dtdatabase.Columns.Add("Indirizzo");
-    
-            return dtdatabase;
-        }
 
 
         public Geo_Dati SelectSystemGeo(string SistemaAttivo, string FileName)
@@ -297,7 +236,7 @@ namespace NuovoPortaleGeo.Controllers
                 dat_i.Google = false;
             }
             
-            GeoDatiController._File = FileName;          
+        //   GeoDatiController._File = FileName;          
     
 
             return dat_i;
@@ -333,12 +272,28 @@ namespace NuovoPortaleGeo.Controllers
                 //conf.Delimiter = ";";
                 conf.DetectDelimiter = true;
                 conf.HasHeaderRecord = true;
-
+                
                 // Lettura file csv e caricamento in tabella
                 DataTable table = new DataTable();
                 Request.Files[0].InputStream.Seek(0, SeekOrigin.Begin);
+                
                 using (var reader = new StreamReader(Request.Files[0].InputStream, System.Text.Encoding.UTF7))
-                { 
+                {
+
+                    /* prova salta commento
+                    var linea = "";
+                    string[] simboli = { @"""", "#", };
+                    int i = 0;
+                    while ((linea = reader.ReadLine()) != null)
+                    {
+                        foreach (var single in simboli)
+                        {
+                            if (linea.StartsWith(single)) linea.Skip(i);
+                        }
+                        var newreader = new StreamWriter(linea);
+
+                    }
+                    */
                     using (var csv = new CsvHelper.CsvReader(reader, conf))
                     {
                         var dr = new CsvDataReader(csv);

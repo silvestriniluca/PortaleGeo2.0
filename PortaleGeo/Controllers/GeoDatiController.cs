@@ -22,13 +22,13 @@ namespace NuovoPortaleGeo.Controllers
 
         //da verificare alternativa con Mirco
 
-        public static string _File;
+     //   public static string _File;
         public static string Name_File_Export;
 
         // GET: GeoDati
         public ActionResult Index(string sortOrder, string Provincia, string Comune, string Indirizzo, string Descrizione, string DescrizioneFile, int? page)
         {
-            
+            //ordinamento tabella
             ViewData["DESCfileSortParm"] = String.IsNullOrEmpty(sortOrder) ? "DESCfile_desc" : "";
             ViewData["ProvSortParm"] = String.IsNullOrEmpty(sortOrder) ? "Prov_desc" : "";
             ViewData["ComuneSortParm"] = String.IsNullOrEmpty(sortOrder) ? "Comune_desc" : "";
@@ -47,24 +47,15 @@ namespace NuovoPortaleGeo.Controllers
             ViewBag.DescrizioneFile = new SelectList(db.Geo_Dati.Where(s => s.IdUtente == Geo_Utente.Id).GroupBy(p => new { p.DescrizioneFile })
                                                      .Select(g => g.FirstOrDefault()), "DescrizioneFile", "DescrizioneFile");
            
-            if(_File!=null)
+     /*       if(_File!=null)
             {
                 DescrizioneFile = _File;
             }
-            else if (DescrizioneFile != null)
-            {
-                ViewBag.CurrentDescrizioneFile = DescrizioneFile;
-            }
+     */
+     //filtri tabella
+            if (DescrizioneFile != null) { ViewBag.CurrentDescrizioneFile = DescrizioneFile;}
        
-            if (Comune != null)
-            {
-                page = 1;
-            }
-            else
-            {
-                
-            }
-
+            if (Comune != null) { page = 1; }
             var geodati = db.Geo_Dati.Where(s => s.IdUtente == Geo_Utente.Id).Select(s => s);
                          
 
@@ -109,7 +100,7 @@ namespace NuovoPortaleGeo.Controllers
             int pageSize = 100;
 
             int pageNumber = (page ?? 1);
-            _File = null;
+         //   _File = null;
             
           
             return View(geodati.ToPagedList(pageNumber,pageSize));

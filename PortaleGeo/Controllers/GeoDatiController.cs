@@ -7,6 +7,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NuovoPortaleGeo.Helpers;
@@ -24,11 +25,11 @@ namespace NuovoPortaleGeo.Controllers
 
      //   public static string _File;
         public static string Name_File_Export;
-
+        public static string cf;
         // GET: GeoDati
         public ActionResult Index(string sortOrder, string Provincia, string Comune, string Indirizzo, string Descrizione, string DescrizioneFile, int? page)
         {
-            //ordinamento tabella
+            
             ViewData["DESCfileSortParm"] = String.IsNullOrEmpty(sortOrder) ? "DESCfile_desc" : "";
             ViewData["ProvSortParm"] = String.IsNullOrEmpty(sortOrder) ? "Prov_desc" : "";
             ViewData["ComuneSortParm"] = String.IsNullOrEmpty(sortOrder) ? "Comune_desc" : "";
@@ -40,7 +41,9 @@ namespace NuovoPortaleGeo.Controllers
             ViewBag.CurrentComune = Comune;
             ViewBag.CurrentIndirizzo = Indirizzo;
             ViewBag.CurrentDescrizione = Descrizione;
-            var cf = Session["CF"].ToString();
+            RegisterViewModel model = new RegisterViewModel();
+            var email = model.Email;
+               cf = Session["CF"].ToString();
             var Geo_Utente = db.Geo_Utente
                     .Where(x => x.CodiceFiscale == cf).FirstOrDefault();
                   
@@ -52,7 +55,7 @@ namespace NuovoPortaleGeo.Controllers
                 DescrizioneFile = _File;
             }
      */
-     //filtri tabella
+
             if (DescrizioneFile != null) { ViewBag.CurrentDescrizioneFile = DescrizioneFile;}
        
             if (Comune != null) { page = 1; }
@@ -123,8 +126,7 @@ namespace NuovoPortaleGeo.Controllers
 
         // GET: geo_Dati/Create
         public ActionResult Create()
-        {
-            ViewBag.IdUtente = new SelectList(db.Geo_Utente, "Id", "Email");
+        {  
             return View();
         }
 
@@ -137,12 +139,13 @@ namespace NuovoPortaleGeo.Controllers
         {
             if (ModelState.IsValid)
             {
+                geo_Dati.IdUtente = db.Geo_Utente.Where(x => x.CodiceFiscale == cf).FirstOrDefault().Email;
                 db.Geo_Dati.Add(geo_Dati);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
-            ViewBag.IdUtente = new SelectList(db.Geo_Utente, "Id", "Email", geo_Dati.IdUtente);
+           
+           
             return View(geo_Dati);
         }
 
